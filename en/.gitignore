@@ -1,0 +1,8 @@
+.DS_Store
+*.icloud
+.obsidian/
+.env
+private/
+# Exported real resume PDFs and check screenshots stay out of the repo
+*.pdf
+p[0-9]*.png

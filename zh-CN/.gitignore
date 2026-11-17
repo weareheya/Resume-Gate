@@ -1,0 +1,8 @@
+.DS_Store
+*.icloud
+.obsidian/
+.env
+private/
+# 导出的真实简历 PDF 和检查截图不进仓库
+*.pdf
+p[0-9]*.png
