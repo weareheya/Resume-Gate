@@ -8,15 +8,7 @@ A resume workflow for a long job search, where you tailor many versions over wee
 
 **It's for you if** you use AI to tailor resumes and have seen it drop results you already confirmed, inflate a number, or quietly water down your strongest experience. **It's probably overkill if** you need one resume, once.
 
-```mermaid
-flowchart LR
-  A["Your old resume<br/>and notes"] --> B["Claim Cards<br/>one per accomplishment"]
-  B --> C["Approved<br/>baseline"]
-  C --> D["Version for<br/>one job"]
-  D --> E{"AI self-review<br/>+ your approval"}
-  E --> F["Sent · frozen"]
-  F -. "next job starts from the best fit" .-> C
-```
+![Resume-Gate overview: one fact, one card, every version traces back](assets/overview-en.svg)
 
 ## What's inside
 
@@ -55,21 +47,13 @@ Then follow the kit's quick start: [en/README.md](en/README.md#quick-start) · [
 
 ## 简体中文
 
-> 让 AI 帮你做简历，但每一句话都有出处、每一版都能追溯、每次改动都经你点头。
+> 用 AI 改简历可以，前提是每句话都有出处。
 
-一套给「长期求职」用的简历生产工作流，适合要在几周或几个月里改出很多版的人：**证据库 → 基线简历 → 按岗位改 Delta → AI 自审 → 人工审核 → 冻结**。文档 + 模板 + 两个小检查脚本，不绑定任何 AI 或简历工具。
+一套给长期求职用的简历工作流。几周、几个月、几十版改下来不乱：**证据库 → 基线 → 按岗位改 Delta → AI 自审 → 本人审核 → 冻结**。文档 + 模板 + 两个检查脚本，不绑定任何 AI 或简历工具。
 
-**适合你，如果**你用 AI 改简历，遇到过它把确认过的成果弄丢、把数字写大、或者把你最强的经历悄悄写弱。**可能用不上，如果**你只需要一份简历、投一次。
+**适合**：用 AI 改过简历，遇到过它把确认过的成果弄丢、把数字写大，或者把最强的经历悄悄写弱。**用不上**：只要一份简历，投一次。
 
-```mermaid
-flowchart LR
-  A["旧简历<br/>和笔记"] --> B["Claim Card<br/>一个成果一张"]
-  B --> C["已批准的<br/>基线"]
-  C --> D["某个岗位的<br/>版本"]
-  D --> E{"AI 自审<br/>+ 你审核"}
-  E --> F["Sent · 冻结"]
-  F -. "下一个岗位从最匹配的版本开始" .-> C
-```
+![Resume-Gate 总览：事实只写一次，每一版都能追回出处](assets/overview-zh.svg)
 
 ## 里面有什么
 

@@ -1,8 +1,16 @@
 # Resume-Gate
 
-> 让 AI 帮你做简历，但每一句话都有出处、每一版都能追溯、每次改动都经你点头。
+> 用 AI 改简历可以，前提是每句话都有出处。
 
-一套给「长期求职」用的简历生产工作流：**证据库 → 基线简历 → 按岗位改 Delta → AI 自审 → 人工审核 → 冻结**。它是文档 + 模板 + 两个小检查脚本，不绑定任何 AI 或简历工具；任何能读你文件的 AI 都能照着做：Claude Code、Codex 会自动读取 `AGENTS.md`，其他工具让 AI 先读它就行。
+说实话，AI 改简历最大的问题不是文笔，是记性。
+
+这套东西是我自己求职时一版一版改出来的。改到后面，AI 会把上一轮确认过的成果弄丢，把数字写大，把最强的那段经历悄悄写弱。
+
+所以我把规矩写成了文件：事实先进证据库，一个成果一张 Claim Card；简历永远从批准过的版本改起；AI 改完先自审，最后本人点头才算数。
+
+**证据库 → 基线 → 按岗位改 Delta → AI 自审 → 本人审核 → 冻结。**
+
+不绑定任何 AI 或简历工具。Claude Code、Codex 会自动读 `AGENTS.md`；别的工具，让 AI 先读它就行。
 
 ## 它解决什么问题
 
@@ -29,29 +37,7 @@
 
 ## 流程一览
 
-```mermaid
-flowchart TB
-  subgraph S0["Step 0 · 只做一次"]
-    direction LR
-    A["旧简历、LinkedIn、<br/>绩效评语"] --> B["Claim Card<br/>evidence/claims/"]
-    B --> C["第一份基线<br/>cv/resumes/"]
-  end
-  subgraph JOB["每个新岗位 · S1–S7"]
-    direction LR
-    D["JD"] --> E["S1 选类型<br/>和基线"]
-    E --> F["S2 Evidence<br/>Retrieval Gate"]
-    F --> G["S3 JD 映射<br/>+ 追问清单"]
-    G --> H["S4 改 Delta"]
-    H --> I["S5 Change Log<br/>+ Coverage Report"]
-    I --> J["S6 AI 自审<br/>check_claims · pdf_fill"]
-    J --> K{"S7 你审核<br/>通过？"}
-    K -- "否" --> H
-    K -- "是" --> L["Approved"]
-    L --> M["Sent · 冻结"]
-  end
-  S0 --> JOB
-  M -. "可作为下一份的基线" .-> E
-```
+![Resume-Gate 流程：Step 0 做一次，之后每个岗位七步](assets/flow.svg)
 
 每一步都要有能拿出来的产出，才进下一步。详见 [docs/WORKFLOW.md](docs/WORKFLOW.md)。
 
