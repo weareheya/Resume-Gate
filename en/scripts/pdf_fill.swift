@@ -59,7 +59,7 @@ for i in 0..<doc.pageCount {
   }
 }
 
-if doc.pageCount > 1 && lastFill < threshold {
-  print(String(format: "⚠️ Last page is only %.0f%% full (minimum %.0f%%): too little spills over. Trim content or adjust layout (D-009)", lastFill, threshold))
+if lastFill < threshold {
+  print(String(format: "⚠️ Last page is only %.0f%% full (minimum %.0f%%). Add real content, or trim and re-flow so the pages fill (D-009)", lastFill, threshold))
   exit(2)
 }

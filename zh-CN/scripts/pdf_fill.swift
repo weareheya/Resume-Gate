@@ -59,7 +59,7 @@ for i in 0..<doc.pageCount {
   }
 }
 
-if doc.pageCount > 1 && lastFill < threshold {
-  print(String(format: "⚠️ 最后一页填充率 %.0f%% < %.0f%%：多出的内容太少，请精简内容或调排版（D-009）", lastFill, threshold))
+if lastFill < threshold {
+  print(String(format: "⚠️ 最后一页填充率 %.0f%% < %.0f%%：请精简内容并重新排版，让页面填满（D-009）", lastFill, threshold))
   exit(2)
 }

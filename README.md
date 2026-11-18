@@ -13,7 +13,7 @@ This repo has two complete, self-contained kits with the same content. Pick one 
 | [`en/`](en/) | English | [en/README.md](en/README.md) |
 | [`zh-CN/`](zh-CN/) | 简体中文 | [zh-CN/README.md](zh-CN/README.md) |
 
-Each kit has its own `AGENTS.md`, so any AI that reads files can pick it up as soon as you copy it in.
+Each kit has its own `AGENTS.md`. Tools like Claude Code and Codex read it automatically once you copy the kit in; with others, point the AI at it.
 
 ---
 
@@ -30,4 +30,4 @@ Each kit has its own `AGENTS.md`, so any AI that reads files can pick it up as s
 | [`en/`](en/) | English | [en/README.md](en/README.md) |
 | [`zh-CN/`](zh-CN/) | 简体中文 | [zh-CN/README.md](zh-CN/README.md) |
 
-每套都自带 `AGENTS.md`，复制进去之后，任何能读文件的 AI 都能直接接手。
+每套都自带 `AGENTS.md`。复制进去后，Claude Code、Codex 等会自动读取；其他工具让 AI 先读它即可。

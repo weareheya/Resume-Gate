@@ -2,7 +2,7 @@
 
 > Use AI to build your resume, but make sure every line has a source, every version can be traced, and every change goes through you.
 
-A resume workflow for a long job search: **evidence bank → baseline resume → per-job delta → AI self-review → your sign-off → freeze**. It's docs, templates, and one layout-check script. It isn't tied to any AI or resume tool. Any AI that can read files (Claude Code, Codex, ChatGPT, etc.) can pick it up from `AGENTS.md`.
+A resume workflow for a long job search: **evidence bank → baseline resume → per-job delta → AI self-review → your sign-off → freeze**. It's docs, templates, and one layout-check script. It isn't tied to any AI or resume tool. Any AI that can read your files can follow it: Claude Code and Codex read `AGENTS.md` automatically, and with other tools you just point the AI at it.
 
 ## What it fixes
 
