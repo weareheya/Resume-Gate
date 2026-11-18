@@ -1,4 +1,4 @@
-# cv-gate
+# Resume-Gate
 
 > Use AI to build your resume, but make sure every line has a source, every version can be traced, and every change goes through you.
 

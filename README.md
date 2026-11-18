@@ -1,4 +1,4 @@
-# cv-gate
+# Resume-Gate
 
 **English** · [简体中文](#简体中文)
 
