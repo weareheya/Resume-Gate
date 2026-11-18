@@ -13,6 +13,8 @@ This repo has two complete, self-contained kits with the same content. Pick one 
 | [`en/`](en/) | English | [en/README.md](en/README.md) |
 | [`zh-CN/`](zh-CN/) | 简体中文 | [zh-CN/README.md](zh-CN/README.md) |
 
+**Privacy:** your evidence bank will hold your real work history, so keep your working copy in a *private* repo. Copy a kit into your own project; don't fork this repo and fill it in publicly.
+
 Each kit has its own `AGENTS.md`. Tools like Claude Code and Codex read it automatically once you copy the kit in; with others, point the AI at it.
 
 ---
@@ -29,5 +31,7 @@ Each kit has its own `AGENTS.md`. Tools like Claude Code and Codex read it autom
 |---|---|---|
 | [`en/`](en/) | English | [en/README.md](en/README.md) |
 | [`zh-CN/`](zh-CN/) | 简体中文 | [zh-CN/README.md](zh-CN/README.md) |
+
+**隐私：** 证据库里会放你真实的工作经历，所以工作副本请用*私有*仓库。把一套内容复制到你自己的项目里，不要 fork 本仓库后公开填写。
 
 每套都自带 `AGENTS.md`。复制进去后，Claude Code、Codex 等会自动读取；其他工具让 AI 先读它即可。

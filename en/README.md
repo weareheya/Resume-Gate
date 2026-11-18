@@ -68,6 +68,10 @@ You can hand layout to [Reactive Resume](https://rxresu.me), an open-source resu
 - Three kinds of tags: type, status (`Draft` / `Approved` / `Sent` / `Unused`), and job ID
 - Lock a resume once it's sent. If you're not sure which version you sent, don't link anything to the application record.
 
+## Keep your working copy private
+
+The evidence bank holds your real work history: employers, numbers, and who you worked with. **Copy this kit into your own project and keep that project in a private repository.** Don't fork this repo and then fill it in publicly. If you use a public repo anyway, add `evidence/` and `cv/` to `.gitignore` first.
+
 ## Design choices
 
 - **Docs first, no framework.** The AI follows rules by reading them, so the docs are short, specific, and full of checkboxes.

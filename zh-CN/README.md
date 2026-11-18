@@ -68,6 +68,10 @@ mkdir -p /tmp/cv-check && swift scripts/pdf_fill.swift your-cv.pdf /tmp/cv-check
 - 标签三类：类型、状态（`Draft` / `Approved` / `Sent` / `Unused`）、岗位 ID
 - 已投递的版本**锁定**，不再改；不确定是哪一版的，不要关联进投递记录
 
+## 工作副本务必保持私有
+
+证据库里是你真实的工作经历：雇主、数字、合作过的人。**把本套内容复制到你自己的项目里，并让那个项目保持私有仓库。** 不要 fork 本仓库后公开填写。如果一定要用公开仓库，先把 `evidence/` 和 `cv/` 加进 `.gitignore`。
+
 ## 设计取舍
 
 - **文档优先，不写框架。** 规则靠 AI 读文档执行，所以文档要短、具体、有勾选项。

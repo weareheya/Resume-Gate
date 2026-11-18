@@ -41,4 +41,4 @@ At the end of each session: update `cv/CV-INDEX.md` if there's a new version, fi
 
 ## Never commit
 
-National ID numbers, pay stubs, passwords, API keys, or anything personal the user doesn't want public. If the evidence bank contains private details, keep the repo private or add `evidence/` to `.gitignore`.
+National ID numbers, pay stubs, passwords, API keys, or anything personal the user doesn't want public. The evidence bank holds real work history, so this repo should be private. If it must be public, keep `evidence/` and `cv/` in `.gitignore`.
