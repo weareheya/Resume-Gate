@@ -2,17 +2,41 @@
 
 > 每步的「产出」写不出来，就不进下一步。
 
+还没有基线简历？先做 [Step 0](#step-0冷启动)。
+
 | 步 | 做什么 | 产出 |
 |---|---|---|
 | S1 | **选类型和基线**：读 JD，在 `cv/CV-INDEX.md` 里定岗位类型，比较「核心 skill sets」，取该类「当前起点」。署名 / 联系方式变体按类型选 | 「类型 X，起点 = …」 |
 | S2 | **Evidence Retrieval Gate**：读 JD，从 `evidence/claims/` 选最多 5 个最相关的案例，读 Claim Card 和已批准措辞。**列出读了哪些** | 已读清单（Claim ID） |
 | S3 | **JD 映射**：JD 的每条核心要求 → 有直接证据 / 只有可迁移证据 / 没有证据。没有证据的不硬写 | 三栏映射表 |
-| S4 | **Delta**：复制基线，只改需要改的：定位句、Summary、bullet 顺序、关键词。不重写已批准的部分 | 新版本草稿 |
+| S4 | **Delta**：复制 `cv/resumes/` 里的基线文件，只改需要改的：定位句、Summary、bullet 顺序、关键词。不重写已批准的部分 | 新版本草稿 |
 | S5 | **Change Log**：每处改动写 Before / After / Why，附 JD Coverage Report 和检查范围 | `cv/changelogs/<id>.md` |
 | S6 | **AI 自审**：按 [REVIEW-CHECKLIST](REVIEW-CHECKLIST.md) 逐项过；导出 PDF 跑 `scripts/pdf_fill.swift` | 截图 + 页数 + 填充率 + 自审改动表 |
 | S7 | **人工审核**：把全文 + 改动对照交给本人，本人说通过才改状态为 `Approved` | 本人批准记录 |
 
 投递之后：版本改状态为 `Sent` 并**冻结**；`cv/CV-INDEX.md` 里记下是哪个岗位用了它、导出文件的 SHA-256。
+
+## Step 0：冷启动
+
+只做一次，在第一个岗位之前。它带你从「我有一份旧简历」走到「我有一份已批准的基线」。
+
+| 步 | 做什么 | 产出 |
+|---|---|---|
+| 0a | **收集原始材料**：现在的简历、LinkedIn 文字、过往的绩效评语，任何含事实的东西。放进 `evidence/sources/`。这个目录已被 git 忽略，不会被提交 | `evidence/sources/` 里的文件 |
+| 0b | **列出成果。** 用 [PROMPTS](PROMPTS.md) 里的提示词 1。AI 列出它找到的，并标出含糊的 | 编号清单 |
+| 0c | **把每一项变成 Claim Card。** 用提示词 2：AI 采访你，再起草状态为 `需复核` 的卡。先从最强的 5–10 项开始。你读过并确认无误后，改成 `Safe to draft` | `evidence/claims/` 里的 Claim Card |
+| 0d | **起草第一份基线**，只用 `Safe to draft` 的卡。复制 `cv/resumes/_TEMPLATE.md`，每条 bullet 都标上 Claim ID | `cv/resumes/<id>.md` |
+| 0e | **审核并批准**，流程同 S6、S7。把它登记进 `cv/CV-INDEX.md`，作为该类型的起点 | 一份 Approved 的基线 |
+
+`cv/CV-INDEX.md` 里至少有一个 Approved 的起点，就算完成。之后每个新岗位都走 S1 到 S7。
+
+## Claim 状态
+
+| 状态 | 含义 | AI 能在简历里用吗？ |
+|---|---|---|
+| `Safe to draft` | 你读过这张卡，确认了事实和措辞限制 | 能 |
+| `需复核` | 从你的材料或采访中提取，但你还没确认 | 不能。AI 只能就它向你提问 |
+| `已停用` | 过时、有误，或你不想再主张 | 不能 |
 
 ## 关键原则
 

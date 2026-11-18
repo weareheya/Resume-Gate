@@ -11,12 +11,15 @@
 ## 硬规则
 
 **事实**
+- 只能用状态为 `Safe to draft` 的 claim。`需复核` 的 claim 只能拿来问本人，不能写进简历。
+- 每条简历 bullet 末尾用 HTML 注释标上 Claim ID（`<!-- C-001 -->`）。没有标签的 bullet 就是没有出处，按错误处理。
 - 简历里的每条经历、每个数字都必须能追到 `evidence/claims/` 里的一张 Claim Card，或已批准 / 已投递的版本。没有出处的，不写。
 - 数字保留单位、币种、时间窗口和限定词（「潜在」「累计」「单个项目」等）。不把团队成果写成个人成果。
 - JD 要求但没有证据的能力，**不写**，记进 Coverage Report，由本人决定怎么补。
 - 不确定的事实标「未核实」，不猜。
 
 **流程**
+- 如果 `cv/CV-INDEX.md` 里还没有 Approved 的起点，先做 `docs/WORKFLOW.md` 里的 Step 0，再做别的。
 - 生成任何简历前先过 Evidence Retrieval Gate：读相关 Claim Card，并**列出读了哪些**。
 - 从最近批准的版本改起（Delta），不从空白开始；改动写进 `cv/changelogs/`。
 - 宣称「检查完成」时附 Coverage Report：查了什么范围、没查什么。

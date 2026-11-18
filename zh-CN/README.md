@@ -36,9 +36,11 @@ docs/
   REVIEW-CHECKLIST.md     AI 自审清单（事实 / 写法 / 排版 / 交付格式）
   DECISIONS.md            决策登记簿（含 10 条起步规则，按你的情况改）
   LESSONS.md              常见过程性失误与防线
+  PROMPTS.md              常用时刻的可复制提示词
 evidence/claims/          证据库：一个成果一张 Claim Card
 cv/
   CV-INDEX.md             岗位类型 → 当前起点简历的检索表
+  resumes/                简历正文本身，一个版本一个 Markdown 文件
   changelogs/             每份简历相对基线的改动记录
 scripts/
   pdf_fill.swift          渲染 PDF 每页为 PNG，并报告填充率（macOS）
@@ -48,9 +50,10 @@ examples/                 一套虚构数据的填写示范
 ## 快速开始
 
 1. 把本目录（`zh-CN/`）里的内容复制到你自己的求职项目根目录。
-2. 把 `cv/CV-INDEX.md` 里的岗位类型改成你自己的；把你的经历按 `evidence/claims/_TEMPLATE.md` 一条条写成 Claim Card，先写最强的 5–10 条。
-3. 对 AI 说：「先读 `AGENTS.md`，然后按 `docs/WORKFLOW.md` 给这个 JD 做一版简历」，并贴上 JD。
-4. 每版简历结束后：写 Change Log、更新 `CV-INDEX.md`、在 `docs/DECISIONS.md` 记下你新定的规则。
+2. 先做 `docs/WORKFLOW.md` 里的 **Step 0**：把你现有的简历变成 Claim Card 和第一份已批准的基线。
+3. 把 `cv/CV-INDEX.md` 里的岗位类型改成你自己的。
+4. 每来一个新岗位，用 `docs/PROMPTS.md` 里的提示词 3，并贴上 JD。
+5. 每版简历结束后：写 Change Log、更新 `CV-INDEX.md`、在 `docs/DECISIONS.md` 记下你新定的规则。
 
 检查排版（macOS，需要 Xcode 命令行工具）：
 

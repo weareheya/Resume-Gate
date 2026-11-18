@@ -6,3 +6,5 @@ private/
 # Exported real resume PDFs and check screenshots stay out of the repo
 *.pdf
 p[0-9]*.png
+# Raw source material (old resumes, reviews) can hold private details
+evidence/sources/

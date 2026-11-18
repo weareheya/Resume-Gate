@@ -36,9 +36,11 @@ docs/
   REVIEW-CHECKLIST.md     AI self-review: facts / writing / layout / handoff format
   DECISIONS.md            Decision register, with 10 starter rules to adapt
   LESSONS.md              Common process mistakes and the guardrails against them
+  PROMPTS.md              Copy-paste prompts for the common moments
 evidence/claims/          Evidence bank: one Claim Card per accomplishment
 cv/
   CV-INDEX.md             Lookup table: job type → current starting-point resume
+  resumes/                The resume files themselves, one Markdown file per version
   changelogs/             What changed in each resume relative to its baseline
 scripts/
   pdf_fill.swift          Renders each PDF page to PNG and reports how full it is (macOS)
@@ -48,9 +50,10 @@ examples/                 A filled-in walkthrough using made-up data
 ## Quick start
 
 1. Copy the contents of this folder (`en/`) into the root of your own job-search project.
-2. In `cv/CV-INDEX.md`, replace the example job types with your own. Write your experience up as Claim Cards using `evidence/claims/_TEMPLATE.md`. Start with your 5–10 strongest.
-3. Tell your AI: "Read `AGENTS.md`, then follow `docs/WORKFLOW.md` to make a resume for this job," and paste the JD.
-4. After each resume: write the Change Log, update `CV-INDEX.md`, and record any new rules you settled on in `docs/DECISIONS.md`.
+2. Do **Step 0** in `docs/WORKFLOW.md`. It takes your existing resume and turns it into Claim Cards and a first approved baseline.
+3. In `cv/CV-INDEX.md`, replace the example job types with your own.
+4. For each new job, use prompt 3 in `docs/PROMPTS.md` and paste the JD.
+5. After each resume: write the Change Log, update `CV-INDEX.md`, and record any new rules you settled on in `docs/DECISIONS.md`.
 
 To check layout (macOS, needs the Xcode command line tools):
 

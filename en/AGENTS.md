@@ -11,12 +11,15 @@ Before you do any resume work in this repo, read these in order:
 ## Hard rules
 
 **Facts**
+- Use only claims marked `Safe to draft`. A `Needs review` claim is something to ask the user about, never something to write.
+- Tag every resume bullet with its Claim ID in an HTML comment (`<!-- C-001 -->`). A bullet with no tag has no source, so treat it as a bug.
 - Every experience and every number in a resume must trace to a Claim Card in `evidence/claims/`, or to an approved or sent version. If it has no source, leave it out.
 - Keep units, currencies, time windows, and qualifiers ("potential", "cumulative", "per project"). Never present a team result as an individual one.
 - If the JD asks for something with no evidence behind it, **don't write it**. Put it in the Coverage Report and let the user decide what to do.
 - If you're unsure of a fact, mark it "unverified". Don't guess.
 
 **Process**
+- If `cv/CV-INDEX.md` has no Approved starting point yet, do Step 0 in `docs/WORKFLOW.md` before anything else.
 - Before generating any resume, pass the Evidence Retrieval Gate: read the relevant Claim Cards and **list which ones you read**.
 - Start from the latest approved version and make a delta. Never start from a blank page. Record changes in `cv/changelogs/`.
 - When you say a check is done, attach a Coverage Report: what you covered and what you didn't.
