@@ -3,6 +3,7 @@
 
 What it checks (these are the checks a script can do for certain):
   1. Every bullet under "Experience", and every line under "Summary", carries a Claim ID
+     (Chinese headings such as 摘要 and 工作经历 work too)
      in an HTML comment, e.g.  - Rebuilt the partner program ... <!-- C-001 -->
   2. Every Claim ID points to a card in evidence/claims/ whose status is "Safe to draft".
   3. If the resume has a baseline (`base:` in its front matter, or --base), every claim marked
@@ -53,6 +54,8 @@ T = {
     },
 }
 
+SUMMARY_HEADINGS = {"summary", "profile", "摘要", "简介", "个人简介", "个人总结"}
+EXPERIENCE_HEADINGS = {"experience", "work experience", "经历", "工作经历", "经验", "项目经历"}
 ID_RE = re.compile(r"\b[A-Za-z]+-\d+\b")
 COMMENT_RE = re.compile(r"<!--(.*?)-->", re.S)
 HEADING_RE = re.compile(r"^(#{1,6})\s+(.*?)\s*$")
@@ -122,8 +125,8 @@ def scan_resume(path):
             continue
         if not text_only:
             continue
-        in_summary = section == "summary"
-        in_experience = section == "experience"
+        in_summary = section in SUMMARY_HEADINGS
+        in_experience = section in EXPERIENCE_HEADINGS
         if (in_summary) or (in_experience and BULLET_RE.match(raw)):
             needs.append((idx + 1, text_only, ids))
     return needs, used

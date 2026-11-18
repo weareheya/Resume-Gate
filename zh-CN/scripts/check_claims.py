@@ -2,7 +2,7 @@
 """对照证据库检查一份简历。只用标准库，macOS、Linux、Windows 都能跑。
 
 它检查什么（脚本能确定性判断的部分）：
-  1. "Experience" 下的每条 bullet、"Summary" 下的每一行，末尾都有 HTML 注释形式的 Claim ID，
+  1. "Experience"（或「工作经历」）下的每条 bullet、"Summary"（或「摘要」）下的每一行，末尾都有 HTML 注释形式的 Claim ID，
      例如：  - 重建了伙伴计划 ... <!-- C-001 -->
   2. 每个 Claim ID 都能对上 evidence/claims/ 里的一张卡，且卡的状态是 "Safe to draft"。
   3. 如果简历有基线（front matter 里的 `base:`，或 --base），基线里标了 `protected: true` 的 claim 在这份里还在。
@@ -51,6 +51,8 @@ T = {
     },
 }
 
+SUMMARY_HEADINGS = {"summary", "profile", "摘要", "简介", "个人简介", "个人总结"}
+EXPERIENCE_HEADINGS = {"experience", "work experience", "经历", "工作经历", "经验", "项目经历"}
 ID_RE = re.compile(r"\b[A-Za-z]+-\d+\b")
 COMMENT_RE = re.compile(r"<!--(.*?)-->", re.S)
 HEADING_RE = re.compile(r"^(#{1,6})\s+(.*?)\s*$")
@@ -120,8 +122,8 @@ def scan_resume(path):
             continue
         if not text_only:
             continue
-        in_summary = section == "summary"
-        in_experience = section == "experience"
+        in_summary = section in SUMMARY_HEADINGS
+        in_experience = section in EXPERIENCE_HEADINGS
         if (in_summary) or (in_experience and BULLET_RE.match(raw)):
             needs.append((idx + 1, text_only, ids))
     return needs, used
