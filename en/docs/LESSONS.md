@@ -3,6 +3,11 @@
 > Each entry: what happened → why → the guardrail now. When a new mistake happens, add it at the top.
 > Rules about facts and numbers belong in DECISIONS or a Claim Card. This file is for **process** mistakes.
 
+## L-09 · An error in an approved resume got inherited
+- **What happened**: A number was wrong in an old resume. Because that resume was approved, the AI treated it as a valid source and copied the number into every new version.
+- **Why**: The rules said a fact could come from a Claim Card *or* from an approved version, so a mistake could bypass the evidence bank.
+- **Guardrail**: An approved or sent resume is approved wording, never evidence. Every line must still trace to a Claim Card (AGENTS.md, D-003).
+
 ## L-01 · A confirmed result dropped out of the new version
 - **What happened**: A result that had already been verified was left out of a new resume, or weakened.
 - **Why**: The AI didn't re-read the evidence bank and wrote from what it remembered of the conversation.

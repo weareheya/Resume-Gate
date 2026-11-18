@@ -20,6 +20,7 @@ D-001 to D-010 are starter rules, each born from a real mistake. Add, remove, or
 ## D-003 · Every number has a claim card
 - scope: cv · status: Active
 - A number must trace to a Claim Card in `evidence/claims/`, with its unit, currency, time window, and qualifiers intact. Rewording must not cross the card's "don't rephrase as" list.
+- Approved and sent resumes are approved *wording*, not evidence. A line in an old resume that has no Claim Card is unverified.
 
 ## D-004 · Don't write what you can't back up
 - scope: cv · status: Active

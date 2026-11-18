@@ -6,7 +6,7 @@ The writing guidance follows standard university career-center resume guides (st
 
 ## A. Facts (pass this first; if it fails, stop here)
 
-- [ ] Every line traces to a Claim Card, or to an approved or sent version
+- [ ] Every line traces to a Claim Card. An approved or sent resume is not evidence, only approved wording
 - [ ] Every bullet carries its Claim ID in an HTML comment, and each one points to a card marked `Safe to draft`
 - [ ] Numbers keep their units and scope (currency, time window, qualifiers like "potential" or "cumulative")
 - [ ] Individual contribution is separate from team results; titles match the employment record and aren't inflated

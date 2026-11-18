@@ -20,6 +20,7 @@
 ## D-003 · 每个数字有口径卡
 - scope: cv · status: Active
 - 数字必须能追到 `evidence/claims/` 里的 Claim Card，保留单位、币种、时间窗口和限定词；改写不得越过卡上的「禁止改写」。
+- 已批准、已投递的简历只是已批准的*措辞*，不是证据。旧简历里没有 Claim Card 的那一行，视为未核实。
 
 ## D-004 · JD 要但没有证据的能力不写
 - scope: cv · status: Active

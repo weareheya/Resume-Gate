@@ -40,6 +40,8 @@ You're done when `cv/CV-INDEX.md` has at least one Approved starting point. Afte
 
 ## Principles
 
+**Facts flow one way.** Source material → Claim Card → approved wording → resume version. A resume inherits wording and structure from the baseline, but never its facts: every line still has to stand on a Claim Card. Otherwise an error in one old resume gets approved, copied, and carried into every version after it.
+
 **Baseline plus delta, never a blank page.** A new job inherits the latest approved version of its type. That way confirmed facts and settled structure don't get lost. If the type has no baseline, derive one from the closest neighboring type and say so in the Change Log.
 
 **The Evidence Gate has to be checkable.** "I read the evidence bank" doesn't count. List the specific Claim IDs. If you can't, you didn't read them.

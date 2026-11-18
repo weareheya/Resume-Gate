@@ -13,7 +13,8 @@ Before you do any resume work in this repo, read these in order:
 **Facts**
 - Use only claims marked `Safe to draft`. A `Needs review` claim is something to ask the user about, never something to write.
 - Tag every resume bullet with its Claim ID in an HTML comment (`<!-- C-001 -->`). A bullet with no tag has no source, so treat it as a bug.
-- Every experience and every number in a resume must trace to a Claim Card in `evidence/claims/`, or to an approved or sent version. If it has no source, leave it out.
+- Every experience and every number in a resume must trace to a Claim Card in `evidence/claims/`, and through the card to its source. If it has no source, leave it out.
+- An approved or sent resume is **not evidence**. It only records which wording and structure the user approved. If a bullet in an old resume has no Claim Card behind it, treat it as unverified: don't copy it forward. Write the missing card and get it confirmed first.
 - Keep units, currencies, time windows, and qualifiers ("potential", "cumulative", "per project"). Never present a team result as an individual one.
 - If the JD asks for something with no evidence behind it, **don't write it**. Put it in the Coverage Report and let the user decide what to do.
 - If you're unsure of a fact, mark it "unverified". Don't guess.
