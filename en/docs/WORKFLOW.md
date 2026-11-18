@@ -6,9 +6,9 @@ No baseline resume yet? Do [Step 0](#step-0-cold-start) first.
 
 | Step | What to do | Output |
 |---|---|---|
-| S1 | **Pick the type and baseline.** Read the JD, find the job type in `cv/CV-INDEX.md`, compare "core skill sets," and choose the baseline by fit: how close its positioning is to this job, how much of the JD its claims already cover, whether it's Approved, and how recent it is. The type's current starting point is the default, not a rule. Choose the byline and contact variant by type | "Type X, starting point = …" |
+| S1 | **Pick the type and baseline.** Read the JD, find the job type in `cv/CV-INDEX.md`, compare "core skill sets," and choose the baseline by fit: how close its positioning is to this job, how much of the JD its claims already cover, whether it's Approved, and how recent it is. The type's current starting point is the default, not a rule. Choose the byline and contact variant by type. If useful, look at the public backgrounds of people in the same role at the company to see which requirements are hard gates (D-016) | "Type X, starting point = …" |
 | S2 | **Evidence Retrieval Gate.** Read the JD, then search `evidence/claims/` for every case that's relevant, with no cap on how many, and read their Claim Cards and approved wording. Also read every Claim ID the baseline already uses and every claim marked `protected`. **List what you read** | List of Claim IDs read |
-| S3 | **Map to the JD.** For each core requirement: direct evidence / transferable evidence only / no evidence. Don't stretch to cover a gap | Three-column mapping table |
+| S3 | **Map to the JD.** For each core requirement: direct evidence / transferable evidence only / no evidence. Before marking anything "no evidence," go through the [probing questions](#probing-questions) (D-014). If there's still no evidence, don't stretch to cover the gap | Three-column mapping table |
 | S4 | **Delta.** Copy the baseline file in `cv/resumes/` and change only what needs changing: headline, summary, bullet order, keywords. Don't rewrite approved text | New draft |
 | S5 | **Change Log.** For each change, write Before / After / Why. Attach a JD Coverage Report and what you checked | `cv/changelogs/<id>.md` |
 | S6 | **AI self-review.** Go through the [REVIEW-CHECKLIST](REVIEW-CHECKLIST.md) item by item. Run `python3 scripts/check_claims.py cv/resumes/<id>.md` (it must pass), then export the PDF and run `scripts/pdf_fill.swift` | Screenshots, page count and reach per page, table of self-review fixes |
@@ -46,11 +46,25 @@ You're done when `cv/CV-INDEX.md` has at least one Approved starting point. Afte
 
 **The Evidence Gate has to be checkable.** "I read the evidence bank" doesn't count. List the specific Claim IDs. If you can't, you didn't read them.
 
+**Dig before you filter.** Rules like "no evidence, no claim" and "a plan isn't a result" apply only after you've asked. Candidates often describe what they did in very few words: an "unlaunched proposal" may have had a part that was adopted, and a "coordinator" may have designed commercial deals. Use the probing questions to dig out the value first, then decide how far the wording can go (D-014).
+
 **No evidence, no claim.** If the JD wants something the evidence bank doesn't cover, put it under "None" in the Coverage Report. The user decides whether to build the evidence, cover it in the interview, or skip the job.
 
 **Don't cut strong results without a reason.** Removing an existing strong bullet has to pass three tests: relevance (it doesn't help for this job), accuracy (there's doubt about it), or space (it doesn't fit). Write the reason in the Change Log. A claim marked `protected: true` can't be dropped or weakened at all without the user's approval.
 
 **Layout follows content, not the other way around.** If the page count is off, edit the content first (cut weak bullets, tighten long sentences). Only then touch font size, line spacing, or margins. Never add unsupported content to fill a page.
+
+## Probing questions
+
+Before writing a Claim Card, mapping to a JD, or marking anything "no evidence," ask at least these:
+
+1. Would this have happened if you hadn't done it? Which part was yours, and which part was the team's?
+2. Beyond your title, what were you actually responsible for?
+3. Which decisions involving money were you part of: budgets, pricing, contracts, sponsorships?
+4. Was any part of this proposal or plan later adopted or carried out?
+5. Are these two things related? Did one directly cause the other, support it indirectly, or are they independent?
+6. What does this number measure: unit, time window, cumulative or per item, actual or potential?
+7. Is there wording you've corrected before? (Weakened wording you've already fixed is the most likely to come back.)
 
 ## Coverage Report format
 

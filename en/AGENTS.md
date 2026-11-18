@@ -16,7 +16,8 @@ Before you do any resume work in this repo, read these in order:
 - Every experience and every number in a resume must trace to a Claim Card in `evidence/claims/`, and through the card to its source. If it has no source, leave it out.
 - An approved or sent resume is **not evidence**. It only records which wording and structure the user approved. If a bullet in an old resume has no Claim Card behind it, treat it as unverified: don't copy it forward. Write the missing card and get it confirmed first.
 - Keep units, currencies, time windows, and qualifiers ("potential", "cumulative", "per project"). Never present a team result as an individual one.
-- If the JD asks for something with no evidence behind it, **don't write it**. Put it in the Coverage Report and let the user decide what to do.
+- If the JD asks for something with no evidence behind it, **don't write it**. Put it in the Coverage Report and let the user decide what to do. But before marking anything "no evidence," ask the user the probing questions in `docs/WORKFLOW.md` (D-014).
+- Among the defensible ways to say something, pick the strongest: never inflated, never written like a disclaimer (D-015).
 - If you're unsure of a fact, mark it "unverified". Don't guess.
 
 **Process**

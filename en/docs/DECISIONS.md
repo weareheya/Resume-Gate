@@ -7,7 +7,7 @@
 
 **applies-to**: `all` (the default), `type: 01`, or `job: ACME-01`. A rule that only fits one kind of job or one application shouldn't become a global rule. Only `all` binds every resume.
 
-D-001 to D-010 are starter rules, each born from a real mistake. Add, remove, or change them to fit you.
+D-001 to D-016 are starter rules, each born from a real mistake. D-001 to D-010 keep facts from getting lost or inflated; D-011 to D-016 help you dig out what your experience is actually worth, so it doesn't get written too weakly. Add, remove, or change them to fit you.
 
 ---
 
@@ -53,6 +53,38 @@ D-001 to D-010 are starter rules, each born from a real mistake. Add, remove, or
 ## D-010 · Sent versions are frozen
 - scope: process · status: Active
 - Once a version is `Sent`, don't edit it. To change anything, copy it into a new version. Record the SHA-256 of the exported file in `CV-INDEX`.
+
+## D-011 · Choose evidence by how much it sets you apart, not by keyword overlap with the JD
+- scope: cv · status: Active
+- An experience that shares words with the JD isn't necessarily the most convincing one. Prefer the thing only you did, the one that best proves the skill, even if it's named differently from the JD.
+- A common failure: the AI rewrites an unfamiliar strong experience (say, a regional narrative strategy) into familiar, generic wording (say, relationship management) because the generic version looks more like the JD.
+
+## D-012 · One experience can yield several separate proofs; pick the angle per job
+- scope: cv · status: Active
+- In one project, diagnosing needs and designing the offer before signing is one skill; delivering after signing is another. For a BD role, lead with the first; for a delivery role, the second. Don't blur them into "managed the full lifecycle."
+- Both versions rest on exactly the same facts; only the selection and order differ (see D-003).
+
+## D-013 · Transferable skills come from what you actually did and owned, not from titles or industry labels
+- scope: cv · status: Active
+- Ask first: what the candidate was actually responsible for, what they decided, who they worked with, and who owns the result. Someone titled "coordinator" may have designed commercial deals; someone titled "lead" may have done only part of the work.
+- Keep three kinds of credit apart: running the project, doing the specialist work (for example a design team's output), and owning the outcome. Write only the candidate's share.
+
+## D-014 · Every restricting rule comes with a probing question
+- scope: process · status: Active
+- Before applying rules like "no evidence, no claim," "a plan isn't a result," or "don't imply causation," ask first, then decide how far the wording can go. An AI that only filters throws away experiences the candidate described incompletely.
+- **Plans, proposals, targets, and analysis given in an interview** aren't delivered results. But ask first: "Was any part of this proposal later adopted or carried out?" Often part of it was.
+- **How two contributions relate**: ask whether it's direct cause, indirect support, or independent. Write the link you can show (for example "cited as one basis for approving the program"); only a link you can't show stays unwritten.
+- The standing questions are in the "Probing questions" section of `docs/WORKFLOW.md`.
+
+## D-015 · Among all the defensible ways to say it, pick the strongest
+- scope: cv · status: Active
+- Accuracy, strength of positioning, and how a recruiter will read it all have to pass. Vague wording fails (for example lumping two companies together as "ventures"), and so does a string of disclaimers ("part-time, occasional, not involved day to day").
+- How to judge: when both versions are accurate, look at where the words go. One spends them explaining what you didn't do; the other spends them proving what you did. Pick the second.
+
+## D-016 · Understand the role from the JD and from what people in that role actually do
+- scope: strategy · status: Active
+- Look at public career information for people in the same role at the company. Use it to tell which JD requirements are hard gates and which can be met with adjacent experience, then decide the order of your experience and whether to apply.
+- Public information only, used to understand the role. Don't build profiles of individuals.
 
 ---
 
