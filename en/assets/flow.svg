@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800" role="img" aria-label="Step 0 once, then seven steps per job">
+<title>Step 0 once, then seven steps per job</title>
+<defs>
+<marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#1A1A1A"/></marker>
+<marker id="ahg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#858E96"/></marker>
+</defs>
+<rect width="1200" height="800" fill="#FAFAF8"/>
+<text x="600.0" y="470.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="190" font-weight="800" fill="#F1F0EC" text-anchor="middle" letter-spacing="-4">HEYESTELLA</text>
+<text x="60" y="54" font-family="'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace" font-size="12" fill="#5C5A55" letter-spacing="1.5">RESUME-GATE / FLOW</text>
+<text x="60" y="88" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="26" font-weight="700" fill="#1A1A1A">Step 0 once, then seven steps per job</text>
+<path d="M 60 106 L 1140 106" stroke="#1A1A1A" stroke-width="1"/>
+<rect x="60" y="134" width="1080" height="160" fill="none" stroke="#D9D7D0" stroke-width="1"/>
+<text x="76" y="154" font-family="'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#5C5A55" text-anchor="start" letter-spacing="1.2">STEP 0 · ONCE</text>
+<rect x="60" y="336" width="1080" height="372" fill="none" stroke="#D9D7D0" stroke-width="1"/>
+<text x="76" y="356" font-family="'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#5C5A55" text-anchor="start" letter-spacing="1.2">EVERY NEW JOB · S1–S7</text>
+<rect x="175.0" y="180" width="230" height="88" fill="#FFFFFF" stroke="#1A1A1A" stroke-width="1"/>
+<rect x="175.0" y="180" width="230" height="3" fill="#151515"/>
+<text x="185.0" y="198" font-family="'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#858E96" text-anchor="start" letter-spacing="0.5">RG // 0a</text>
+<text x="290.0" y="226.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="15" font-weight="600" fill="#1A1A1A" text-anchor="middle">Old resume, LinkedIn,</text>
+<text x="290.0" y="246.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="15" font-weight="400" fill="#1A1A1A" text-anchor="middle">reviews</text>
+<rect x="485.0" y="180" width="230" height="88" fill="#FFFFFF" stroke="#1A1A1A" stroke-width="1"/>
+<rect x="485.0" y="180" width="230" height="3" fill="#151515"/>
+<text x="495.0" y="198" font-family="'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#858E96" text-anchor="start" letter-spacing="0.5">RG // 0b</text>
+<text x="600.0" y="226.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="15" font-weight="600" fill="#1A1A1A" text-anchor="middle">Claim Cards</text>
+<text x="600.0" y="246.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="15" font-weight="400" fill="#1A1A1A" text-anchor="middle">evidence/claims/</text>
+<rect x="795.0" y="180" width="230" height="88" fill="#FFFFFF" stroke="#1A1A1A" stroke-width="1"/>
+<rect x="795.0" y="180" width="230" height="3" fill="#151515"/>
+<text x="805.0" y="198" font-family="'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#858E96" text-anchor="start" letter-spacing="0.5">RG // 0c</text>
+<text x="910.0" y="226.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="15" font-weight="600" fill="#1A1A1A" text-anchor="middle">First baseline</text>
+<text x="910.0" y="246.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="15" font-weight="400" fill="#1A1A1A" text-anchor="middle">cv/resumes/</text>
+<path d="M 405.0 224.0 L 483.0 224.0" fill="none" stroke="#1A1A1A" stroke-width="1" marker-end="url(#ah)"/>
+<path d="M 715.0 224.0 L 793.0 224.0" fill="none" stroke="#1A1A1A" stroke-width="1" marker-end="url(#ah)"/>
+<rect x="90" y="392" width="176" height="88" fill="#FFFFFF" stroke="#1A1A1A" stroke-width="1"/>
+<rect x="90" y="392" width="176" height="3" fill="#151515"/>
+<text x="100" y="410" font-family="'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#858E96" text-anchor="start" letter-spacing="0.5">RG // JD</text>
+<text x="178.0" y="438.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="15" font-weight="600" fill="#1A1A1A" text-anchor="middle">JD</text>
+<text x="178.0" y="458.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="15" font-weight="400" fill="#1A1A1A" text-anchor="middle">the job post</text>
+<rect x="301" y="392" width="176" height="88" fill="#FFFFFF" stroke="#1A1A1A" stroke-width="1"/>
+<rect x="301" y="392" width="176" height="3" fill="#151515"/>
+<text x="311" y="410" font-family="'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#858E96" text-anchor="start" letter-spacing="0.5">RG // S1</text>
+<text x="389.0" y="438.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="15" font-weight="600" fill="#1A1A1A" text-anchor="middle">Pick type</text>
+<text x="389.0" y="458.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="15" font-weight="400" fill="#1A1A1A" text-anchor="middle">and baseline</text>
+<rect x="512" y="392" width="176" height="88" fill="#FFFFFF" stroke="#1A1A1A" stroke-width="1"/>
+<rect x="512" y="392" width="176" height="3" fill="#151515"/>
+<text x="522" y="410" font-family="'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#858E96" text-anchor="start" letter-spacing="0.5">RG // S2</text>
+<text x="600.0" y="438.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="15" font-weight="600" fill="#1A1A1A" text-anchor="middle">Evidence</text>
+<text x="600.0" y="458.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="15" font-weight="400" fill="#1A1A1A" text-anchor="middle">Retrieval Gate</text>
+<rect x="723" y="392" width="176" height="88" fill="#FFFFFF" stroke="#1A1A1A" stroke-width="1"/>
+<rect x="723" y="392" width="176" height="3" fill="#151515"/>
+<text x="733" y="410" font-family="'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#858E96" text-anchor="start" letter-spacing="0.5">RG // S3</text>
+<text x="811.0" y="438.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="15" font-weight="600" fill="#1A1A1A" text-anchor="middle">Map to JD</text>
+<text x="811.0" y="458.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="15" font-weight="400" fill="#1A1A1A" text-anchor="middle">+ probing questions</text>
+<rect x="934" y="392" width="176" height="88" fill="#FFFFFF" stroke="#1A1A1A" stroke-width="1"/>
+<rect x="934" y="392" width="176" height="3" fill="#151515"/>
+<text x="944" y="410" font-family="'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#858E96" text-anchor="start" letter-spacing="0.5">RG // S4</text>
+<text x="1022.0" y="438.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="15" font-weight="600" fill="#1A1A1A" text-anchor="middle">Edit</text>
+<text x="1022.0" y="458.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="15" font-weight="400" fill="#1A1A1A" text-anchor="middle">the delta</text>
+<rect x="90" y="584" width="176" height="88" fill="#FFFFFF" stroke="#1A1A1A" stroke-width="1"/>
+<rect x="90" y="584" width="176" height="3" fill="#151515"/>
+<text x="100" y="602" font-family="'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#858E96" text-anchor="start" letter-spacing="0.5">RG // S5</text>
+<text x="178.0" y="630.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="15" font-weight="600" fill="#1A1A1A" text-anchor="middle">Change Log</text>
+<text x="178.0" y="650.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="15" font-weight="400" fill="#1A1A1A" text-anchor="middle">+ Coverage Report</text>
+<rect x="301" y="584" width="176" height="88" fill="#FFFFFF" stroke="#1A1A1A" stroke-width="1"/>
+<rect x="301" y="584" width="176" height="3" fill="#151515"/>
+<text x="311" y="602" font-family="'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#858E96" text-anchor="start" letter-spacing="0.5">RG // S6</text>
+<text x="389.0" y="630.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="15" font-weight="600" fill="#1A1A1A" text-anchor="middle">AI self-review</text>
+<text x="389.0" y="650.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="15" font-weight="400" fill="#1A1A1A" text-anchor="middle">check_claims · pdf_fill</text>
+<rect x="512" y="584" width="176" height="88" fill="#1A1A1A" stroke="#1A1A1A" stroke-width="1"/>
+<text x="522" y="602" font-family="'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#B9B7B0" text-anchor="start" letter-spacing="0.5">RG // S7</text>
+<text x="600.0" y="630.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="15" font-weight="600" fill="#FFFFFF" text-anchor="middle">You</text>
+<text x="600.0" y="650.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="15" font-weight="400" fill="#FFFFFF" text-anchor="middle">approve?</text>
+<rect x="723" y="584" width="176" height="88" fill="#FFFFFF" stroke="#1A1A1A" stroke-width="1"/>
+<rect x="723" y="584" width="176" height="3" fill="#151515"/>
+<text x="733" y="602" font-family="'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#858E96" text-anchor="start" letter-spacing="0.5">RG // OK</text>
+<text x="811.0" y="630.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="15" font-weight="600" fill="#1A1A1A" text-anchor="middle">Approved</text>
+<text x="811.0" y="650.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="15" font-weight="400" fill="#1A1A1A" text-anchor="middle">new baseline</text>
+<rect x="934" y="584" width="176" height="88" fill="#FFFFFF" stroke="#1A1A1A" stroke-width="1"/>
+<rect x="934" y="584" width="176" height="3" fill="#858E96"/>
+<text x="944" y="602" font-family="'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#858E96" text-anchor="start" letter-spacing="0.5">RG // SENT</text>
+<text x="1022.0" y="630.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="15" font-weight="600" fill="#1A1A1A" text-anchor="middle">Sent</text>
+<text x="1022.0" y="650.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="15" font-weight="400" fill="#1A1A1A" text-anchor="middle">frozen</text>
+<path d="M 266 436.0 L 299 436.0" fill="none" stroke="#1A1A1A" stroke-width="1" marker-end="url(#ah)"/>
+<path d="M 477 436.0 L 510 436.0" fill="none" stroke="#1A1A1A" stroke-width="1" marker-end="url(#ah)"/>
+<path d="M 688 436.0 L 721 436.0" fill="none" stroke="#1A1A1A" stroke-width="1" marker-end="url(#ah)"/>
+<path d="M 899 436.0 L 932 436.0" fill="none" stroke="#1A1A1A" stroke-width="1" marker-end="url(#ah)"/>
+<path d="M 266 628.0 L 299 628.0" fill="none" stroke="#1A1A1A" stroke-width="1" marker-end="url(#ah)"/>
+<path d="M 477 628.0 L 510 628.0" fill="none" stroke="#1A1A1A" stroke-width="1" marker-end="url(#ah)"/>
+<path d="M 688 628.0 L 721 628.0" fill="none" stroke="#1A1A1A" stroke-width="1" marker-end="url(#ah)"/>
+<path d="M 899 628.0 L 932 628.0" fill="none" stroke="#1A1A1A" stroke-width="1" marker-end="url(#ah)"/>
+<path d="M 910.0 268 L 910.0 334" fill="none" stroke="#1A1A1A" stroke-width="1" marker-end="url(#ah)"/>
+<path d="M 984 480 L 984 530 L 178.0 530 L 178.0 582" fill="none" stroke="#1A1A1A" stroke-width="1" marker-end="url(#ah)"/>
+<path d="M 630.0 584 L 630.0 548 L 1070 548 L 1070 483" fill="none" stroke="#858E96" stroke-width="1" stroke-dasharray="5 4" marker-end="url(#ahg)"/>
+<text x="638.0" y="570" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="12" font-weight="400" fill="#5C5A55" text-anchor="start">no</text>
+<text x="705.5" y="620.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="12" font-weight="400" fill="#5C5A55" text-anchor="middle">yes</text>
+<path d="M 1110 628.0 L 1125 628.0 L 1125 372 L 389.0 372 L 389.0 390" fill="none" stroke="#858E96" stroke-width="1" stroke-dasharray="5 4" marker-end="url(#ahg)"/>
+<text x="757.0" y="366" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="12" font-weight="400" fill="#5C5A55" text-anchor="middle">can become the next baseline</text>
+<path d="M 60 744 L 1140 744" stroke="#1A1A1A" stroke-width="1"/>
+<text x="60" y="766" font-family="'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace" font-size="11" fill="#5C5A55" letter-spacing="1">© 2026 HEYESTELLA · RESUME-GATE · MIT LICENSE</text>
+<text x="1140" y="767" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="17" font-weight="700" fill="#1A1A1A" text-anchor="end">HeyEstella</text>
+</svg>

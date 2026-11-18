@@ -29,29 +29,7 @@ Mistakes that keep showing up when AI edits a resume, and where each fix lives:
 
 ## The flow
 
-```mermaid
-flowchart TB
-  subgraph S0["Step 0 · once"]
-    direction LR
-    A["Old resume, LinkedIn,<br/>reviews"] --> B["Claim Cards<br/>evidence/claims/"]
-    B --> C["First baseline<br/>cv/resumes/"]
-  end
-  subgraph JOB["Every new job · S1–S7"]
-    direction LR
-    D["JD"] --> E["S1 Pick type<br/>and baseline"]
-    E --> F["S2 Evidence<br/>Retrieval Gate"]
-    F --> G["S3 Map to JD<br/>+ probing questions"]
-    G --> H["S4 Edit the delta"]
-    H --> I["S5 Change Log<br/>+ Coverage Report"]
-    I --> J["S6 AI self-review<br/>check_claims · pdf_fill"]
-    J --> K{"S7 You<br/>approve?"}
-    K -- "no" --> H
-    K -- "yes" --> L["Approved"]
-    L --> M["Sent · frozen"]
-  end
-  S0 --> JOB
-  M -. "can become the next baseline" .-> E
-```
+![Resume-Gate flow: Step 0 once, then seven steps per job](assets/flow.svg)
 
 Each step has an output you must be able to show before moving on. Details in [docs/WORKFLOW.md](docs/WORKFLOW.md).
 
