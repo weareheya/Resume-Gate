@@ -40,7 +40,7 @@
 
 ## D-007 · AI 先自审再给本人看
 - scope: process · status: Active
-- 按 `docs/REVIEW-CHECKLIST.md` 自审并修改；交付时附截图、填充率、自审改动、Highlights、风险。
+- 按 `docs/REVIEW-CHECKLIST.md` 自审并修改；交付时附截图、页数和每页内容位置、自审改动、Highlights、风险。
 
 ## D-008 · 人工审核关卡
 - scope: process · status: Active
@@ -48,7 +48,7 @@
 
 ## D-009 · PDF 要填满页面（默认：1 页满或 2 页满）
 - scope: cv · status: Active
-- 默认 1 页或 2 页满，最后一页填充率 ≥ 85%。这两个数都是默认值，你的行业习惯不同可以在这里改。先改内容再调排版参数；不为凑页数加没有证据的内容。
+- 默认 1 页或 2 页满，最后一页的内容到达页面高度的 85% 以上。这两个数都是默认值，你的行业习惯不同可以在这里改。先改内容再调排版参数；不为凑页数加没有证据的内容。
 
 ## D-010 · 已投递的版本冻结
 - scope: process · status: Active

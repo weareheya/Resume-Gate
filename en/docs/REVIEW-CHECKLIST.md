@@ -32,7 +32,7 @@ These are defaults. A structure the user has already approved takes priority ove
 
 ## C. Layout
 
-- [ ] Exported PDF fills its pages: by default **1 or 2 full pages**, with the last page at least 85% full (both defaults can be changed in D-009), not just a few stray lines
+- [ ] Exported PDF fills its pages: by default **1 or 2 full pages**, with the content on the last page reaching at least 85% of the page height (both defaults can be changed in D-009), not just a few stray lines
 - [ ] Page breaks fall between roles, not between a role's heading and its bullets
 - [ ] No one- or two-word widows; reword if you can
 - [ ] If your resume tool has a built-in checker, it reports zero errors and zero warnings
@@ -45,10 +45,12 @@ Check tool:
 swift scripts/pdf_fill.swift <cv.pdf> <output-dir>
 ```
 
+It checks the page count (default 1 or 2) and how far down the last page the content reaches (default 85%). "Reach" is where the last content ends, not how much of the page is used, so a page number in the footer can make a nearly empty page look full. If your resume has a footer, pass `--ignore-bottom=4` (just the footer's height; it also ignores real content in that zone). Always look at the PNGs as well.
+
 ## D. Handoff format
 
 1. **Page images**: paste the PNGs that `pdf_fill` generated. Don't make the user go find the file.
-2. **Layout result**: page count and fill rate per page
+2. **Layout result**: page count and how far down the content reaches on each page
 3. **Self-review findings and fixes** (as a table)
 4. **Highlights**: the 3–5 strongest selling points in this version, and which JD requirement each answers
 5. **Risks and gaps**: what the JD wants but you have no evidence for, and what the candidate must be ready to explain in an interview

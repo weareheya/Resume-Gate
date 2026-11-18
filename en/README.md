@@ -44,7 +44,7 @@ cv/
   changelogs/             What changed in each resume relative to its baseline
 scripts/
   check_claims.py         Checks every bullet has a source, claims are usable, protected ones stay (Python 3)
-  pdf_fill.swift          Renders each PDF page to PNG and reports how full it is (macOS)
+  pdf_fill.swift          Renders each PDF page to PNG, checks the page count, and reports how far down the content reaches (macOS)
 examples/                 A filled-in walkthrough using made-up data
 ```
 
@@ -68,11 +68,11 @@ To check layout (macOS, needs the Xcode command line tools):
 mkdir -p /tmp/cv-check && swift scripts/pdf_fill.swift your-cv.pdf /tmp/cv-check
 ```
 
-It prints the page count and how full each page is, and writes `p1.png`, `p2.png`, … so you can paste them to your AI or just look. If the last page is under 85% full, it exits with code 2, so you can wire it into a script.
+It prints the page count and how far down the content reaches on each page, and writes `p1.png`, `p2.png`, … so you can paste them to your AI or just look. If the page count isn't 1 or 2, or the content on the last page reaches less than 85% of the way down, it exits with code 2, so you can wire it into a script.
 
 ## What the scripts check, and what they don't
 
-`check_claims.py` checks sourcing mechanically: every bullet has a Claim ID, each ID points to a `Safe to draft` card, and protected claims are still there. `pdf_fill.swift` measures how full the pages are. Everything else is a rule your AI follows by reading it: whether a claim is true, whether the wording stays within a card's limits, whether the choices fit the job. For those, you're the check.
+`check_claims.py` checks sourcing mechanically: every bullet has a Claim ID, each ID points to a `Safe to draft` card, and protected claims are still there. `pdf_fill.swift` checks the page count and how far down the content reaches. It can't measure how much of each page is used, so look at the images too. Everything else is a rule your AI follows by reading it: whether a claim is true, whether the wording stays within a card's limits, whether the choices fit the job. For those, you're the check.
 
 ## Optional: Reactive Resume
 

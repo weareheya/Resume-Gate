@@ -44,7 +44,7 @@ cv/
   changelogs/             每份简历相对基线的改动记录
 scripts/
   check_claims.py         检查每条 bullet 有出处、claim 可用、受保护的没丢（Python 3）
-  pdf_fill.swift          渲染 PDF 每页为 PNG，并报告填充率（macOS）
+  pdf_fill.swift          渲染 PDF 每页为 PNG，检查页数，并报告内容延伸到页面多低的位置（macOS）
 examples/                 一套虚构数据的填写示范
 ```
 
@@ -68,11 +68,11 @@ python3 scripts/check_claims.py cv/resumes/<id>.md
 mkdir -p /tmp/cv-check && swift scripts/pdf_fill.swift your-cv.pdf /tmp/cv-check
 ```
 
-输出页数、每页填充率，并为每页生成 `p1.png`、`p2.png`……方便贴给 AI 或自己看。最后一页低于 85% 时退出码为 2，可接进脚本。
+输出页数、每页内容延伸到的位置，并为每页生成 `p1.png`、`p2.png`……方便贴给 AI 或自己看。页数不是 1 或 2，或最后一页的内容没到页面高度的 85% 时，退出码为 2，可接进脚本。
 
 ## 脚本检查什么，不检查什么
 
-`check_claims.py` 机械地检查出处：每条 bullet 都有 Claim ID，每个 ID 都指向一张 `Safe to draft` 的卡，受保护的 claim 没丢。`pdf_fill.swift` 量页面填得有多满。其余都是 AI 靠读规则来执行的：claim 是否属实、措辞有没有越过卡的限制、选择是否贴合岗位。这些靠你来把关。
+`check_claims.py` 机械地检查出处：每条 bullet 都有 Claim ID，每个 ID 都指向一张 `Safe to draft` 的卡，受保护的 claim 没丢。`pdf_fill.swift` 检查页数和内容延伸到的位置。它量不出每页用了多少面积，所以也要看生成的图。其余都是 AI 靠读规则来执行的：claim 是否属实、措辞有没有越过卡的限制、选择是否贴合岗位。这些靠你来把关。
 
 ## 可选：Reactive Resume
 

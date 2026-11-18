@@ -11,7 +11,7 @@ No baseline resume yet? Do [Step 0](#step-0-cold-start) first.
 | S3 | **Map to the JD.** For each core requirement: direct evidence / transferable evidence only / no evidence. Don't stretch to cover a gap | Three-column mapping table |
 | S4 | **Delta.** Copy the baseline file in `cv/resumes/` and change only what needs changing: headline, summary, bullet order, keywords. Don't rewrite approved text | New draft |
 | S5 | **Change Log.** For each change, write Before / After / Why. Attach a JD Coverage Report and what you checked | `cv/changelogs/<id>.md` |
-| S6 | **AI self-review.** Go through the [REVIEW-CHECKLIST](REVIEW-CHECKLIST.md) item by item. Run `python3 scripts/check_claims.py cv/resumes/<id>.md` (it must pass), then export the PDF and run `scripts/pdf_fill.swift` | Screenshots, page count, fill rates, table of self-review fixes |
+| S6 | **AI self-review.** Go through the [REVIEW-CHECKLIST](REVIEW-CHECKLIST.md) item by item. Run `python3 scripts/check_claims.py cv/resumes/<id>.md` (it must pass), then export the PDF and run `scripts/pdf_fill.swift` | Screenshots, page count and reach per page, table of self-review fixes |
 | S7 | **Human review.** Give the user the full text and a diff against the baseline. Only when they say it's approved does the status become `Approved` | The user's approval on record |
 
 After you apply, mark the version `Sent` and **freeze** it. In `cv/CV-INDEX.md`, record which job used it and the SHA-256 of the exported file.

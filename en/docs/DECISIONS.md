@@ -40,7 +40,7 @@ D-001 to D-010 are starter rules, each born from a real mistake. Add, remove, or
 
 ## D-007 · AI self-reviews before the user sees anything
 - scope: process · status: Active
-- Go through `docs/REVIEW-CHECKLIST.md` and fix what you find. When you hand off, include page images, fill rates, self-review fixes, highlights, and risks.
+- Go through `docs/REVIEW-CHECKLIST.md` and fix what you find. When you hand off, include page images, page count and reach per page, self-review fixes, highlights, and risks.
 
 ## D-008 · Human review gate
 - scope: process · status: Active
@@ -48,7 +48,7 @@ D-001 to D-010 are starter rules, each born from a real mistake. Add, remove, or
 
 ## D-009 · The PDF fills its pages (default: 1 or 2 full pages)
 - scope: cv · status: Active
-- By default, 1 or 2 full pages with the last page at least 85% full. Both numbers are defaults: change them here if your field expects something else. Fix content first, then layout settings. Never add unsupported content to fill a page.
+- By default, 1 or 2 full pages with the content on the last page reaching at least 85% of the page height. Both numbers are defaults: change them here if your field expects something else. Fix content first, then layout settings. Never add unsupported content to fill a page.
 
 ## D-010 · Sent versions are frozen
 - scope: process · status: Active

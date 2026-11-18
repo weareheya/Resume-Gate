@@ -49,7 +49,7 @@ date: 2026-05-10
 | Bullet 2 began with "Responsible for" | Changed to "Ran" |
 | PDF was 3 pages with 2 lines on page 3 | Dropped one weak bullet; now 2 pages |
 
-Layout: 2 pages, fill rates 100% / 91%.
+Layout: 2 pages, content reaches 98% / 91% down the page.
 
 ## Review outcome
 

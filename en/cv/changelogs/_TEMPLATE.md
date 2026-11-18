@@ -43,7 +43,7 @@ JD source: (link or file path)
 |---|---|
 | | |
 
-Layout: pages , fill rate , (result from your resume tool's checker)
+Layout: pages , reach per page , (result from your resume tool's checker)
 
 ## Open questions for the user
 
