@@ -6,6 +6,8 @@ The writing guidance follows standard university career-center resume guides (st
 
 ## A. Facts (pass this first; if it fails, stop here)
 
+Run `python3 scripts/check_claims.py cv/resumes/<id>.md` first. It checks the first two items below mechanically. The rest still need judgment.
+
 - [ ] Every line traces to a Claim Card. An approved or sent resume is not evidence, only approved wording
 - [ ] Every bullet carries its Claim ID in an HTML comment, and each one points to a card marked `Safe to draft`
 - [ ] Numbers keep their units and scope (currency, time window, qualifiers like "potential" or "cumulative")

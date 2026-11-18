@@ -6,6 +6,8 @@
 
 ## A. 事实（先过这一关，不通过不往下看）
 
+先跑 `python3 scripts/check_claims.py cv/resumes/<id>.md`。它能机械地检查下面的前两项，其余仍要靠判断。
+
 - [ ] 每条都能追到 Claim Card。已批准 / 已投递的简历不是证据，只是已批准的措辞
 - [ ] 每条 bullet 末尾都有 Claim ID 注释，且指向的卡状态是 `Safe to draft`
 - [ ] 数字带单位和口径（币种、时间窗口、「潜在」「累计」等限定词没丢）

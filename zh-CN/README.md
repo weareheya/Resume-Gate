@@ -43,6 +43,7 @@ cv/
   resumes/                简历正文本身，一个版本一个 Markdown 文件
   changelogs/             每份简历相对基线的改动记录
 scripts/
+  check_claims.py         检查每条 bullet 有出处、claim 可用、受保护的没丢（Python 3）
   pdf_fill.swift          渲染 PDF 每页为 PNG，并报告填充率（macOS）
 examples/                 一套虚构数据的填写示范
 ```
@@ -55,6 +56,12 @@ examples/                 一套虚构数据的填写示范
 4. 每来一个新岗位，用 `docs/PROMPTS.md` 里的提示词 3，并贴上 JD。
 5. 每版简历结束后：写 Change Log、更新 `CV-INDEX.md`、在 `docs/DECISIONS.md` 记下你新定的规则。
 
+检查出处（任何系统，需要 Python 3）：
+
+```bash
+python3 scripts/check_claims.py cv/resumes/<id>.md
+```
+
 检查排版（macOS，需要 Xcode 命令行工具）：
 
 ```bash
@@ -62,6 +69,10 @@ mkdir -p /tmp/cv-check && swift scripts/pdf_fill.swift your-cv.pdf /tmp/cv-check
 ```
 
 输出页数、每页填充率，并为每页生成 `p1.png`、`p2.png`……方便贴给 AI 或自己看。最后一页低于 85% 时退出码为 2，可接进脚本。
+
+## 脚本检查什么，不检查什么
+
+`check_claims.py` 机械地检查出处：每条 bullet 都有 Claim ID，每个 ID 都指向一张 `Safe to draft` 的卡，受保护的 claim 没丢。`pdf_fill.swift` 量页面填得有多满。其余都是 AI 靠读规则来执行的：claim 是否属实、措辞有没有越过卡的限制、选择是否贴合岗位。这些靠你来把关。
 
 ## 可选：Reactive Resume
 

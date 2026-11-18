@@ -26,6 +26,7 @@
 - 标了 `protected: true` 的 claim，未经本人批准，不能删除或削弱。新版本里如果漏了一条，要明说并解释原因。
 - 宣称「检查完成」时附 Coverage Report：查了什么范围、没查什么。
 - 给本人看之前先按 `docs/REVIEW-CHECKLIST.md` 自审。
+- 给本人看简历之前，先跑 `python3 scripts/check_claims.py cv/resumes/<id>.md`，修掉所有错误，并报告结果。
 - **人工审核关卡**：本人说「通过」之前，版本状态保持 `Draft`；已投递（`Sent`）的版本不再修改。
 
 **权限**

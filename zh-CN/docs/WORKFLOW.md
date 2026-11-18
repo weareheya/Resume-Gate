@@ -11,7 +11,7 @@
 | S3 | **JD 映射**：JD 的每条核心要求 → 有直接证据 / 只有可迁移证据 / 没有证据。没有证据的不硬写 | 三栏映射表 |
 | S4 | **Delta**：复制 `cv/resumes/` 里的基线文件，只改需要改的：定位句、Summary、bullet 顺序、关键词。不重写已批准的部分 | 新版本草稿 |
 | S5 | **Change Log**：每处改动写 Before / After / Why，附 JD Coverage Report 和检查范围 | `cv/changelogs/<id>.md` |
-| S6 | **AI 自审**：按 [REVIEW-CHECKLIST](REVIEW-CHECKLIST.md) 逐项过；导出 PDF 跑 `scripts/pdf_fill.swift` | 截图 + 页数 + 填充率 + 自审改动表 |
+| S6 | **AI 自审**：按 [REVIEW-CHECKLIST](REVIEW-CHECKLIST.md) 逐项过；跑 `python3 scripts/check_claims.py cv/resumes/<id>.md`（必须通过），再导出 PDF 并跑 `scripts/pdf_fill.swift` | 截图 + 页数 + 填充率 + 自审改动表 |
 | S7 | **人工审核**：把全文 + 改动对照交给本人，本人说通过才改状态为 `Approved` | 本人批准记录 |
 
 投递之后：版本改状态为 `Sent` 并**冻结**；`cv/CV-INDEX.md` 里记下是哪个岗位用了它、导出文件的 SHA-256。
