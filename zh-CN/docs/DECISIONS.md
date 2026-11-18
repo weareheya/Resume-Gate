@@ -5,17 +5,21 @@
 
 **scope**：`cv`（简历生产）· `process`（协作流程）· `strategy`（求职方向）
 
+**applies-to**：`all`（默认）、`type: 01` 或 `job: ACME-01`。只适合某一类岗位或某一次申请的规则，不该变成全局规则。只有 `all` 才约束每一份简历。
+
 下面 D-001 ~ D-010 是起步规则，来自实际踩过的坑。按你的情况增删改。
 
 ---
 
-## D-001 · 新岗位版本继承最近批准的版本，不从空白开始
+## D-001 · 新岗位版本继承匹配度最高的已批准版本，不从空白开始
 - scope: cv · status: Active
+- 按匹配程度选（定位、证据覆盖、批准状态、新旧），不只看类型和日期。
 - 同类没有基线时，从最近的相邻类型派生，并在 Change Log 说明。
 
 ## D-002 · 不随意删减已有的强成果
 - scope: cv · status: Active
 - 删除要过相关性、真实性、篇幅三关，并在 Change Log 写理由。
+- Claim Card 里标了 `protected: true` 的 claim，未经本人批准，不能删除或削弱。
 
 ## D-003 · 每个数字有口径卡
 - scope: cv · status: Active
@@ -42,9 +46,9 @@
 - scope: process · status: Active
 - 本人说「通过」之前，版本状态保持 `Draft`；通过后改 `Approved`。AI 不自行定稿。
 
-## D-009 · PDF 正好 1 页满或 2 页满
+## D-009 · PDF 要填满页面（默认：1 页满或 2 页满）
 - scope: cv · status: Active
-- 最后一页填充率 ≥ 85%；先改内容再调排版参数；不为凑页数加没有证据的内容。
+- 默认 1 页或 2 页满，最后一页填充率 ≥ 85%。这两个数都是默认值，你的行业习惯不同可以在这里改。先改内容再调排版参数；不为凑页数加没有证据的内容。
 
 ## D-010 · 已投递的版本冻结
 - scope: process · status: Active
@@ -54,6 +58,6 @@
 
 <!-- 新决策模板：
 ## D-0xx · 一句话标题
-- scope: cv|process|strategy · status: Active · date: YYYY-MM-DD
+- scope: cv|process|strategy · status: Active · applies-to: all · date: YYYY-MM-DD
 - 具体规则、适用范围、例外。
 -->

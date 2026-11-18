@@ -1,6 +1,7 @@
 ---
 id: C-001
 status: Safe to draft
+protected: true
 role: Partnerships Manager, Northwind Labs (fictional)
 period: 2022.03–2023.09
 ---

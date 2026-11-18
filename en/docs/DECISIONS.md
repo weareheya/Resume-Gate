@@ -5,17 +5,21 @@
 
 **scope**: `cv` (resume production) · `process` (how we work together) · `strategy` (job-search direction)
 
+**applies-to**: `all` (the default), `type: 01`, or `job: ACME-01`. A rule that only fits one kind of job or one application shouldn't become a global rule. Only `all` binds every resume.
+
 D-001 to D-010 are starter rules, each born from a real mistake. Add, remove, or change them to fit you.
 
 ---
 
-## D-001 · A new job's version inherits the latest approved version, not a blank page
+## D-001 · A new job's version inherits the best-fitting approved version, not a blank page
 - scope: cv · status: Active
+- Choose by fit (positioning, evidence coverage, approval status, recency), not only by type and date.
 - If the type has no baseline, derive one from the closest neighboring type and note it in the Change Log.
 
 ## D-002 · Don't cut strong results without a reason
 - scope: cv · status: Active
 - A cut has to pass three tests (relevance, accuracy, space), and the reason goes in the Change Log.
+- A claim marked `protected: true` in its Claim Card can't be dropped or weakened without the user's approval.
 
 ## D-003 · Every number has a claim card
 - scope: cv · status: Active
@@ -42,9 +46,9 @@ D-001 to D-010 are starter rules, each born from a real mistake. Add, remove, or
 - scope: process · status: Active
 - Until the user says "approved," a version stays `Draft`. After that it becomes `Approved`. The AI never finalizes on its own.
 
-## D-009 · The PDF is exactly 1 full page or 2 full pages
+## D-009 · The PDF fills its pages (default: 1 or 2 full pages)
 - scope: cv · status: Active
-- The last page is at least 85% full. Fix content first, then layout settings. Never add unsupported content to fill a page.
+- By default, 1 or 2 full pages with the last page at least 85% full. Both numbers are defaults: change them here if your field expects something else. Fix content first, then layout settings. Never add unsupported content to fill a page.
 
 ## D-010 · Sent versions are frozen
 - scope: process · status: Active
@@ -54,6 +58,6 @@ D-001 to D-010 are starter rules, each born from a real mistake. Add, remove, or
 
 <!-- Template for a new decision:
 ## D-0xx · One-line title
-- scope: cv|process|strategy · status: Active · date: YYYY-MM-DD
+- scope: cv|process|strategy · status: Active · applies-to: all · date: YYYY-MM-DD
 - The rule, where it applies, and any exceptions.
 -->

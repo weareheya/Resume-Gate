@@ -1,6 +1,7 @@
 ---
 id: C-000
 status: Safe to draft   # Safe to draft | Needs review | Retired
+protected: false        # true = can't be dropped or weakened in a new version without the user's approval
 role: 
 period: 
 ---

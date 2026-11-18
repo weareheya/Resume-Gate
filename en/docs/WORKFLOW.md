@@ -6,8 +6,8 @@ No baseline resume yet? Do [Step 0](#step-0-cold-start) first.
 
 | Step | What to do | Output |
 |---|---|---|
-| S1 | **Pick the type and baseline.** Read the JD, find the job type in `cv/CV-INDEX.md`, compare "core skill sets," and take that type's current starting point. Choose the byline and contact variant by type | "Type X, starting point = …" |
-| S2 | **Evidence Retrieval Gate.** Read the JD, then pick up to 5 of the most relevant cases from `evidence/claims/` and read their Claim Cards and approved wording. **List what you read** | List of Claim IDs read |
+| S1 | **Pick the type and baseline.** Read the JD, find the job type in `cv/CV-INDEX.md`, compare "core skill sets," and choose the baseline by fit: how close its positioning is to this job, how much of the JD its claims already cover, whether it's Approved, and how recent it is. The type's current starting point is the default, not a rule. Choose the byline and contact variant by type | "Type X, starting point = …" |
+| S2 | **Evidence Retrieval Gate.** Read the JD, then search `evidence/claims/` for every case that's relevant, with no cap on how many, and read their Claim Cards and approved wording. Also read every Claim ID the baseline already uses and every claim marked `protected`. **List what you read** | List of Claim IDs read |
 | S3 | **Map to the JD.** For each core requirement: direct evidence / transferable evidence only / no evidence. Don't stretch to cover a gap | Three-column mapping table |
 | S4 | **Delta.** Copy the baseline file in `cv/resumes/` and change only what needs changing: headline, summary, bullet order, keywords. Don't rewrite approved text | New draft |
 | S5 | **Change Log.** For each change, write Before / After / Why. Attach a JD Coverage Report and what you checked | `cv/changelogs/<id>.md` |
@@ -42,24 +42,24 @@ You're done when `cv/CV-INDEX.md` has at least one Approved starting point. Afte
 
 **Facts flow one way.** Source material → Claim Card → approved wording → resume version. A resume inherits wording and structure from the baseline, but never its facts: every line still has to stand on a Claim Card. Otherwise an error in one old resume gets approved, copied, and carried into every version after it.
 
-**Baseline plus delta, never a blank page.** A new job inherits the latest approved version of its type. That way confirmed facts and settled structure don't get lost. If the type has no baseline, derive one from the closest neighboring type and say so in the Change Log.
+**Baseline plus delta, never a blank page.** A new job inherits the best-fitting approved version, usually the latest one of its type. That way confirmed facts and settled structure don't get lost. If the type has no baseline, derive one from the closest neighboring type and say so in the Change Log.
 
 **The Evidence Gate has to be checkable.** "I read the evidence bank" doesn't count. List the specific Claim IDs. If you can't, you didn't read them.
 
 **No evidence, no claim.** If the JD wants something the evidence bank doesn't cover, put it under "None" in the Coverage Report. The user decides whether to build the evidence, cover it in the interview, or skip the job.
 
-**Don't cut strong results without a reason.** Removing an existing strong bullet has to pass three tests: relevance (it doesn't help for this job), accuracy (there's doubt about it), or space (it doesn't fit). Write the reason in the Change Log.
+**Don't cut strong results without a reason.** Removing an existing strong bullet has to pass three tests: relevance (it doesn't help for this job), accuracy (there's doubt about it), or space (it doesn't fit). Write the reason in the Change Log. A claim marked `protected: true` can't be dropped or weakened at all without the user's approval.
 
 **Layout follows content, not the other way around.** If the page count is off, edit the content first (cut weak bullets, tighten long sentences). Only then touch font size, line spacing, or margins. Never add unsupported content to fill a page.
 
 ## Coverage Report format
 
 ```markdown
-| JD requirement | Covered | Notes |
-|---|---|---|
-| Requirement A | Yes | Claim C-003 |
-| Requirement B | Partly | Transferable: C-007 (different setting) |
-| Requirement C | None | No evidence, so left out. Suggestion: … |
+| JD requirement | Covered | Notes | How to close the gap |
+|---|---|---|---|
+| Requirement A | Yes | Claim C-003 | n/a |
+| Requirement B | Partly | Transferable: C-007 (different setting) | Lead with the transferable skill; be ready to say how the setting differs |
+| Requirement C | None | No evidence, so left out | Build the evidence, answer it in the interview, or skip the job |
 
 **Scope of check**: covered …; not covered … (reason)
 ```

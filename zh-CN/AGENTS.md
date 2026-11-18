@@ -22,7 +22,8 @@
 **流程**
 - 如果 `cv/CV-INDEX.md` 里还没有 Approved 的起点，先做 `docs/WORKFLOW.md` 里的 Step 0，再做别的。
 - 生成任何简历前先过 Evidence Retrieval Gate：读相关 Claim Card，并**列出读了哪些**。
-- 从最近批准的版本改起（Delta），不从空白开始；改动写进 `cv/changelogs/`。
+- 从匹配度最高的已批准版本改起（Delta），不从空白开始；改动写进 `cv/changelogs/`。
+- 标了 `protected: true` 的 claim，未经本人批准，不能删除或削弱。新版本里如果漏了一条，要明说并解释原因。
 - 宣称「检查完成」时附 Coverage Report：查了什么范围、没查什么。
 - 给本人看之前先按 `docs/REVIEW-CHECKLIST.md` 自审。
 - **人工审核关卡**：本人说「通过」之前，版本状态保持 `Draft`；已投递（`Sent`）的版本不再修改。
@@ -41,7 +42,7 @@
 
 ## 交接
 
-每次会话结束前：更新 `cv/CV-INDEX.md`（如有新版本），补全对应 changelog，并 `git commit`。一次提交只做一件事。
+每次会话结束前：更新 `cv/CV-INDEX.md`（如有新版本），补全对应 changelog，如果有被追踪的文件改动，就 `git commit`。一次提交只做一件事。
 
 ## 不要提交
 

@@ -1,6 +1,7 @@
 ---
 id: C-000
 status: Safe to draft   # Safe to draft | 需复核 | 已停用
+protected: false        # true = 新版本里未经本人批准，不能删除或削弱
 role: 
 period: 
 ---

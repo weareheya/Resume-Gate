@@ -22,7 +22,8 @@ Before you do any resume work in this repo, read these in order:
 **Process**
 - If `cv/CV-INDEX.md` has no Approved starting point yet, do Step 0 in `docs/WORKFLOW.md` before anything else.
 - Before generating any resume, pass the Evidence Retrieval Gate: read the relevant Claim Cards and **list which ones you read**.
-- Start from the latest approved version and make a delta. Never start from a blank page. Record changes in `cv/changelogs/`.
+- Start from the best-fitting approved version and make a delta. Never start from a blank page. Record changes in `cv/changelogs/`.
+- Never drop or weaken a claim marked `protected: true` without the user's approval. If a new version leaves one out, say so and explain why.
 - When you say a check is done, attach a Coverage Report: what you covered and what you didn't.
 - Self-review against `docs/REVIEW-CHECKLIST.md` before showing anything to the user.
 - **Human review gate**: until the user says "approved", a version stays `Draft`. Don't edit a version marked `Sent`.
@@ -41,7 +42,7 @@ Before you do any resume work in this repo, read these in order:
 
 ## Handoff
 
-At the end of each session: update `cv/CV-INDEX.md` if there's a new version, finish the matching changelog, and `git commit`. One commit, one change.
+At the end of each session: update `cv/CV-INDEX.md` if there's a new version, finish the matching changelog, and `git commit` if any tracked files changed. One commit, one change.
 
 ## Never commit
 
