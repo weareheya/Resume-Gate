@@ -2,61 +2,103 @@
 
 > Use AI to build your resume, but make sure every line has a source, every version can be traced, and every change goes through you.
 
-A resume workflow for a long job search: **evidence bank → baseline resume → per-job delta → AI self-review → your sign-off → freeze**. It's docs, templates, and one layout-check script. It isn't tied to any AI or resume tool. Any AI that can read your files can follow it: Claude Code and Codex read `AGENTS.md` automatically, and with other tools you just point the AI at it.
+A resume workflow for a long job search: **evidence bank → baseline resume → per-job delta → AI self-review → your sign-off → freeze**. It's docs, templates, and two small check scripts. It isn't tied to any AI or resume tool. Any AI that can read your files can follow it: Claude Code and Codex read `AGENTS.md` automatically, and with other tools you just point the AI at it.
 
 ## What it fixes
 
-Mistakes that keep showing up when AI edits a resume:
+Mistakes that keep showing up when AI edits a resume, and where each fix lives:
 
-| Problem | Mechanism |
-|---|---|
-| Results you already confirmed vanish from the next version | **Evidence Retrieval Gate**: the AI must read the evidence bank first and list what it read |
-| A new version starts from an old one and old errors come back | **Baseline + Delta + Change Log**: always start from the latest approved version |
-| Numbers get inflated or their meaning drifts | **Claim Card**: every number has a unit, scope, attribution, and a "don't rephrase as" list |
-| The AI says "all checked" but skipped things | **Coverage Report**: spell out what was checked and what wasn't |
-| A few stray lines spill onto a last page | **Full-page rule + `pdf_fill`**: the PDF must fill its pages, and a script measures it |
-| The AI signs off on its own work | **Human review gate**: nothing is Approved until you say so, and sent versions are frozen |
-| A strong experience gets dropped or written weakly because you described it in few words | **Probing questions + D-011 to D-016**: the AI asks before it filters, and picks the strongest wording the facts support |
-| A corrected strength quietly comes back weaker | **Semantic check in self-review**: protected claims are compared with their approved wording, not just checked for presence |
+| Problem | Mechanism | Where |
+|---|---|---|
+| Results you already confirmed vanish from the next version | **Evidence Retrieval Gate**: the AI must read the evidence bank first and list what it read | [WORKFLOW S2](docs/WORKFLOW.md) · [D-006](docs/DECISIONS.md) |
+| A new version starts from an old one and old errors come back | **Baseline + Delta + Change Log**: always start from the best-fitting approved version | [WORKFLOW S1, S4, S5](docs/WORKFLOW.md) · [CV-INDEX](cv/CV-INDEX.md) · [Change Log template](cv/changelogs/_TEMPLATE.md) |
+| Numbers get inflated or their meaning drifts | **Claim Card**: every number has a unit, scope, attribution, and a "don't rephrase as" list | [Claim Card template](evidence/claims/_TEMPLATE.md) · [filled example](examples/claim-C-001.md) |
+| The AI says "all checked" but skipped things | **Coverage Report**: spell out what was checked and what wasn't | [format](docs/WORKFLOW.md#coverage-report-format) · [example](examples/changelog-ACME-01.md) |
+| A strong experience gets dropped or written weakly because you described it in few words | **Probing questions + D-011 to D-016**: the AI asks before it filters, and picks the strongest wording the facts support | [probing questions](docs/WORKFLOW.md#probing-questions) · [DECISIONS](docs/DECISIONS.md) · [10 cases](examples/cases.md) |
+| A corrected strength quietly comes back weaker | **Semantic check in self-review**: protected claims are compared with their approved wording, not just checked for presence | [REVIEW-CHECKLIST A](docs/REVIEW-CHECKLIST.md) · [LESSONS L-12](docs/LESSONS.md) |
+| A few stray lines spill onto a last page | **Full-page rule + `pdf_fill`**: the PDF must fill its pages, and a script measures it | [D-009](docs/DECISIONS.md) · [pdf_fill.swift](scripts/pdf_fill.swift) |
+| The AI signs off on its own work | **Human review gate**: nothing is Approved until you say so, and sent versions are frozen | [WORKFLOW S7](docs/WORKFLOW.md) · [D-008, D-010](docs/DECISIONS.md) |
+
+## Five ideas to know first
+
+- **Claim Card**: one file per accomplishment, holding the facts, what each number measures, what was yours versus the team's, and wording you must not use. It is the only place facts come from. [Template](evidence/claims/_TEMPLATE.md)
+- **Baseline and delta**: you never write a resume from scratch. Each new job copies the best-fitting approved version and changes only what the job needs. [WORKFLOW](docs/WORKFLOW.md)
+- **Protected claim**: a card marked `protected: true` can't be dropped or weakened without your say-so, because it's the kind of strength an AI tends to water down.
+- **Decisions**: when you settle a rule ("always do X"), it goes into [DECISIONS](docs/DECISIONS.md), so the next session and the next AI follow it too.
+- **You are the gate**: the AI drafts, asks, and checks itself; only you mark a version Approved.
 
 ## The flow
 
-```
-JD ─▶ pick type & baseline ─▶ read evidence (Gate) ─▶ map to JD ─▶ edit delta ─▶ Change Log
-                                                                                    │
-       Freeze (Sent) ◀─ You approve (Approved) ◀─ AI self-review + layout check ◀───┘
+```mermaid
+flowchart TB
+  subgraph S0["Step 0 · once"]
+    direction LR
+    A["Old resume, LinkedIn,<br/>reviews"] --> B["Claim Cards<br/>evidence/claims/"]
+    B --> C["First baseline<br/>cv/resumes/"]
+  end
+  subgraph JOB["Every new job · S1–S7"]
+    direction LR
+    D["JD"] --> E["S1 Pick type<br/>and baseline"]
+    E --> F["S2 Evidence<br/>Retrieval Gate"]
+    F --> G["S3 Map to JD<br/>+ probing questions"]
+    G --> H["S4 Edit the delta"]
+    H --> I["S5 Change Log<br/>+ Coverage Report"]
+    I --> J["S6 AI self-review<br/>check_claims · pdf_fill"]
+    J --> K{"S7 You<br/>approve?"}
+    K -- "no" --> H
+    K -- "yes" --> L["Approved"]
+    L --> M["Sent · frozen"]
+  end
+  S0 --> JOB
+  M -. "can become the next baseline" .-> E
 ```
 
-Details in [docs/WORKFLOW.md](docs/WORKFLOW.md).
+Each step has an output you must be able to show before moving on. Details in [docs/WORKFLOW.md](docs/WORKFLOW.md).
 
 ## What's here
 
-```
-AGENTS.md                 Instructions for any AI that picks this up (read first)
-docs/
-  WORKFLOW.md             The seven steps and what each one produces
-  REVIEW-CHECKLIST.md     AI self-review: facts / writing / layout / handoff format
-  DECISIONS.md            Decision register, with 10 starter rules to adapt
-  LESSONS.md              Common process mistakes and the guardrails against them
-  PROMPTS.md              Copy-paste prompts for the common moments
-evidence/claims/          Evidence bank: one Claim Card per accomplishment
-cv/
-  CV-INDEX.md             Lookup table: job type → current starting-point resume
-  resumes/                The resume files themselves, one Markdown file per version
-  changelogs/             What changed in each resume relative to its baseline
-scripts/
-  check_claims.py         Checks every bullet has a source, claims are usable, protected ones stay (Python 3)
-  pdf_fill.swift          Renders each PDF page to PNG, checks the page count, and reports how far down the content reaches (macOS)
-examples/                 A filled-in walkthrough using made-up data
-```
+| Path | What it is | Read it when |
+|---|---|---|
+| [AGENTS.md](AGENTS.md) | Instructions for any AI that picks this up | Your AI reads it first; skim it once yourself |
+| [docs/WORKFLOW.md](docs/WORKFLOW.md) | Step 0, the seven steps, probing questions, Coverage Report format | Before your first resume |
+| [docs/PROMPTS.md](docs/PROMPTS.md) | Copy-paste prompts for each moment | Every session |
+| [docs/DECISIONS.md](docs/DECISIONS.md) | Decision register, with 16 starter rules to adapt | When you set or change a rule |
+| [docs/REVIEW-CHECKLIST.md](docs/REVIEW-CHECKLIST.md) | AI self-review: facts, writing, layout, handoff format | When the AI hands you a version |
+| [docs/LESSONS.md](docs/LESSONS.md) | Real process mistakes and the guardrails against them | Once, and whenever something goes wrong |
+| [evidence/claims/](evidence/claims/_TEMPLATE.md) | Evidence bank: one Claim Card per accomplishment | Step 0, and whenever you remember something new |
+| [cv/CV-INDEX.md](cv/CV-INDEX.md) | Job types, current starting point per type, every version and where it went | Start of every new job |
+| [cv/resumes/](cv/resumes/_TEMPLATE.md) | The resumes themselves, one Markdown file per version | Every new job |
+| [cv/changelogs/](cv/changelogs/_TEMPLATE.md) | What changed in each version and why | Every new job |
+| [scripts/check_claims.py](scripts/check_claims.py) | Checks every bullet has a source, claims are usable, protected ones stay (Python 3) | Before you review a version |
+| [scripts/pdf_fill.swift](scripts/pdf_fill.swift) | Renders the PDF to images, checks page count and how far down each page the content reaches (macOS) | After every export |
+| [examples/](examples/README.md) | A filled Claim Card, a filled Change Log, and ten before-and-after cases, all made up | Before Step 0, to see the level of detail |
 
 ## Quick start
 
-1. Copy the contents of this folder (`en/`) into the root of your own job-search project.
-2. Do **Step 0** in `docs/WORKFLOW.md`. It takes your existing resume and turns it into Claim Cards and a first approved baseline.
-3. In `cv/CV-INDEX.md`, replace the example job types with your own.
-4. For each new job, use prompt 3 in `docs/PROMPTS.md` and paste the JD.
-5. After each resume: write the Change Log, update `CV-INDEX.md`, and record any new rules you settled on in `docs/DECISIONS.md`.
+**1. Copy the kit into your own private project.**
+
+```bash
+git clone https://github.com/weareheya/Resume-Gate.git
+mkdir my-job-search
+cp -R Resume-Gate/en/. my-job-search/
+cd my-job-search && git init
+```
+
+Push it only to a **private** repository (see [Keep your working copy private](#keep-your-working-copy-private)).
+
+**2. Open the folder in an AI that can read files**: Claude Code, Codex, Cursor, or any agent with file access. Then paste prompt 0 from [PROMPTS](docs/PROMPTS.md):
+
+```text
+Read AGENTS.md, then docs/WORKFLOW.md. I'm new to this kit. Walk me through Step 0 one step at a time. Before each step, tell me what it produces and what you need from me. Don't start the next step until I say so.
+```
+
+**3. Do Step 0.** Put your old resume in `evidence/sources/`, turn your strongest 5–10 accomplishments into Claim Cards, and approve a first baseline. For your first baseline you can use the `General` type in [CV-INDEX](cv/CV-INDEX.md); add specific job types once you know which roles you're targeting.
+
+**4. For each new job**, use prompt 3 and paste the JD. Review the version the AI hands you, approve it, send it, and mark it `Sent`.
+
+**5. After each version**: the Change Log is written, `CV-INDEX.md` is updated, and any new rule you settled on is in `DECISIONS.md`.
+
+**Only have a chat AI (no file access)?** Put `AGENTS.md` and the files in `docs/` into a project in your chat tool (for example a Claude Project or a ChatGPT Project) as reference files, keep your Claim Cards in a document or a database the chat can read, and paste each JD into the project. The scripts won't run there, so do their checks by hand: every bullet maps to a card, and the PDF has the right page count.
 
 To check sourcing (any OS, needs Python 3):
 
@@ -70,7 +112,7 @@ To check layout (macOS, needs the Xcode command line tools):
 mkdir -p /tmp/cv-check && swift scripts/pdf_fill.swift your-cv.pdf /tmp/cv-check
 ```
 
-It prints the page count and how far down the content reaches on each page, and writes `p1.png`, `p2.png`, … so you can paste them to your AI or just look. If the page count isn't 1 or 2, or the content on the last page reaches less than 85% of the way down, it exits with code 2, so you can wire it into a script.
+It prints the page count and how far down the content reaches on each page, and writes `p1.png`, `p2.png`, … so you can paste them to your AI or just look. If the page count isn't 1 or 2, or the content on the last page reaches less than 85% of the way down, it exits with code 2, so you can wire it into a script. Not on macOS? Open the exported PDF and check the page count and the last page by eye.
 
 ## What the scripts check, and what they don't
 
