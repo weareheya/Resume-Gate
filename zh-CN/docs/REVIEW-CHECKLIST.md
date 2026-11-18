@@ -2,7 +2,12 @@
 
 简历写完、给本人看之前，AI 必须先按这份清单自审并修改。交付时附上：改了什么、还剩什么问题、Highlights。
 
-写法依据：大学就业中心的通用简历指南（动词开头、可量化结果、不写职责描述、不写空泛形容词）和常见 ATS 建议（单栏、标准栏目名、几秒内可扫读）。第三方博客里的具体统计数字不可靠，不作依据。
+写法依据有两类，各管一件事：
+
+- **简历写法**：Harvard 就业指导中心的简历指南：[Harvard College](https://careerservices.fas.harvard.edu/resources/create-a-strong-resume/)、[Harvard Extension School](https://careerservices.fas.harvard.edu/resources/hes-create-impactful-resumes-and-cover-letters/)、[Harvard Law School 简历工作坊](https://hls.harvard.edu/wp-content/uploads/2024/06/Resume-Workshop-for-Website.pdf)。共同的几条：每条用行动动词开头，能量化就量化，用具体动作代替「responsible for」，不用空泛形容词，写给几秒内扫读的人。
+- **自查一条经历讲没讲完整**：STAR（Situation / Task / Action / Result）。它出自 DDI 1974 年的结构化行为面试法 Targeted Selection（[DDI 的说明](https://www.ddi.com/blog/what-is-the-star-format)），本来是面试官用来收集完整回答的，不是简历格式。这里只拿它当检查框架，见 B 节。
+
+另加常见的 ATS 建议（单栏、标准栏目名）。第三方博客里的具体统计数字不可靠，不作依据。
 
 ## A. 事实（先过这一关，不通过不往下看）
 
@@ -25,6 +30,7 @@
 - [ ] Summary 简短（约 3–4 行）：定位 + 2–4 个最强证据；不用「results-oriented」「team player」类空话
 - [ ] bullet 在准确的前提下用有力动词开头；避免「Responsible for」「Duties included」这类职责式开头。「Helped」「Served as」如果是如实描述，可以用：措辞绝不能说得比实际角色更大
 - [ ] 每条尽量是「做了什么 + 怎么做 + 结果」，有数字就放进去
+- [ ] 用 STAR 自查每条强 bullet：本人的动作（A）和结果（R）都在；背景（S）和任务（T）只在不写就看不懂时才写。落到纸面压缩成「动作 + 关键判断或交付物 + 结果」，不写成四句话。完整的 STAR 留给面试
 - [ ] 每条 ≤ 3 行（排版后）；每段经历大约 2–5 条，越近越相关的越多
 - [ ] 与目标 JD 最相关的 bullet 排在每段第一
 - [ ] 没有写成免责声明：在准确的前提下，篇幅花在证明做了什么，而不是解释没做什么（D-015）

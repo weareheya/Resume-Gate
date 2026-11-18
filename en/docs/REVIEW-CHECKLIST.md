@@ -2,7 +2,12 @@
 
 After a resume is written and before the user sees it, the AI must go through this checklist and fix what it finds. When handing off, include what you changed, what's still open, and the highlights.
 
-The writing guidance follows standard university career-center resume guides (start with a strong verb, quantify results, no duty-style descriptions, no empty adjectives) and common ATS advice (single column, standard section names, scannable in seconds). Specific statistics from third-party blogs are unreliable, so don't rely on them.
+Two sources, each for one job:
+
+- **How to write a resume**: Harvard's career-office resume guides: [Harvard College](https://careerservices.fas.harvard.edu/resources/create-a-strong-resume/), [Harvard Extension School](https://careerservices.fas.harvard.edu/resources/hes-create-impactful-resumes-and-cover-letters/), and the [Harvard Law School resume workshop](https://hls.harvard.edu/wp-content/uploads/2024/06/Resume-Workshop-for-Website.pdf). What they agree on: start each bullet with an action verb, quantify where you can, replace "responsible for" with what you actually did, skip empty adjectives, and write for someone who scans in seconds.
+- **Checking that a bullet tells the whole story**: STAR (Situation, Task, Action, Result). It comes from DDI's Targeted Selection, a structured behavioral-interview method from 1974 ([DDI's explanation](https://www.ddi.com/blog/what-is-the-star-format)), and was built for interviewers collecting complete answers. It isn't a resume format. Here it's only a checklist; see section B.
+
+Plus common ATS advice (single column, standard section names). Specific statistics from third-party blogs are unreliable, so don't rely on them.
 
 ## A. Facts (pass this first; if it fails, stop here)
 
@@ -25,6 +30,7 @@ These are defaults. A structure the user has already approved takes priority ove
 - [ ] Summary is short (about 3–4 lines): positioning plus the 2–4 strongest proof points. No filler like "results-oriented" or "team player"
 - [ ] Bullets start with a strong verb where that's accurate. Avoid duty-style openers like "Responsible for" or "Duties included." "Helped" and "Served as" are fine when they're the honest description: the wording must never claim more than the role was
 - [ ] Each bullet tries to say what you did, how, and what came of it, with numbers where you have them
+- [ ] Check each strong bullet against STAR: the candidate's own action (A) and the result (R) are both there; the situation (S) and task (T) appear only if the bullet makes no sense without them. On paper, compress it to action + key judgment or deliverable + result, not four sentences. Save the full STAR for the interview
 - [ ] Each bullet is at most 3 lines once laid out, with roughly 2–5 bullets per role (more for recent, relevant roles)
 - [ ] The bullet most relevant to the target JD comes first in each role
 - [ ] Nothing reads like a disclaimer: while staying accurate, the words go to proving what was done, not to explaining what wasn't (D-015)
