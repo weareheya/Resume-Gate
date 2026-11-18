@@ -72,7 +72,7 @@ It prints the page count and how far down the content reaches on each page, and 
 
 ## What the scripts check, and what they don't
 
-`check_claims.py` checks sourcing mechanically: every bullet has a Claim ID, each ID points to a `Safe to draft` card, and protected claims are still there. `pdf_fill.swift` checks the page count and how far down the content reaches. It can't measure how much of each page is used, so look at the images too. Everything else is a rule your AI follows by reading it: whether a claim is true, whether the wording stays within a card's limits, whether the choices fit the job. For those, you're the check.
+`check_claims.py` checks sourcing mechanically: every bullet has a Claim ID, each ID points to a `Safe to draft` card, every number appears on the card it cites, and protected claims are still there. It fails if it can't find a Summary or Experience section, and it names any other section it didn't verify. `pdf_fill.swift` checks the page count and how far down the content reaches. It can't measure how much of each page is used, so look at the images too. Everything else is a rule your AI follows by reading it: whether a claim is true, whether the wording stays within a card's limits, whether the choices fit the job. For those, you're the check.
 
 ## Optional: Reactive Resume
 
