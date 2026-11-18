@@ -1,9 +1,6 @@
 # examples
 
-A filled-in walkthrough using **entirely made-up** data (the person, company, and numbers are all invented), to show how much detail a Claim Card and a Change Log should have.
+Everything here is **made up**: the people, companies, and numbers are invented. Don't copy any of it into your own resume.
 
-- [claim-C-001.md](claim-C-001.md): a completed Claim Card
-- [changelog-ACME-01.md](changelog-ACME-01.md): a completed Change Log, with Coverage Report and self-review
-- [cases.md](cases.md): ten short before-and-after cases, one or two rules each
-
-Don't copy anything from these examples into your own resume.
+- [jordan-lee/](jordan-lee/README.md): a full mini project laid out like yours. Five Claim Cards, an approved baseline, a new version for one job with its Change Log and filled CV-INDEX, and a copy with seven planted mistakes. Run `check_claims.py` on it to see a pass and a failure, and which mistakes only a human can catch.
+- [cases.md](cases.md): ten short before-and-after cases, one or two rules each.

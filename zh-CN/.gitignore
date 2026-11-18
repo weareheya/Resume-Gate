@@ -8,3 +8,4 @@ private/
 p[0-9]*.png
 # 原始素材（旧简历、绩效评语）可能含隐私
 evidence/sources/
+__pycache__/

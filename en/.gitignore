@@ -8,3 +8,4 @@ private/
 p[0-9]*.png
 # Raw source material (old resumes, reviews) can hold private details
 evidence/sources/
+__pycache__/

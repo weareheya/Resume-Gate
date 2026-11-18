@@ -12,8 +12,8 @@ Mistakes that keep showing up when AI edits a resume, and where each fix lives:
 |---|---|---|
 | Results you already confirmed vanish from the next version | **Evidence Retrieval Gate**: the AI must read the evidence bank first and list what it read | [WORKFLOW S2](docs/WORKFLOW.md) · [D-006](docs/DECISIONS.md) |
 | A new version starts from an old one and old errors come back | **Baseline + Delta + Change Log**: always start from the best-fitting approved version | [WORKFLOW S1, S4, S5](docs/WORKFLOW.md) · [CV-INDEX](cv/CV-INDEX.md) · [Change Log template](cv/changelogs/_TEMPLATE.md) |
-| Numbers get inflated or their meaning drifts | **Claim Card**: every number has a unit, scope, attribution, and a "don't rephrase as" list | [Claim Card template](evidence/claims/_TEMPLATE.md) · [filled example](examples/claim-C-001.md) |
-| The AI says "all checked" but skipped things | **Coverage Report**: spell out what was checked and what wasn't | [format](docs/WORKFLOW.md#coverage-report-format) · [example](examples/changelog-ACME-01.md) |
+| Numbers get inflated or their meaning drifts | **Claim Card**: every number has a unit, scope, attribution, and a "don't rephrase as" list | [Claim Card template](evidence/claims/_TEMPLATE.md) · [filled example](examples/jordan-lee/evidence/claims/C-001.md) |
+| The AI says "all checked" but skipped things | **Coverage Report**: spell out what was checked and what wasn't | [format](docs/WORKFLOW.md#coverage-report-format) · [example](examples/jordan-lee/cv/changelogs/ACME-01.md) |
 | A strong experience gets dropped or written weakly because you described it in few words | **Probing questions + D-011 to D-016**: the AI asks before it filters, and picks the strongest wording the facts support | [probing questions](docs/WORKFLOW.md#probing-questions) · [DECISIONS](docs/DECISIONS.md) · [10 cases](examples/cases.md) |
 | A corrected strength quietly comes back weaker | **Semantic check in self-review**: protected claims are compared with their approved wording, not just checked for presence | [REVIEW-CHECKLIST A](docs/REVIEW-CHECKLIST.md) · [LESSONS L-12](docs/LESSONS.md) |
 | A few stray lines spill onto a last page | **Full-page rule + `pdf_fill`**: the PDF must fill its pages, and a script measures it | [D-009](docs/DECISIONS.md) · [pdf_fill.swift](scripts/pdf_fill.swift) |
@@ -71,7 +71,7 @@ Each step has an output you must be able to show before moving on. Details in [d
 | [cv/changelogs/](cv/changelogs/_TEMPLATE.md) | What changed in each version and why | Every new job |
 | [scripts/check_claims.py](scripts/check_claims.py) | Checks every bullet has a source, claims are usable, protected ones stay (Python 3) | Before you review a version |
 | [scripts/pdf_fill.swift](scripts/pdf_fill.swift) | Renders the PDF to images, checks page count and how far down each page the content reaches (macOS) | After every export |
-| [examples/](examples/README.md) | A filled Claim Card, a filled Change Log, and ten before-and-after cases, all made up | Before Step 0, to see the level of detail |
+| [examples/](examples/README.md) | A full made-up mini project (claims, baseline, a new version, its Change Log, and a version with planted mistakes), plus ten before-and-after cases | Before Step 0, to see the level of detail |
 
 ## Quick start
 
@@ -105,6 +105,8 @@ To check sourcing (any OS, needs Python 3):
 ```bash
 python3 scripts/check_claims.py cv/resumes/<id>.md
 ```
+
+On Windows, use `python` instead of `python3` here and in the docs. To see what a pass and a failure look like, run it on the [worked example](examples/jordan-lee/README.md) first.
 
 To check layout (macOS, needs the Xcode command line tools):
 
