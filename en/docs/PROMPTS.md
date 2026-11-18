@@ -2,6 +2,12 @@
 
 Paste these into your AI at the matching moment. Replace anything in [brackets].
 
+## 0. First session
+
+```text
+Read AGENTS.md, then docs/WORKFLOW.md. I'm new to this kit. Walk me through Step 0 one step at a time. Before each step, tell me what it produces and what you need from me. Don't start the next step until I say so.
+```
+
 ## 1. Import my existing resume (Step 0)
 
 ```text
