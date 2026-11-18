@@ -116,7 +116,7 @@ mkdir -p /tmp/cv-check && swift scripts/pdf_fill.swift your-cv.pdf /tmp/cv-check
 
 ## 脚本检查什么，不检查什么
 
-`check_claims.py` 机械地检查出处：每条 bullet 都有 Claim ID，每个 ID 都指向一张 `Safe to draft` 的卡，受保护的 claim 没丢。`pdf_fill.swift` 检查页数和内容延伸到的位置。它量不出每页用了多少面积，所以也要看生成的图。其余都是 AI 靠读规则来执行的：claim 是否属实、措辞有没有越过卡的限制、选择是否贴合岗位。这些靠你来把关。
+`check_claims.py` 机械地检查出处：每条 bullet 都有 Claim ID，每个 ID 都指向一张 `Safe to draft` 的卡，每个数字都能在所引用的卡里找到，受保护的 claim 没丢。找不到 Summary 或 Experience 栏目时判为未通过，没验证的栏目会逐一列出。`pdf_fill.swift` 检查页数和内容延伸到的位置。它量不出每页用了多少面积，所以也要看生成的图。其余都是 AI 靠读规则来执行的：claim 是否属实、措辞有没有越过卡的限制、选择是否贴合岗位。这些靠你来把关。
 
 ## 工具：自己选
 
