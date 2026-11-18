@@ -12,8 +12,8 @@
 |---|---|---|
 | 已确认的成果在新版里又丢了 | **Evidence Retrieval Gate**：生成前必须读证据库，并列出读了哪些 | [WORKFLOW S2](docs/WORKFLOW.md) · [D-006](docs/DECISIONS.md) |
 | 新版本退回旧版，旧错误复活 | **基线 + Delta + Change Log**：永远从匹配度最高的已批准版本改起 | [WORKFLOW S1、S4、S5](docs/WORKFLOW.md) · [CV-INDEX](cv/CV-INDEX.md) · [Change Log 模板](cv/changelogs/_TEMPLATE.md) |
-| 数字被夸大、口径混淆 | **Claim Card**：每个数字有单位、范围、归因和禁止改写 | [Claim Card 模板](evidence/claims/_TEMPLATE.md) · [填好的示例](examples/claim-C-001.md) |
-| AI 说「检查完了」其实有遗漏 | **Coverage Report**：写明查了什么、没查什么 | [格式](docs/WORKFLOW.md#coverage-report-格式) · [示例](examples/changelog-ACME-01.md) |
+| 数字被夸大、口径混淆 | **Claim Card**：每个数字有单位、范围、归因和禁止改写 | [Claim Card 模板](evidence/claims/_TEMPLATE.md) · [填好的示例](examples/jordan-lee/evidence/claims/C-001.md) |
+| AI 说「检查完了」其实有遗漏 | **Coverage Report**：写明查了什么、没查什么 | [格式](docs/WORKFLOW.md#coverage-report-格式) · [示例](examples/jordan-lee/cv/changelogs/ACME-01.md) |
 | 你说得太简略，强经历被丢掉或写弱 | **追问清单 + D-011～D-016**：AI 先问再过滤，并在事实允许的范围内选最有竞争力的写法 | [追问清单](docs/WORKFLOW.md#追问清单) · [DECISIONS](docs/DECISIONS.md) · [10 个案例](examples/cases.md) |
 | 纠正过的强项悄悄又被写弱 | **自审里的语义对比**：protected claim 要和已批准措辞对比，不只检查还在不在 | [自审清单 A](docs/REVIEW-CHECKLIST.md) · [LESSONS L-12](docs/LESSONS.md) |
 | 排版多出几行孤页 | **整页规则 + `pdf_fill`**：PDF 必须整页满，脚本量化检查 | [D-009](docs/DECISIONS.md) · [pdf_fill.swift](scripts/pdf_fill.swift) |
@@ -71,7 +71,7 @@ flowchart TB
 | [cv/changelogs/](cv/changelogs/_TEMPLATE.md) | 每一版改了什么、为什么 | 每个新岗位 |
 | [scripts/check_claims.py](scripts/check_claims.py) | 检查每条 bullet 有出处、claim 可用、受保护的没丢（Python 3） | 你审一版之前 |
 | [scripts/pdf_fill.swift](scripts/pdf_fill.swift) | 把 PDF 渲染成图片，检查页数和每页内容延伸到哪里（macOS） | 每次导出后 |
-| [examples/](examples/README.md) | 填好的 Claim Card、Change Log，以及 10 个改前改后的案例，全部虚构 | Step 0 之前，看看要写到多细 |
+| [examples/](examples/README.md) | 一套完整的虚构小项目（Claim Card、基线、新版本、Change Log、一份故意写错的版本），以及 10 个改前改后的案例 | Step 0 之前，看看要写到多细 |
 
 ## 快速开始
 
@@ -105,6 +105,8 @@ cd my-job-search && git init
 ```bash
 python3 scripts/check_claims.py cv/resumes/<id>.md
 ```
+
+Windows 上，这里和文档里的 `python3` 都换成 `python`。想先看看通过和未通过长什么样，就先拿[完整示例](examples/jordan-lee/README.md)跑一遍。
 
 检查排版（macOS，需要 Xcode 命令行工具）：
 

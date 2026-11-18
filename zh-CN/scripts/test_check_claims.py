@@ -214,5 +214,33 @@ class CheckClaims(unittest.TestCase):
         self.assertEqual(code, 0, out)
 
 
+class WorkedExample(unittest.TestCase):
+    """examples/jordan-lee must behave the way its README says."""
+    EXAMPLE = SCRIPT.parent.parent / "examples" / "jordan-lee"
+
+    def run_check(self, name):
+        r = subprocess.run(
+            [sys.executable, "-I", str(SCRIPT), f"cv/resumes/{name}.md", "--lang", "en"],
+            cwd=self.EXAMPLE, capture_output=True, text=True)
+        return r.returncode, r.stdout
+
+    def test_baseline_passes(self):
+        code, out = self.run_check("channel-baseline")
+        self.assertEqual(code, 0, out)
+
+    def test_new_version_passes_with_note(self):
+        code, out = self.run_check("acme-pdm")
+        self.assertEqual(code, 0, out)
+        self.assertIn("NOTE  C-002", out)
+
+    def test_traps_fail_with_five_errors(self):
+        code, out = self.run_check("acme-pdm-with-traps")
+        self.assertEqual(code, 1, out)
+        self.assertIn("FAILED: 5 error(s)", out)
+        for snippet in ("no Claim ID", "C-005 has status", '"420"', "C-009 does not match",
+                        "Protected claim C-001"):
+            self.assertIn(snippet, out)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
