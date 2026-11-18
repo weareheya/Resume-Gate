@@ -4,5 +4,6 @@
 
 - [claim-C-001.md](claim-C-001.md) — 一张填好的 Claim Card
 - [changelog-ACME-01.md](changelog-ACME-01.md) — 一份填好的 Change Log（含 Coverage Report 和自审）
+- [cases.md](cases.md) — 10 个改前改后的小案例，每个演示一两条规则
 
 不要把示例里的内容抄进自己的简历。

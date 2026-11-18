@@ -3,6 +3,21 @@
 > Each entry: what happened → why → the guardrail now. When a new mistake happens, add it at the top.
 > Rules about facts and numbers belong in DECISIONS or a Claim Card. This file is for **process** mistakes.
 
+## L-12 · A strength that had been corrected came back weakened (semantic regression)
+- **What happened**: The user had already corrected it once: the core of an experience was a regional narrative strategy, not relationship management. In the next version the experience was still there, Claim ID and all, but the wording had slid back to "relationship management."
+- **Why**: The AI rewrote toward the JD's familiar vocabulary and swapped an unfamiliar strength for a familiar, weaker phrase. `check_claims.py` only checks that the Claim ID is present, so it passed.
+- **Guardrail**: During self-review, compare the wording of every `protected` claim with its approved wording, sentence by sentence, and check whether the meaning got weaker (REVIEW-CHECKLIST A). Put wording you've already corrected into the Claim Card's "don't rephrase as" list.
+
+## L-11 · The AI "remembered" a difference that never existed
+- **What happened**: In a retrospective, the AI said two applications had used two differently positioned resumes. CV-INDEX recorded the same hash for both exported PDFs: they were the same file.
+- **Why**: The AI wrote the retrospective from conversation memory instead of checking the records.
+- **Guardrail**: Retrospectives, audits, and write-ups of the method go by `cv/CV-INDEX.md`, the Change Logs, and file hashes, never by conversation memory.
+
+## L-10 · A decision lived in one tool, and the next session lost it
+- **What happened**: The job-type taxonomy had already been settled in the project. Another session, working in a different tool, never read it and proposed rules that already existed as if they were new.
+- **Why**: The Evidence Retrieval Gate only required reading Claim Cards, not DECISIONS or CV-INDEX.
+- **Guardrail**: Every settled decision lives only in `docs/DECISIONS.md`. Any new session, in any tool, reads DECISIONS and CV-INDEX before the evidence (see the reading order in AGENTS.md).
+
 ## L-09 · An error in an approved resume got inherited
 - **What happened**: A number was wrong in an old resume. Because that resume was approved, the AI treated it as a valid source and copied the number into every new version.
 - **Why**: The rules said a fact could come from a Claim Card *or* from an approved version, so a mistake could bypass the evidence bank.

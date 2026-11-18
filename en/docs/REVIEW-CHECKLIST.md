@@ -6,14 +6,15 @@ The writing guidance follows standard university career-center resume guides (st
 
 ## A. Facts (pass this first; if it fails, stop here)
 
-Run `python3 scripts/check_claims.py cv/resumes/<id>.md` first. It checks the first two items below mechanically. The rest still need judgment.
+Run `python3 scripts/check_claims.py cv/resumes/<id>.md` first. It checks the first two items below mechanically, and also that every number on a checked line appears in the card it cites. It fails if it can't find a Summary or Experience section, and it lists any other section (Skills, Projects…) as not verified: check those by hand. The rest still need judgment.
 
 - [ ] Every line traces to a Claim Card. An approved or sent resume is not evidence, only approved wording
 - [ ] Every bullet carries its Claim ID in an HTML comment, and each one points to a card marked `Safe to draft`
 - [ ] Numbers keep their units and scope (currency, time window, qualifiers like "potential" or "cumulative")
 - [ ] Individual contribution is separate from team results; titles match the employment record and aren't inflated
 - [ ] Start and end dates, company type, and role are correct
-- [ ] A result that happened at the same time isn't credited entirely to the candidate (causality)
+- [ ] A result that happened at the same time isn't credited entirely to the candidate (causality); a link that *can* be shown is written, not split apart by reflex (D-014)
+- [ ] Claims marked `protected` aren't just present; **their meaning hasn't been weakened**. Compare them sentence by sentence with the approved wording. `check_claims.py` only checks that the Claim ID is there and can't catch this (LESSONS L-12)
 - [ ] Anything the JD asks for without evidence is **not written** and is listed in the Coverage Report
 - [ ] No sensitive information (a former employer's confidential details, other people's private information)
 
@@ -26,6 +27,7 @@ These are defaults. A structure the user has already approved takes priority ove
 - [ ] Each bullet tries to say what you did, how, and what came of it, with numbers where you have them
 - [ ] Each bullet is at most 3 lines once laid out, with roughly 2–5 bullets per role (more for recent, relevant roles)
 - [ ] The bullet most relevant to the target JD comes first in each role
+- [ ] Nothing reads like a disclaimer: while staying accurate, the words go to proving what was done, not to explaining what wasn't (D-015)
 - [ ] Capitalization, punctuation, and currency formats are consistent
 - [ ] Contact details are clean: no `https://`, readable link text
 - [ ] Section names are standard (Summary / Experience / Education / Skills)
