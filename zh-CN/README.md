@@ -61,7 +61,7 @@
 
 ## 快速开始
 
-**1. 把这套内容复制到你自己的私有项目里。**
+**1. 把这套内容复制到你自己的私有项目里。** 最省事：下载 [resume-gate-zh-CN.zip](https://github.com/weareheya/Resume-Gate/releases/latest/download/resume-gate-zh-CN.zip)，解压，用 AI 工具打开这个文件夹。不用 Git，也不用 GitHub 账号。用 Git：
 
 ```bash
 git clone https://github.com/weareheya/Resume-Gate.git
