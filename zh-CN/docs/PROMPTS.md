@@ -15,7 +15,7 @@
 
 [把简历贴在这里]
 
-做一份简历体检报告［或：针对这份 JD 的岗位匹配报告：贴上 JD］。把 report/template.html 复制到 reports/，只填数据块，然后跑 scripts/report_score.py，给我三行摘要。先不要写任何 Claim Card。最后列出你建议先采访的 3 项成果，以及每项还缺什么。
+做一份简历体检报告［或：针对这份 JD 的岗位匹配报告：贴上 JD］。把 report/template.html 复制到 reports/，只填数据块，然后跑 scripts/report_score.py，给我三行摘要。先不要写任何 Claim Card。问我要不要一份可以分享的版本。最后列出你建议先采访的 3 项成果，以及每项还缺什么。
 ```
 
 ## 2. 采访我，写一张 Claim Card（Step 0）

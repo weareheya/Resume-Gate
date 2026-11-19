@@ -5,7 +5,7 @@ What changed in each version, and whether you need to do anything. Your version 
 ## 0.2.0 · 2026-11-19
 
 **New**
-- **Checkup report.** A scored, visual report on any resume, on its own or against a JD. The AI only marks each bullet; the template does the counting, so the score is the same whichever AI fills it in. See `docs/REPORT.md` and `report/template.html`; `scripts/report_score.py` prints the same score in the chat. One file, two views: the full report, and a share card to screenshot and post, which hides your name, employer and bullets.
+- **Checkup report.** A scored, visual report on any resume, on its own or against a JD. The AI only marks each bullet; the template does the counting, so the score is the same whichever AI fills it in. See `docs/REPORT.md` and `report/template.html`; `scripts/report_score.py` prints the same score in the chat. One file, two views: the full report, and a share card to screenshot and post, which hides your name, employer and bullets. The AI asks whether you want a shareable version; `scripts/report_share.py` makes a separate copy with every private detail removed, safe to send as a file.
 - **Shorter Step 0 interview.** The checkup comes first, then a plan: your 3 strongest accomplishments, at most 5 questions each, with a time estimate. Every question has a progress line. Three modes: one at a time, one form per accomplishment, or just talk. "Skip" and "stop" always work. Progress is saved in `evidence/INTAKE.md`.
 - **Your own rules have their own file.** `docs/MY-DECISIONS.md` holds your rules (from D-101). `docs/DECISIONS.md` keeps the starter rules and is replaced on update, so updates never overwrite your rules.
 - **Updating.** `VERSION`, this changelog, and prompt 5.

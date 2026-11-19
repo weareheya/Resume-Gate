@@ -253,5 +253,23 @@ class ReportScore(unittest.TestCase):
         self.assertIn("34 / 100", r.stdout)
 
 
+class ReportShare(unittest.TestCase):
+    """report_share.py keeps the score and removes every private string from the sample report."""
+
+    def test_share_copy_is_clean_and_scores_the_same(self):
+        root = SCRIPT.parent.parent
+        with tempfile.TemporaryDirectory() as d:
+            src = Path(d) / "r.html"
+            src.write_text((root / "report" / "template.html").read_text(encoding="utf-8"), encoding="utf-8")
+            r = subprocess.run([sys.executable, "-I", str(SCRIPT.with_name("report_share.py")), str(src)], capture_output=True, text=True)
+            self.assertEqual(r.returncode, 0, r.stdout)
+            out = (Path(d) / "r-share.html")
+            body = out.read_text(encoding="utf-8")
+            for private in ("Jordan", "Northwind", "Acme", "old-resume", "webinar", "tiering"):
+                self.assertNotIn(private, body)
+            s = subprocess.run([sys.executable, "-I", str(SCRIPT.with_name("report_score.py")), str(out)], capture_output=True, text=True)
+            self.assertIn("34 / 100", s.stdout)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

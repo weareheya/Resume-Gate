@@ -27,6 +27,7 @@ Before you do any resume work in this repo, read these in order:
 - Never drop or weaken a claim marked `protected: true` without the user's approval. If a new version leaves one out, say so and explain why.
 - When you say a check is done, attach a Coverage Report: what you covered and what you didn't.
 - Self-review against `docs/REVIEW-CHECKLIST.md` before showing anything to the user.
+- Reports follow `docs/REPORT.md`. Never send or upload a full report: it holds all the user's details. For sharing, make a copy with `scripts/report_share.py`.
 - Before showing a resume to the user, run `python3 scripts/check_claims.py cv/resumes/<id>.md`, fix every error, and report its result.
 - **Human review gate**: until the user says "approved", a version stays `Draft`. Don't edit a version marked `Sent`.
 

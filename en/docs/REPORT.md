@@ -5,6 +5,7 @@ A visual, scored report on a resume. The AI fills in the data; the template does
 - **Template**: [`report/template.html`](../report/template.html). Open it in a browser to see a made-up example.
 - **Output**: copy it to `reports/<date>-checkup.html` (or `-<job-id>.html` for a job-fit report), replace the data block, and open it in a browser. Print to PDF from the browser if you want a file.
 - **Two views, one file.** *Full report* is for you: every bullet, every fix. *Share card* (the button at the top, or add `#share` to the address) is a portrait card to screenshot and post: score, band and dimension bars, with a link back to Resume-Gate. It hides your name, employer, target job and bullet text; set `"share_name"` in `meta` only if you want a name on it.
+- **Share copy.** The full report file still holds everything, so it must never be sent around. `python3 scripts/report_share.py reports/<file>.html` writes `<file>-share.html`: same score, no private text at all, opens on the share card. Add `--name "…"` to put a name on it.
 
 ## Two modes
 
@@ -44,6 +45,7 @@ R6 is 0 before Step 0, and that's expected: no Claim Cards exist yet. It's the p
 - **Strengths, fixes and gaps use only facts already in the resume or the Claim Cards.** A suggested fix never adds a new fact or number. If a fix needs information the resume doesn't have, say what to ask the user.
 - **At most 5 fixes**, most important first.
 - Then run `python3 scripts/report_score.py reports/<file>.html` and quote its score in the chat with a three-line summary: the score and band, the strongest point, and the first fix. The `summary` lines in the data block don't mention the score; the page shows it.
+- **Then ask once: "Want a version you can share?"** If yes, run `scripts/report_share.py`, give the user the `-share.html` path, and remind them to share only that file or a screenshot of the share card, never the full report.
 
 ## What the score is and isn't
 

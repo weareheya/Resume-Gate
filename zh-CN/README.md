@@ -61,6 +61,7 @@
 | [cv/changelogs/](cv/changelogs/_TEMPLATE.md) | 每一版改了什么、为什么 | 每个新岗位 |
 | [scripts/check_claims.py](scripts/check_claims.py) | 检查每条 bullet 有出处、claim 可用、受保护的没丢（Python 3） | 你审一版之前 |
 | [scripts/report_score.py](scripts/report_score.py) | 用和模板相同的公式算出报告分数，让对话里说的分数和页面一致（Python 3） | AI 填完报告后 |
+| [scripts/report_share.py](scripts/report_share.py) | 生成删掉所有隐私信息的报告分享版（Python 3） | 想分享报告时 |
 | [scripts/pdf_fill.swift](scripts/pdf_fill.swift) | 把 PDF 渲染成图片，检查页数和每页内容延伸到哪里（macOS） | 每次导出后 |
 | [examples/](examples/README.md) | 一套完整的虚构小项目（Claim Card、基线、新版本、Change Log、一份故意写错的版本），以及 10 个改前改后的案例 | Step 0 之前，看看要写到多细 |
 

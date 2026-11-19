@@ -53,6 +53,7 @@ Each step has an output you must be able to show before moving on. Details in [d
 | [cv/changelogs/](cv/changelogs/_TEMPLATE.md) | What changed in each version and why | Every new job |
 | [scripts/check_claims.py](scripts/check_claims.py) | Checks every bullet has a source, claims are usable, protected ones stay (Python 3) | Before you review a version |
 | [scripts/report_score.py](scripts/report_score.py) | Prints a report's score with the same formula as the template, so the chat and the page agree (Python 3) | After the AI fills a report |
+| [scripts/report_share.py](scripts/report_share.py) | Makes a shareable copy of a report with every private detail removed (Python 3) | When you want to share a report |
 | [scripts/pdf_fill.swift](scripts/pdf_fill.swift) | Renders the PDF to images, checks page count and how far down each page the content reaches (macOS) | After every export |
 | [examples/](examples/README.md) | A full made-up mini project (claims, baseline, a new version, its Change Log, and a version with planted mistakes), plus ten before-and-after cases | Before Step 0, to see the level of detail |
 

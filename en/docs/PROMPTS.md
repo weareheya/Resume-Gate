@@ -15,7 +15,7 @@ Read AGENTS.md and docs/REPORT.md. Here is my resume [or: it's in evidence/sourc
 
 [paste it here]
 
-Make a checkup report [or: a job-fit report for this JD: paste it]. Copy report/template.html to reports/, fill in only the data block, then run scripts/report_score.py and give me the three-line summary. Don't write any Claim Cards yet. Then list the 3 accomplishments you'd interview me about first, and what's still missing for each.
+Make a checkup report [or: a job-fit report for this JD: paste it]. Copy report/template.html to reports/, fill in only the data block, then run scripts/report_score.py and give me the three-line summary. Don't write any Claim Cards yet. Ask me whether I want a shareable version. Then list the 3 accomplishments you'd interview me about first, and what's still missing for each.
 ```
 
 ## 2. Interview me and write a Claim Card (Step 0)

@@ -23,7 +23,7 @@
 | 步 | 做什么 | 产出 |
 |---|---|---|
 | 0a | **收集原始材料**：现在的简历、LinkedIn 文字、过往的绩效评语，任何含事实的东西。放进 `evidence/sources/`。这个目录已被 git 忽略，不会被提交 | `evidence/sources/` 里的文件 |
-| 0b | **体检报告。** 用 [PROMPTS](PROMPTS.md) 里的提示词 1。AI 读简历，按 [REPORT](REPORT.md) 的标准数数，填进 `report/template.html`。采访之前就先拿到一份带分数的可视化报告：哪里强、哪里含糊、最该先改的 5 处 | `reports/<日期>-checkup.html`，对话里附三行摘要 |
+| 0b | **体检报告。** 用 [PROMPTS](PROMPTS.md) 里的提示词 1。AI 读简历，按 [REPORT](REPORT.md) 的标准数数，填进 `report/template.html`。采访之前就先拿到一份带分数的可视化报告：哪里强、哪里含糊、最该先改的 5 处。然后问你要不要一份可以分享的版本 | `reports/<日期>-checkup.html`、对话里的三行摘要，要的话还有 `-share.html` |
 | 0c | **采访计划。** AI 挑出**最强的 3 项**成果（够出第一份基线，其余以后再补），读完材料后只列每项还缺什么，把计划写进 `evidence/INTAKE.md`：一共几个问题、大约多久。本人选一种问法（见下文） | `evidence/INTAKE.md` |
 | 0d | **采访并写卡。** 用提示词 2。每个问题前都带一行进度。任何问题都可以跳过，随时可以停：没答的记在卡上「待补」，不再追问。卡先是 `需复核`；本人读过、确认无误后，改成 `Safe to draft` | `evidence/claims/` 里的 Claim Card，`INTAKE.md` 同步更新 |
 | 0e | **起草第一份基线**，只用 `Safe to draft` 的卡。复制 `cv/resumes/_TEMPLATE.md`，每条 bullet 都标上 Claim ID | `cv/resumes/<id>.md` |
