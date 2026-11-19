@@ -1,0 +1,49 @@
+# On every version tag (v*), build one zip per kit and attach both to the GitHub Release.
+# Users then download a single kit without Git or a GitHub account:
+#   https://github.com/weareheya/Resume-Gate/releases/latest/download/resume-gate-en.zip
+#   https://github.com/weareheya/Resume-Gate/releases/latest/download/resume-gate-zh-CN.zip
+name: Release kit zips
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Existing tag to build zips for"
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  zips:
+    runs-on: ubuntu-latest
+    env:
+      TAG: ${{ github.event.inputs.tag || github.ref_name }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.tag || github.ref }}
+
+      - name: Build one zip per kit
+        run: |
+          mkdir -p dist
+          for kit in en zh-CN; do
+            dir="dist/resume-gate-$kit"
+            mkdir -p "$dir"
+            cp -R "$kit/." "$dir/"
+            find "$dir" \( -name __pycache__ -o -name .DS_Store \) -prune -exec rm -rf {} +
+            (cd dist && zip -qr "resume-gate-$kit.zip" "resume-gate-$kit")
+          done
+          ls -l dist/*.zip
+
+      - name: Create or update the release
+        run: |
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" dist/resume-gate-en.zip dist/resume-gate-zh-CN.zip --clobber
+          else
+            gh release create "$TAG" dist/resume-gate-en.zip dist/resume-gate-zh-CN.zip \
+              --title "$TAG" --generate-notes
+          fi

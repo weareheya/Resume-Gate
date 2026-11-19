@@ -41,17 +41,22 @@ It works best with an AI that can open and edit files in a folder on your comput
 
 These tools need a paid plan; each setup guide lists which. Claude Code and Codex read the kit's `AGENTS.md` on their own. In other tools, tell the AI to read it first.
 
+**Using Codex?** It runs without network access by default and asks before any download ([why](https://developers.openai.com/codex/agent-approvals-security)). The easy way: download the zip in step 2 yourself, then open the unzipped folder in Codex as a local project. No GitHub connection needed.
+
 ### 2. Get the files
 
-Pick **one** kit: `en/` (English) or `zh-CN/` (简体中文). Each is complete on its own.
+Pick **one** kit and download it. No Git and no GitHub account needed.
 
-**Easiest: let the AI do it.** Make an empty folder (say `my-job-search`), open it in your AI tool, and paste:
+- **English**: [resume-gate-en.zip](https://github.com/weareheya/Resume-Gate/releases/latest/download/resume-gate-en.zip)
+- **简体中文**: [resume-gate-zh-CN.zip](https://github.com/weareheya/Resume-Gate/releases/latest/download/resume-gate-zh-CN.zip)
+
+Unzip it and open the folder in your AI tool. Rename the folder if you like.
+
+**Prefer to let the AI do it?** Open an empty folder in your AI tool and paste:
 
 ```text
-Set up Resume-Gate in this folder. Download https://github.com/weareheya/Resume-Gate, copy everything inside its en/ folder (use zh-CN/ if I want Chinese) into this folder, then delete the download. Check that AGENTS.md is here, then run git init if git is installed.
+Set up Resume-Gate in this folder. Download https://github.com/weareheya/Resume-Gate/releases/latest/download/resume-gate-en.zip (use resume-gate-zh-CN.zip if I want Chinese), unzip it, copy everything inside its resume-gate-en/ folder into this folder, and delete the zip and the extra folder. It's a public download: no GitHub account or connector is needed. If you need my approval to use the network, ask once for this download. Then check that AGENTS.md is here and run git init if git is installed.
 ```
-
-**By hand, no Git:** on the [repo page](https://github.com/weareheya/Resume-Gate), click **Code → Download ZIP** ([how](https://docs.github.com/en/repositories/working-with-files/using-files/downloading-source-code-archives)), unzip it, and copy the contents of `en/` (or `zh-CN/`) into a new folder.
 
 **With Git:**
 
@@ -125,17 +130,22 @@ Resume-Gate 是一个文件夹，AI 读了照着做。上手三步：选 AI 工�
 
 这些工具都要付费方案，具体看各自的安装说明。Claude Code 和 Codex 会自己读 `AGENTS.md`；别的工具，先让 AI 读它。
 
+**用 Codex？** 它默认不联网，下载前会先问你（[官方说明](https://developers.openai.com/codex/agent-approvals-security)）。最省事的做法：第 2 步的压缩包自己下载，解压后在 Codex 里把这个文件夹当本地项目打开。不用连 GitHub。
+
 ### 2. 拿到文件
 
-两套选**一套**：`zh-CN/`（简体中文）或 `en/`（English），各自完整。
+两套选**一套**下载。不用 Git，也不用 GitHub 账号。
 
-**最省事：让 AI 来。** 新建一个空文件夹（比如 `my-job-search`），在 AI 工具里打开它，贴这段：
+- **简体中文**：[resume-gate-zh-CN.zip](https://github.com/weareheya/Resume-Gate/releases/latest/download/resume-gate-zh-CN.zip)
+- **English**：[resume-gate-en.zip](https://github.com/weareheya/Resume-Gate/releases/latest/download/resume-gate-en.zip)
+
+解压，用 AI 工具打开这个文件夹就行。文件夹名可以随便改。
+
+**想让 AI 来做？** 在 AI 工具里打开一个空文件夹，贴这段：
 
 ```text
-在这个文件夹里装好 Resume-Gate。下载 https://github.com/weareheya/Resume-Gate，把里面 zh-CN/ 文件夹的全部内容复制到这个文件夹（要英文版就用 en/），然后删掉下载的副本。确认 AGENTS.md 在这里；如果装了 git，再运行 git init。
+在这个文件夹里装好 Resume-Gate。下载 https://github.com/weareheya/Resume-Gate/releases/latest/download/resume-gate-zh-CN.zip（要英文版就用 resume-gate-en.zip），解压，把里面 resume-gate-zh-CN/ 文件夹的全部内容复制到这个文件夹，再删掉压缩包和多出来的文件夹。这是公开下载，不需要 GitHub 账号或连接器。如果联网要我批准，就为这次下载问我一次。最后确认 AGENTS.md 在这里；如果装了 git，再运行 git init。
 ```
-
-**手动，不用 Git：** 打开[仓库页面](https://github.com/weareheya/Resume-Gate)，点 **Code → Download ZIP**（[说明](https://docs.github.com/en/repositories/working-with-files/using-files/downloading-source-code-archives)），解压，把 `zh-CN/`（或 `en/`）里的内容复制到一个新文件夹。
 
 **用 Git：**
 

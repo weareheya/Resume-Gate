@@ -53,7 +53,7 @@ Each step has an output you must be able to show before moving on. Details in [d
 
 ## Quick start
 
-**1. Copy the kit into your own private project.**
+**1. Copy the kit into your own private project.** Easiest: download [resume-gate-en.zip](https://github.com/weareheya/Resume-Gate/releases/latest/download/resume-gate-en.zip), unzip it, and open the folder in your AI tool. No Git or GitHub account needed. With Git:
 
 ```bash
 git clone https://github.com/weareheya/Resume-Gate.git
