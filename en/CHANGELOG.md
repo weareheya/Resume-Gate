@@ -10,7 +10,7 @@ What changed in each version, and whether you need to do anything. Your version 
 - **Your own rules have their own file.** `docs/MY-DECISIONS.md` holds your rules (from D-101). `docs/DECISIONS.md` keeps the starter rules and is replaced on update, so updates never overwrite your rules.
 - **Updating.** `VERSION`, this changelog, and prompt 5.
 - Claim Cards have a "To fill" section for skipped questions.
-- Diagrams and the report carry icons and a RESUME-GATE watermark.
+- Diagrams and the report carry icons and a RESUME-GATE watermark. In the report, the score and every dimension are coloured by band (red, ochre, blue, green), with serif headings and numbers.
 
 **What you need to do**
 - If you added or changed rules in `docs/DECISIONS.md`, they need to move to `docs/MY-DECISIONS.md`. Prompt 5 does this for you and shows you what moved.

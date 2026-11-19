@@ -13,7 +13,14 @@
 <style>
 :root{--bg:#FAFAF8;--ink:#1A1A1A;--ink2:#5C5A55;--soft:#D9D7D0;--track:#ECEBE6;--tint:#F3F2EE;--acc:#151515;--acc2:#858E96;--card:#FFFFFF;
  --sans:Inter,-apple-system,"Helvetica Neue","PingFang SC","Source Han Sans SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif;
- --mono:"JetBrains Mono","SF Mono",Menlo,Consolas,monospace}
+ --mono:"JetBrains Mono","SF Mono",Menlo,Consolas,monospace;
+ --serif:Charter,Georgia,"Songti SC","Noto Serif SC","Source Han Serif SC",serif;
+ --display:var(--serif);--b0:#C65B3D;--b1:#9B7B58;--b2:#5D748C;--b3:#6F8662}
+.bc0{--bandc:var(--b0)}.bc1{--bandc:var(--b1)}.bc2{--bandc:var(--b2)}.bc3{--bandc:var(--b3)}
+.bar i.bc0{background:var(--b0)}.bar i.bc1{background:var(--b1)}.bar i.bc2{background:var(--b2)}.bar i.bc3{background:var(--b3)}
+h1,.sc h3,.ring .num b,.card .big{font-family:var(--display)}
+body .band{background:var(--bandc,var(--ink))}
+body .scale span.cur{border-top-color:var(--bandc,var(--ink))}
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased}
 .ic{width:18px;height:18px;flex:none;vertical-align:-3px}
@@ -119,7 +126,6 @@ body.sharing .share{display:flex;flex-direction:column;align-items:center}
 .sc .cta .u{font-family:var(--mono);font-size:12.5px;color:#D9D7D0}
 .sc .cta .st{display:inline-flex;align-items:center;gap:6px;margin-top:12px;background:#fff;color:var(--ink);padding:6px 12px;font-size:13px;font-weight:600}
 .sc .cta .st .ic{width:14px;height:14px}
-.sc .sig{position:absolute;right:32px;bottom:22px;font-family:var(--mono);font-size:10px;color:var(--acc2);letter-spacing:.06em}
 .share .hint{margin-top:14px;font-size:13px;color:var(--ink2);max-width:540px;text-align:center}
 @media (max-width:760px){.hero,.two{grid-template-columns:1fr}.hero{padding:20px}.grid{grid-template-columns:1fr 1fr}.wrap{padding:24px 16px}.toolbar{padding:10px 16px}.brand span.txt{display:none}.prog .row{grid-template-columns:1fr 100px}.prog .row .bar{display:none}}
 @media print{.toolbar{display:none}.bgmark{position:absolute}.wrap{padding:0}h2{break-after:avoid}.card,.item,tr{break-inside:avoid}}
@@ -363,6 +369,8 @@ ids.filter(on).forEach(id => { wsum += WEIGHTS[id]; acc += WEIGHTS[id] * R[id].p
 const score = wsum ? Math.round(acc / wsum * 100) : 0;
 const bandIdx = score >= 85 ? 3 : score >= 70 ? 2 : score >= 55 ? 1 : 0;
 const band = L.bands[bandIdx];
+const bandOf = p => p >= .85 ? 3 : p >= .70 ? 2 : p >= .55 ? 1 : 0;
+document.body.classList.add("bc" + bandIdx);
 const pct = x => Math.round(x * 100) + "%";
 const fmt = r => (Number.isInteger(r.n) ? r.n : r.n.toFixed(1)) + " / " + r.d;
 const modeName = job ? L.mode_job : L.mode_checkup;
@@ -372,7 +380,7 @@ const ring = (size, r, sw) => {
   const c = size / 2, C = 2 * Math.PI * r;
   const ticks = [55, 70, 85].map(v => { const a = (v / 100) * 2 * Math.PI - Math.PI / 2, r1 = r - sw / 2 - 3, r2 = r + sw / 2 + 3;
     return `<line x1="${c + r1 * Math.cos(a)}" y1="${c + r1 * Math.sin(a)}" x2="${c + r2 * Math.cos(a)}" y2="${c + r2 * Math.sin(a)}" stroke="#858E96" stroke-width="1.5"/>`; }).join("");
-  return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}"><circle cx="${c}" cy="${c}" r="${r}" fill="none" stroke="#ECEBE6" stroke-width="${sw}"/><circle cx="${c}" cy="${c}" r="${r}" fill="none" stroke="#1A1A1A" stroke-width="${sw}" stroke-dasharray="${C * score / 100} ${C}" transform="rotate(-90 ${c} ${c})"/>${ticks}</svg>`;
+  return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}"><circle cx="${c}" cy="${c}" r="${r}" fill="none" stroke="#ECEBE6" stroke-width="${sw}"/><circle cx="${c}" cy="${c}" r="${r}" fill="none" stroke="var(--bandc,#1A1A1A)" stroke-width="${sw}" stroke-dasharray="${C * score / 100} ${C}" transform="rotate(-90 ${c} ${c})"/>${ticks}</svg>`;
 };
 const wm = cls => `<svg class="${cls}" viewBox="0 0 1200 200" aria-hidden="true"><text x="600" y="168" text-anchor="middle" font-family="Inter,-apple-system,Helvetica,Arial,sans-serif" font-size="190" font-weight="800" fill="#F1F0EC" textLength="1180" lengthAdjust="spacingAndGlyphs">RESUME-GATE</text></svg>`;
 
@@ -388,7 +396,7 @@ h += `<ul class="sum">${(D.summary || []).map((s, i) => `<li>${ic(sumIcons[i] ||
 h += `<h2>${ic("gauge")}${L.dims}</h2><div class="grid">`;
 ids.forEach(id => {
   const r = R[id], o = on(id);
-  h += `<div class="card${o ? "" : " off"}"><div class="top"><span class="icb">${ic(DIM_ICON[id])}</span><div><div class="name">${L.names[id]}</div><div class="stamp">RG // ${id}</div></div></div><div class="big">${o ? pct(r.p) : "-"}</div><div class="bar"><i style="width:${o ? pct(r.p) : 0}"></i></div><div class="cnt">${o ? fmt(r) : L.notscored}</div></div>`;
+  h += `<div class="card${o ? "" : " off"}"><div class="top"><span class="icb">${ic(DIM_ICON[id])}</span><div><div class="name">${L.names[id]}</div><div class="stamp">RG // ${id}</div></div></div><div class="big">${o ? pct(r.p) : "-"}</div><div class="bar"><i class="bc${bandOf(r.p)}" style="width:${o ? pct(r.p) : 0}"></i></div><div class="cnt">${o ? fmt(r) : L.notscored}</div></div>`;
 });
 h += `</div>`;
 if ((D.structure || []).length) h += `<div class="checks">${D.structure.map(c => `<span class="${c.pass ? "" : "fail"}">${ic(c.pass ? "check" : "x")}${esc(c.check)}</span>`).join("")}</div>`;
@@ -429,8 +437,8 @@ let s = `<div class="sc">${wm("wm")}`;
 s += `<div class="hd"><span class="brand"><span class="logo">${ic("gate")}</span>RESUME-GATE</span><span class="chip">${ic(job ? "briefcase" : "gauge")}${modeName}</span></div>`;
 s += `<h3>${esc(D.meta.share_name || L.share_title)}</h3>`;
 s += `<div class="mid"><div class="ring">${ring(150, 64, 10)}<div class="num"><b>${score}</b><small>${L.of100.toUpperCase()}</small></div></div><div><div class="band">${ic("gauge")}${band}</div><div class="std">${L.share_std}</div></div></div>`;
-s += `<div class="dl">${ids.filter(on).map(id => `<div>${ic(DIM_ICON[id])}<span>${L.names[id]}</span><div class="bar"><i style="width:${pct(R[id].p)}"></i></div><span>${pct(R[id].p)}</span></div>`).join("")}</div>`;
-s += `<div class="cta"><b>${ic("target")}${L.share_cta}</b><span class="u">github.com/weareheya/Resume-Gate</span><br><span class="st">${ic("star")}${L.share_star}</span><span class="sig">by HeyEstella</span></div></div><p class="hint">${D.meta.share_only ? L.share_hint : L.share_hint_full}</p>`;
+s += `<div class="dl">${ids.filter(on).map(id => `<div>${ic(DIM_ICON[id])}<span>${L.names[id]}</span><div class="bar"><i class="bc${bandOf(R[id].p)}" style="width:${pct(R[id].p)}"></i></div><span>${pct(R[id].p)}</span></div>`).join("")}</div>`;
+s += `<div class="cta"><b>${ic("target")}${L.share_cta}</b><span class="u">github.com/weareheya/Resume-Gate</span><br><span class="st">${ic("star")}${L.share_star}</span></div></div><p class="hint">${D.meta.share_only ? L.share_hint : L.share_hint_full}</p>`;
 document.getElementById("share").innerHTML = s;
 
 const tb = document.getElementById("toolbar");
