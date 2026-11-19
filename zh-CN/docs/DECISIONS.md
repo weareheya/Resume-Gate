@@ -1,13 +1,13 @@
 # DECISIONS · 决策登记簿
 
-> 本人确认过的规则。**状态为 Active 的，AI 必须遵守**；推翻时把旧条目改成 `Superseded by D-xxx`，不删除。
-> 新增前先 `grep "^## D-" docs/DECISIONS.md` 取最大号 +1。
+> Resume-Gate 自带的起步规则（D-001 ~ D-099）。**状态为 Active 的，AI 必须遵守**，除非 [MY-DECISIONS.md](MY-DECISIONS.md) 里有规则覆盖它。
+> **不要改这个文件**，更新时它会被整份替换。你自己的规则、对这些规则的改动，都写进 `docs/MY-DECISIONS.md`。
 
 **scope**：`cv`（简历生产）· `process`（协作流程）· `strategy`（求职方向）
 
 **applies-to**：`all`（默认）、`type: 01` 或 `job: ACME-01`。只适合某一类岗位或某一次申请的规则，不该变成全局规则。只有 `all` 才约束每一份简历。
 
-下面 D-001 ~ D-016 是起步规则，来自实际踩过的坑。D-001 ~ D-010 防止事实丢失和夸大；D-011 ~ D-016 帮你把经历的价值挖出来，防止写得太弱。按你的情况增删改。
+下面 D-001 ~ D-016 是起步规则，来自实际踩过的坑。D-001 ~ D-010 防止事实丢失和夸大；D-011 ~ D-016 帮你把经历的价值挖出来，防止写得太弱。想改或停用某一条，在 `MY-DECISIONS.md` 里加一条规则，写明它覆盖哪一条。
 
 ---
 
@@ -87,9 +87,3 @@
 - 只用公开信息，用途是理解岗位，不为具体的人建档。
 
 ---
-
-<!-- 新决策模板：
-## D-0xx · 一句话标题
-- scope: cv|process|strategy · status: Active · applies-to: all · date: YYYY-MM-DD
-- 具体规则、适用范围、例外。
--->

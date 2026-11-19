@@ -31,5 +31,8 @@ What you actually did, in plain words. Include the context, what you specificall
 ## Source
 Where the proof is: emails, contracts, dashboard screenshots, a colleague who can vouch, a public link. If there's none, write "own account only."
 
+## To fill
+Questions skipped in the interview, to answer later. Delete this section once it's empty.
+
 ## Notes
 Points to be ready to explain in an interview.

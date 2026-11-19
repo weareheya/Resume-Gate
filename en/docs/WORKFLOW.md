@@ -23,12 +23,29 @@ Do this once, before your first job. It takes you from "I have an old resume" to
 | Step | What to do | Output |
 |---|---|---|
 | 0a | **Gather raw material**: your current resume, your LinkedIn text, old performance reviews, anything with facts in it. Put it in `evidence/sources/`. That folder is git-ignored, so it never gets committed | Files in `evidence/sources/` |
-| 0b | **List the accomplishments.** Use prompt 1 in [PROMPTS](PROMPTS.md). The AI lists what it finds and flags the vague ones | Numbered list |
-| 0c | **Turn each one into a Claim Card.** Use prompt 2: the AI interviews you, then drafts the card as `Needs review`. Start with your 5–10 strongest. Once you've read a card and confirmed it's right, change it to `Safe to draft` | Claim Cards in `evidence/claims/` |
-| 0d | **Draft the first baseline** from `Safe to draft` cards only. Copy `cv/resumes/_TEMPLATE.md` and tag every bullet with its Claim ID | `cv/resumes/<id>.md` |
-| 0e | **Review and approve** it as in S6 and S7. Add it to `cv/CV-INDEX.md` as the starting point for its type | An Approved baseline |
+| 0b | **Checkup report.** Use prompt 1 in [PROMPTS](PROMPTS.md). The AI reads the resume, counts what [REPORT](REPORT.md) asks for, and fills `report/template.html`. You get a scored, visual report before any interview: what's strong, what's vague, the five fixes that matter most | `reports/<date>-checkup.html`, plus a three-line summary in the chat |
+| 0c | **Interview plan.** The AI picks your **3 strongest** accomplishments (enough for a first baseline; the rest can wait), lists only what's still missing for each after reading your material, and writes the plan into `evidence/INTAKE.md`: how many questions, about how long. You pick a mode (see below) | `evidence/INTAKE.md` |
+| 0d | **Interview and write cards.** Use prompt 2. Every question starts with a progress line. Skip any question or stop any time: what's unanswered goes on the card as "To fill", not into more questions. Each card starts as `Needs review`; once you've read it and confirmed it's right, change it to `Safe to draft` | Claim Cards in `evidence/claims/`, `INTAKE.md` updated |
+| 0e | **Draft the first baseline** from `Safe to draft` cards only. Copy `cv/resumes/_TEMPLATE.md` and tag every bullet with its Claim ID | `cv/resumes/<id>.md` |
+| 0f | **Review and approve** it as in S6 and S7. Add it to `cv/CV-INDEX.md` as the starting point for its type | An Approved baseline |
 
-You're done when `cv/CV-INDEX.md` has at least one Approved starting point. After that, every new job follows S1 to S7.
+You're done when `cv/CV-INDEX.md` has at least one Approved starting point. After that, every new job follows S1 to S7. Add more cards whenever you like with prompt 2, and rerun the checkup (prompt 1) to see the score move.
+
+### Keeping the interview short
+
+The interview is the slowest part of Step 0, so the AI keeps it small and always says where you are.
+
+- **Don't ask what the material already answers.** If the old resume says "grew partners from 12 to 40", confirm it in one yes/no question instead of asking for it again.
+- **At most 5 questions per accomplishment.** What's still open after that goes on the card as "To fill".
+- **Three modes; the user picks one in 0c:**
+  - *One at a time*: one question, one answer. Slowest, easiest.
+  - *One form per accomplishment*: all of its questions in one message, answered in one reply.
+  - *Just talk*: the user describes it freely in one long message; the AI pulls out the facts and asks only what's left.
+- **A progress line before every question**, in this format:
+
+  `▓▓▓▓▓▓░░░░░░░░░ 6/15 · accomplishment 2/3 · question 1/5`
+
+- **"Skip" and "stop" always work.** On "stop", save `evidence/INTAKE.md` and say where the next session picks up.
 
 ## Claim statuses
 

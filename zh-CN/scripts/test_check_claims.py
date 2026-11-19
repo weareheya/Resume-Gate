@@ -242,5 +242,16 @@ class WorkedExample(unittest.TestCase):
             self.assertIn(snippet, out)
 
 
+class ReportScore(unittest.TestCase):
+    """report_score.py must agree with the sample in report/template.html (34, as the page shows)."""
+
+    def test_sample_report_score(self):
+        root = SCRIPT.parent.parent
+        r = subprocess.run([sys.executable, "-I", str(SCRIPT.with_name("report_score.py")), str(root / "report" / "template.html")],
+                           capture_output=True, text=True)
+        self.assertEqual(r.returncode, 0, r.stdout)
+        self.assertIn("34 / 100", r.stdout)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

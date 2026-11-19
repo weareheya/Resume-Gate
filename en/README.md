@@ -18,13 +18,14 @@ Mistakes that keep showing up when AI edits a resume, and where each fix lives:
 | A corrected strength quietly comes back weaker | **Semantic check in self-review**: protected claims are compared with their approved wording, not just checked for presence | [REVIEW-CHECKLIST A](docs/REVIEW-CHECKLIST.md) · [LESSONS L-12](docs/LESSONS.md) |
 | A few stray lines spill onto a last page | **Full-page rule + `pdf_fill`**: the PDF must fill its pages, and a script measures it | [D-009](docs/DECISIONS.md) · [pdf_fill.swift](scripts/pdf_fill.swift) |
 | The AI signs off on its own work | **Human review gate**: nothing is Approved until you say so, and sent versions are frozen | [WORKFLOW S7](docs/WORKFLOW.md) · [D-008, D-010](docs/DECISIONS.md) |
+| A long interview with no end in sight | **Checkup report first, then a short interview**: a scored visual report on day one, at most 3 accomplishments and 5 questions each, and a progress line on every question | [REPORT](docs/REPORT.md) · [WORKFLOW Step 0](docs/WORKFLOW.md) · [sample report](report/template.html) |
 
 ## Five ideas to know first
 
 - **Claim Card**: one file per accomplishment, holding the facts, what each number measures, what was yours versus the team's, and wording you must not use. It is the only place facts come from. [Template](evidence/claims/_TEMPLATE.md)
 - **Baseline and delta**: you never write a resume from scratch. Each new job copies the best-fitting approved version and changes only what the job needs. [WORKFLOW](docs/WORKFLOW.md)
 - **Protected claim**: a card marked `protected: true` can't be dropped or weakened without your say-so, because it's the kind of strength an AI tends to water down.
-- **Decisions**: when you settle a rule ("always do X"), it goes into [DECISIONS](docs/DECISIONS.md), so the next session and the next AI follow it too.
+- **Decisions**: when you settle a rule ("always do X"), it goes into [MY-DECISIONS](docs/MY-DECISIONS.md), so the next session and the next AI follow it too. The starter rules in [DECISIONS](docs/DECISIONS.md) stay as shipped, so updates never clash with yours.
 - **You are the gate**: the AI drafts, asks, and checks itself; only you mark a version Approved.
 
 ## The flow
@@ -40,7 +41,10 @@ Each step has an output you must be able to show before moving on. Details in [d
 | [AGENTS.md](AGENTS.md) | Instructions for any AI that picks this up | Your AI reads it first; skim it once yourself |
 | [docs/WORKFLOW.md](docs/WORKFLOW.md) | Step 0, the seven steps, probing questions, Coverage Report format | Before your first resume |
 | [docs/PROMPTS.md](docs/PROMPTS.md) | Copy-paste prompts for each moment | Every session |
-| [docs/DECISIONS.md](docs/DECISIONS.md) | Decision register, with 16 starter rules to adapt | When you set or change a rule |
+| [docs/DECISIONS.md](docs/DECISIONS.md) | 16 starter rules. Don't edit: it's replaced when you update | Once, to know the defaults |
+| [docs/MY-DECISIONS.md](docs/MY-DECISIONS.md) | Your own rules, including changes to starter rules. Yours alone | When you set or change a rule |
+| [docs/REPORT.md](docs/REPORT.md) · [report/template.html](report/template.html) | The scored, visual checkup and job-fit report: what's measured, and the template | Step 0, and whenever you want to see where a resume stands |
+| [evidence/INTAKE.md](evidence/INTAKE.md) | Step 0 interview plan and progress, so a new session picks up where you stopped | Step 0 |
 | [docs/REVIEW-CHECKLIST.md](docs/REVIEW-CHECKLIST.md) | AI self-review: facts, writing, layout, handoff format | When the AI hands you a version |
 | [docs/LESSONS.md](docs/LESSONS.md) | Real process mistakes and the guardrails against them | Once, and whenever something goes wrong |
 | [evidence/claims/](evidence/claims/_TEMPLATE.md) | Evidence bank: one Claim Card per accomplishment | Step 0, and whenever you remember something new |
@@ -48,6 +52,7 @@ Each step has an output you must be able to show before moving on. Details in [d
 | [cv/resumes/](cv/resumes/_TEMPLATE.md) | The resumes themselves, one Markdown file per version | Every new job |
 | [cv/changelogs/](cv/changelogs/_TEMPLATE.md) | What changed in each version and why | Every new job |
 | [scripts/check_claims.py](scripts/check_claims.py) | Checks every bullet has a source, claims are usable, protected ones stay (Python 3) | Before you review a version |
+| [scripts/report_score.py](scripts/report_score.py) | Prints a report's score with the same formula as the template, so the chat and the page agree (Python 3) | After the AI fills a report |
 | [scripts/pdf_fill.swift](scripts/pdf_fill.swift) | Renders the PDF to images, checks page count and how far down each page the content reaches (macOS) | After every export |
 | [examples/](examples/README.md) | A full made-up mini project (claims, baseline, a new version, its Change Log, and a version with planted mistakes), plus ten before-and-after cases | Before Step 0, to see the level of detail |
 
@@ -67,14 +72,14 @@ Push it only to a **private** repository (see [Keep your working copy private](#
 **2. Open the folder in an AI that can read files**: Claude Code, Codex, Cursor, or any agent with file access. Then paste prompt 0 from [PROMPTS](docs/PROMPTS.md):
 
 ```text
-Read AGENTS.md, then docs/WORKFLOW.md. I'm new to this kit. Walk me through Step 0 one step at a time. Before each step, tell me what it produces and what you need from me. Don't start the next step until I say so.
+Read AGENTS.md, then docs/WORKFLOW.md. I'm new to this kit. Walk me through Step 0 one step at a time. Start with the checkup report on my current resume, then show me the interview plan before you ask anything. Before each step, tell me what it produces and what you need from me. Don't start the next step until I say so.
 ```
 
-**3. Do Step 0.** Put your old resume in `evidence/sources/`, turn your strongest 5–10 accomplishments into Claim Cards, and approve a first baseline. For your first baseline you can use the `General` type in [CV-INDEX](cv/CV-INDEX.md); add specific job types once you know which roles you're targeting.
+**3. Do Step 0.** Put your old resume in `evidence/sources/`. You get a scored [checkup report](report/template.html) first. Then the AI interviews you about your 3 strongest accomplishments (more can come later), with a progress line on every question, turns them into Claim Cards, and you approve a first baseline. For your first baseline you can use the `General` type in [CV-INDEX](cv/CV-INDEX.md); add specific job types once you know which roles you're targeting.
 
 **4. For each new job**, use prompt 3 and paste the JD. Review the version the AI hands you, approve it, send it, and mark it `Sent`.
 
-**5. After each version**: the Change Log is written, `CV-INDEX.md` is updated, and any new rule you settled on is in `DECISIONS.md`.
+**5. After each version**: the Change Log is written, `CV-INDEX.md` is updated, and any new rule you settled on is in `MY-DECISIONS.md`.
 
 **Only have a chat AI (no file access)?** Put `AGENTS.md` and the files in `docs/` into a project in your chat tool (for example a Claude Project or a ChatGPT Project) as reference files, keep your Claim Cards in a document or a database the chat can read, and paste each JD into the project. The scripts won't run there, so do their checks by hand: every bullet maps to a card, and the PDF has the right page count.
 
@@ -93,6 +98,14 @@ mkdir -p /tmp/cv-check && swift scripts/pdf_fill.swift your-cv.pdf /tmp/cv-check
 ```
 
 It prints the page count and how far down the content reaches on each page, and writes `p1.png`, `p2.png`, … so you can paste them to your AI or just look. If the page count isn't 1 or 2, or the content on the last page reaches less than 85% of the way down, it exits with code 2, so you can wire it into a script. Not on macOS? Open the exported PDF and check the page count and the last page by eye.
+
+## Staying up to date
+
+Resume-Gate keeps improving. `VERSION` says which version you have, and [CHANGELOG.md](CHANGELOG.md) says what changed in each one and whether you need to do anything.
+
+To update, paste prompt 5 from [PROMPTS](docs/PROMPTS.md). The AI fetches the latest kit, shows you what changed, and after you say yes replaces only the kit files. Your evidence, resumes, reports, `INTAKE.md` and `MY-DECISIONS.md` are never touched.
+
+To hear about new versions, open the [repo page](https://github.com/weareheya/Resume-Gate) and choose **Watch → Custom → Releases** (needs a free GitHub account). Or just ask your AI to check every few weeks.
 
 ## What the scripts check, and what they don't
 

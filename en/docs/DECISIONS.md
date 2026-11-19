@@ -1,13 +1,13 @@
 # DECISIONS: Decision register
 
-> Rules the user has confirmed. **The AI must follow every one with status Active.** To overturn one, change its status to `Superseded by D-xxx`. Don't delete it.
-> Before adding one, run `grep "^## D-" docs/DECISIONS.md`, take the highest number, and add 1.
+> Starter rules that ship with Resume-Gate (D-001 to D-099). **The AI must follow every one with status Active**, unless a rule in [MY-DECISIONS.md](MY-DECISIONS.md) overrides it.
+> **Don't edit this file.** It's replaced when you update the kit. Your own rules, and any change to these, go in `docs/MY-DECISIONS.md`.
 
 **scope**: `cv` (resume production) · `process` (how we work together) · `strategy` (job-search direction)
 
 **applies-to**: `all` (the default), `type: 01`, or `job: ACME-01`. A rule that only fits one kind of job or one application shouldn't become a global rule. Only `all` binds every resume.
 
-D-001 to D-016 are starter rules, each born from a real mistake. D-001 to D-010 keep facts from getting lost or inflated; D-011 to D-016 help you dig out what your experience is actually worth, so it doesn't get written too weakly. Add, remove, or change them to fit you.
+D-001 to D-016 are starter rules, each born from a real mistake. D-001 to D-010 keep facts from getting lost or inflated; D-011 to D-016 help you dig out what your experience is actually worth, so it doesn't get written too weakly. To change or switch one off, add a rule in `MY-DECISIONS.md` that says which one it overrides.
 
 ---
 
@@ -87,9 +87,3 @@ D-001 to D-016 are starter rules, each born from a real mistake. D-001 to D-010 
 - Public information only, used to understand the role. Don't build profiles of individuals.
 
 ---
-
-<!-- Template for a new decision:
-## D-0xx · One-line title
-- scope: cv|process|strategy · status: Active · applies-to: all · date: YYYY-MM-DD
-- The rule, where it applies, and any exceptions.
--->

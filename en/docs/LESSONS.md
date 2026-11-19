@@ -16,7 +16,7 @@
 ## L-10 · A decision lived in one tool, and the next session lost it
 - **What happened**: The job-type taxonomy had already been settled in the project. Another session, working in a different tool, never read it and proposed rules that already existed as if they were new.
 - **Why**: The Evidence Retrieval Gate only required reading Claim Cards, not DECISIONS or CV-INDEX.
-- **Guardrail**: Every settled decision lives only in `docs/DECISIONS.md`. Any new session, in any tool, reads DECISIONS and CV-INDEX before the evidence (see the reading order in AGENTS.md).
+- **Guardrail**: Every settled decision lives only in `docs/DECISIONS.md` (starter rules) or `docs/MY-DECISIONS.md` (yours). Any new session, in any tool, reads DECISIONS and CV-INDEX before the evidence (see the reading order in AGENTS.md).
 
 ## L-09 · An error in an approved resume got inherited
 - **What happened**: A number was wrong in an old resume. Because that resume was approved, the AI treated it as a valid source and copied the number into every new version.
@@ -45,7 +45,7 @@
 
 ## L-06 · Two sessions numbered decisions independently and collided
 - **What happened**: Two AI sessions were setting rules at the same time. Each took the highest number it could see and added 1, so the numbers clashed. One of them wrote its number only in the chat, not in DECISIONS, so the clash was invisible.
-- **Guardrail**: Write a new decision into DECISIONS right away. Before numbering, run `grep "^## D-" docs/DECISIONS.md`, take the highest, and add 1. Let only one session edit the rule files at a time.
+- **Guardrail**: Write a new decision into MY-DECISIONS right away. Before numbering, run `grep "^## D-" docs/MY-DECISIONS.md`, take the highest, and add 1. Let only one session edit the rule files at a time.
 
 ## L-07 · A few extra lines became an orphan page
 - **What happened**: After a content edit, page 3 held just 2 lines.
