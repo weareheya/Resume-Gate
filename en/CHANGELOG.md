@@ -2,6 +2,13 @@
 
 What changed in each version, and whether you need to do anything. Your version is in `VERSION`. To update, paste prompt 5 from `docs/PROMPTS.md`.
 
+## 0.2.1 · 2026-11-19
+
+- Share card and poster: more breathing room, band ticks moved outside the score ring, a lighter watermark that no longer sits on the score, and a call to action that wraps cleanly on phones.
+- Full report on phones: tighter dimension cards, and the band scale shows only the current band.
+
+**What you need to do**: nothing; reports you make from now on use the new layout.
+
 ## 0.2.0 · 2026-11-19
 
 **New**
