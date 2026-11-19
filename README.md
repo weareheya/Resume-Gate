@@ -10,6 +10,8 @@ A resume workflow for a long job search, where you tailor many versions over wee
 
 ![Resume-Gate overview: one fact, one card, every version traces back](assets/overview-en.svg)
 
+**New in 0.2.0 (2026-11-19):** a scored checkup report with a share card, a shorter Step 0 interview with a progress line, and updates that never overwrite your own rules. [All changes](en/CHANGELOG.md)
+
 ## What's inside
 
 | Feature | What it does | English | 中文 |
@@ -100,6 +102,8 @@ Not sure about any of this? Ask the AI tool you picked in step 1. It can check w
 **适合**：用 AI 改过简历，遇到过它把确认过的成果弄丢、把数字写大，或者把最强的经历悄悄写弱。**用不上**：只要一份简历，投一次。
 
 ![Resume-Gate 总览：事实只写一次，每一版都能追回出处](assets/overview-zh.svg)
+
+**0.2.0 新增（2026-11-19）：** 带分数的体检报告和分享卡、更短且带进度条的 Step 0 采访，以及永远不会冲掉你自己规则的更新机制。[全部更新记录](zh-CN/CHANGELOG.md)
 
 ## 里面有什么
 
