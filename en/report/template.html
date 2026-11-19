@@ -1,0 +1,502 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Resume-Gate report</title>
+<!--
+  Resume-Gate report template. To make a report:
+  1. Copy this file to reports/<date>-checkup.html (or reports/<date>-<job-id>.html).
+  2. Replace ONLY the JSON inside <script id="report-data">. Follow docs/REPORT.md.
+  3. Never type scores or percentages: the script below counts the marks and computes them.
+-->
+<style>
+:root{--bg:#FAFAF8;--ink:#1A1A1A;--ink2:#5C5A55;--soft:#D9D7D0;--track:#ECEBE6;--tint:#F3F2EE;--acc:#151515;--acc2:#858E96;--card:#FFFFFF;
+ --sans:Inter,-apple-system,"Helvetica Neue","PingFang SC","Source Han Sans SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif;
+ --mono:"JetBrains Mono","SF Mono",Menlo,Consolas,monospace;
+ --serif:Charter,Georgia,"Songti SC","Noto Serif SC","Source Han Serif SC",serif;
+ --display:var(--serif);--b0:#C65B3D;--b1:#9B7B58;--b2:#5D748C;--b3:#6F8662}
+.bc0{--bandc:var(--b0)}.bc1{--bandc:var(--b1)}.bc2{--bandc:var(--b2)}.bc3{--bandc:var(--b3)}
+.bar i.bc0{background:var(--b0)}.bar i.bc1{background:var(--b1)}.bar i.bc2{background:var(--b2)}.bar i.bc3{background:var(--b3)}
+h1,.sc h3,.ring .num b,.card .big{font-family:var(--display)}
+body .band{background:var(--bandc,var(--ink))}
+body .scale span.cur{border-top-color:var(--bandc,var(--ink))}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+.ic{width:18px;height:18px;flex:none;vertical-align:-3px}
+.bgmark{position:fixed;left:2vw;right:2vw;top:50%;transform:translateY(-50%);width:96vw;height:auto;pointer-events:none;z-index:0}
+.toolbar{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 32px;background:rgba(250,250,248,.94);border-bottom:1px solid var(--soft);backdrop-filter:blur(6px)}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-decoration:none;color:var(--ink)}
+.logo{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;background:var(--ink);color:#fff}
+.logo .ic{width:16px;height:16px}
+.views{display:flex;gap:6px}
+.views button{display:inline-flex;align-items:center;gap:6px;font:inherit;font-size:13px;padding:6px 12px;border:1px solid var(--ink);background:var(--card);color:var(--ink);cursor:pointer}
+.views button.on{background:var(--ink);color:#fff}
+.views .ic{width:15px;height:15px}
+.wrap{position:relative;z-index:1;max-width:1000px;margin:0 auto;padding:40px 32px 32px}
+.kicker{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;letter-spacing:.14em;color:var(--ink2)}
+h1{font-size:32px;line-height:1.2;margin:10px 0 12px;font-weight:700;letter-spacing:-.01em}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--ink2);padding:5px 10px;border:1px solid var(--soft);background:var(--card)}
+.chip .ic{width:14px;height:14px}
+.hero{margin-top:28px;display:grid;grid-template-columns:250px 1fr;gap:36px;align-items:center;background:var(--card);border:1px solid var(--ink);border-top:4px solid var(--ink);padding:28px 32px}
+.ring{position:relative;width:210px;height:210px}
+.ring .num{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring .num b{font-size:64px;line-height:1;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.ring .num small{font-family:var(--mono);font-size:11px;color:var(--ink2);letter-spacing:.1em;margin-top:8px}
+.band{display:inline-flex;align-items:center;gap:6px;background:var(--ink);color:#fff;padding:6px 12px;font-size:14px;font-weight:600;margin-bottom:16px}
+.band .ic{width:16px;height:16px}
+.scale{display:flex;gap:4px;margin:-6px 0 18px;font-family:var(--mono);font-size:10px;color:var(--acc2)}
+.scale span{flex:1;border-top:3px solid var(--track);padding-top:5px}
+.scale span.cur{border-top-color:var(--ink);color:var(--ink)}
+.sum{list-style:none;margin:0;padding:0}
+.sum li{display:flex;gap:10px;align-items:flex-start;font-size:15.5px;line-height:1.55;padding:6px 0}
+.sum li .ic{margin-top:3px}
+.sum li:first-child{font-weight:600}
+h2{display:flex;align-items:center;gap:9px;font-size:13px;font-family:var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink);font-weight:600;margin:44px 0 16px;padding-bottom:10px;border-bottom:1px solid var(--ink)}
+h2 .ic{width:17px;height:17px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.card{background:var(--card);border:1px solid var(--ink);padding:16px 18px 16px;position:relative}
+.card.off{opacity:.5;border-style:dashed}
+.card .top{display:flex;align-items:center;gap:10px}
+.card .icb{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;background:var(--tint);border:1px solid var(--soft)}
+.card .name{font-weight:600;font-size:15px}
+.card .stamp{font-family:var(--mono);font-size:10px;color:var(--acc2);letter-spacing:.06em}
+.card .big{font-size:30px;font-weight:700;margin:14px 0 8px;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.bar{height:6px;background:var(--track)}
+.bar i{display:block;height:100%;background:var(--ink)}
+.card .cnt{font-size:12.5px;color:var(--ink2);margin-top:8px;font-variant-numeric:tabular-nums}
+.checks{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.checks span{display:inline-flex;align-items:center;gap:6px;font-size:13px;padding:5px 10px;border:1px solid var(--ink);background:var(--card)}
+.checks span .ic{width:14px;height:14px}
+.checks span.fail{border-style:dashed;border-color:var(--acc2);color:var(--ink2)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+.items{display:flex;flex-direction:column;gap:10px}
+.item{display:flex;gap:14px;background:var(--card);border:1px solid var(--soft);padding:14px 16px}
+.item .mk{flex:none;display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;background:var(--ink);color:#fff;font-family:var(--mono);font-size:12px}
+.item .mk.lt{background:var(--tint);color:var(--ink);border:1px solid var(--soft)}
+.item .t{font-weight:600;font-size:15px;line-height:1.4}
+.item .w{display:inline-block;font-family:var(--mono);font-size:10.5px;color:var(--acc2);margin-top:2px}
+.item .d{color:var(--ink2);font-size:14px;line-height:1.55;margin-top:4px}
+table{width:100%;border-collapse:collapse;font-size:14px;background:var(--card);border:1px solid var(--ink)}
+th{text-align:left;font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--ink2);font-weight:500;padding:10px 12px;border-bottom:1px solid var(--ink);background:var(--tint)}
+td{padding:10px 12px;border-top:1px solid var(--soft);vertical-align:top;line-height:1.45}
+td.c{text-align:center;white-space:nowrap}
+.pill{display:inline-block;font-size:12px;padding:2px 9px;border:1px solid var(--ink)}
+.pill.direct{background:var(--ink);color:#fff}
+.pill.none{border-style:dashed;border-color:var(--acc2);color:var(--acc2)}
+.ok{font-weight:700}.no{color:var(--acc2)}
+.terms{margin-top:14px}
+.terms .lbl{font-size:13px;color:var(--ink2);margin-bottom:6px}
+.terms span.t{display:inline-block;margin:4px 6px 0 0;padding:3px 10px;font-size:13px;border:1px solid var(--ink);background:var(--card)}
+.terms span.t.miss{border-style:dashed;border-color:var(--acc2);color:var(--ink2);background:transparent}
+.prog{background:var(--card);border:1px solid var(--soft);padding:16px 18px}
+.cells{display:flex;gap:3px;margin-bottom:8px}
+.cells i{flex:1;height:12px;background:var(--track)}
+.cells i.f{background:var(--ink)}
+.prog .total{font-family:var(--mono);font-size:12px;color:var(--ink2);margin-bottom:10px}
+.prog .row{display:grid;grid-template-columns:1fr 180px 150px;gap:14px;align-items:center;padding:9px 0;border-top:1px solid var(--soft);font-size:14px}
+.prog .row .s{font-family:var(--mono);font-size:11px;color:var(--ink2);text-align:right;white-space:nowrap}
+details summary{cursor:pointer;font-size:14px;color:var(--ink2);margin-bottom:12px}
+.method{display:flex;gap:10px;margin-top:40px;font-size:12.5px;line-height:1.65;color:var(--ink2);max-width:780px}
+footer{margin-top:24px;padding-top:12px;border-top:1px solid var(--ink);display:flex;justify-content:space-between;align-items:center;gap:16px;font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:var(--acc2)}
+footer a{color:inherit;text-decoration:none}
+footer .l{display:flex;align-items:center;gap:8px}
+footer .logo{width:18px;height:18px}
+footer .logo .ic{width:11px;height:11px}
+.share{display:none;justify-content:center;padding:32px 16px 48px;position:relative;z-index:1}
+body.sharing .wrap,body.sharing .bgmark{display:none}
+body.sharing .share{display:flex;flex-direction:column;align-items:center}
+.sc{width:540px;max-width:100%;aspect-ratio:4/5;background:var(--bg);border:1px solid var(--ink);position:relative;overflow:hidden;padding:30px 32px 0;display:flex;flex-direction:column}
+.sc .wm{position:absolute;left:4%;width:92%;top:47%;z-index:0}
+.sc>*{position:relative;z-index:1}
+.sc .hd{display:flex;align-items:center;justify-content:space-between}
+.sc .hd .chip{padding:3px 8px;font-size:12px}
+.sc h3{margin:18px 0 0;font-size:24px;letter-spacing:-.01em}
+.sc .mid{display:flex;align-items:center;gap:22px;margin:16px 0 16px}
+.sc .mid .ring{width:150px;height:150px}
+.sc .mid .ring .num b{font-size:46px}
+.sc .std{font-family:var(--mono);font-size:10.5px;color:var(--ink2);letter-spacing:.03em;line-height:1.6}
+.sc .dl{display:grid;gap:8px}
+.sc .dl>div{display:grid;grid-template-columns:18px 84px 1fr 38px;gap:9px;align-items:center;font-size:13px}
+.sc .dl .ic{width:15px;height:15px}
+.sc .dl>div>span:last-child{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+.sc .cta{margin:auto -32px 0;background:var(--ink);color:#fff;padding:18px 32px 20px;position:relative}
+.sc .cta b{display:flex;align-items:center;gap:8px;font-size:17px;margin-bottom:6px}
+.sc .cta .u{font-family:var(--mono);font-size:12.5px;color:#D9D7D0}
+.sc .cta .st{display:inline-flex;align-items:center;gap:6px;margin-top:12px;background:#fff;color:var(--ink);padding:6px 12px;font-size:13px;font-weight:600}
+.sc .cta .st .ic{width:14px;height:14px}
+.sc{aspect-ratio:auto;min-height:675px}
+.sc .hl{font-family:var(--display);font-size:19px;line-height:1.35;margin-top:8px}
+.sc .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.sc .tags span{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;padding:3px 9px;border:1px solid var(--ink);background:var(--card)}
+.sc .tags span.role{background:var(--ink);color:#fff}
+.sc .tags .ic{width:13px;height:13px}
+.sc .hls{margin:14px 0 0;padding:0;list-style:none}
+.sc .hls li{display:flex;gap:8px;font-size:13.5px;line-height:1.45;padding:4px 0}
+.sc .hls .ic{width:15px;height:15px;margin-top:2px}
+.sc .cmp{display:grid;grid-template-columns:1fr 40px 1fr;align-items:start;margin:18px 0 14px;text-align:center}
+.sc .cmp .ring{width:130px;height:130px;margin:0 auto}
+.sc .cmp .ring .num b{font-size:40px}
+.sc .cmp .lab{font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--ink2);margin-top:6px}
+.sc .cmp .arw{padding-top:52px}
+.sc .cmp .arw .ic{width:26px;height:26px}
+.sc .dl,.sc .cd{margin-bottom:24px}
+.sc .foot{margin-bottom:18px}
+.sc .delta{display:inline-block;margin-top:6px;font-family:var(--display);font-weight:700;font-size:18px}
+.sc .cd{display:grid;gap:7px}
+.sc .cd>div{display:grid;grid-template-columns:18px 78px 1fr 46px;gap:9px;align-items:center;font-size:13px}
+.sc .cd .ic{width:15px;height:15px}
+.sc .cd .pair{display:grid;gap:3px}
+.sc .cd .pair .bar{height:5px}
+.sc .cd .pair .bar.b i{opacity:.35}
+.sc .cd .d{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+.sc .foot{font-family:var(--mono);font-size:10.5px;color:var(--ink2);margin-top:12px}
+.share .hint{margin-top:14px;font-size:13px;color:var(--ink2);max-width:540px;text-align:center}
+@media (max-width:760px){.hero,.two{grid-template-columns:1fr}.hero{padding:20px}.grid{grid-template-columns:1fr 1fr}.wrap{padding:24px 16px}.toolbar{padding:10px 16px}.brand span.txt{display:none}.prog .row{grid-template-columns:1fr 100px}.prog .row .bar{display:none}}
+@media print{.toolbar{display:none}.bgmark{position:absolute}.wrap{padding:0}h2{break-after:avoid}.card,.item,tr{break-inside:avoid}}
+</style>
+</head>
+<body>
+<svg class="bgmark" viewBox="0 0 1200 200" aria-hidden="true"><text x="600" y="168" text-anchor="middle" font-family="Inter,-apple-system,Helvetica,Arial,sans-serif" font-size="190" font-weight="800" fill="#F1F0EC" textLength="1180" lengthAdjust="spacingAndGlyphs">RESUME-GATE</text></svg>
+<nav class="toolbar" id="toolbar"></nav>
+<main class="wrap" id="app"></main>
+<section class="share" id="share"></section>
+
+<script type="application/json" id="report-data">
+{
+ "meta": {
+  "name": "Jordan Lee",
+  "title": "Old resume, before Step 0",
+  "date": "2026-05-02",
+  "mode": "job",
+  "target": "Acme Cloud · Partner Development Manager (fictional)",
+  "file": "evidence/sources/old-resume.pdf",
+  "kit_version": "0.2.0"
+ },
+ "dims": {
+  "R1": true,
+  "R2": true,
+  "R3": true,
+  "R4": true,
+  "R5": true,
+  "R6": true,
+  "J1": true,
+  "J2": true,
+  "J3": true
+ },
+ "summary": [
+  "Only 2 of 6 bullets say what came of the work, and the strongest one sits 2nd.",
+  "Strongest point: active partners grew from 12 to 40.",
+  "First fix: lead with that result and cut the duty-style first bullet."
+ ],
+ "bullets": [
+  {
+   "where": "Northwind · 1",
+   "text": "Responsible for managing channel partners across the region.",
+   "result": false,
+   "number": false,
+   "action": false,
+   "specific": true,
+   "sourced": false
+  },
+  {
+   "where": "Northwind · 2",
+   "text": "Grew active partners from 12 to 40 and rebuilt the tiering.",
+   "result": true,
+   "number": true,
+   "action": true,
+   "specific": true,
+   "sourced": false
+  },
+  {
+   "where": "Northwind · 3",
+   "text": "Worked on a self-serve partner portal with engineering.",
+   "result": false,
+   "number": false,
+   "action": false,
+   "specific": true,
+   "sourced": false
+  },
+  {
+   "where": "Northwind · 4",
+   "text": "Drove strong partner pipeline growth.",
+   "result": false,
+   "number": false,
+   "action": true,
+   "specific": false,
+   "sourced": false
+  },
+  {
+   "where": "Northwind · 5",
+   "text": "Ran four co-branded webinars with three partners, 380 registrants.",
+   "result": true,
+   "number": true,
+   "action": true,
+   "specific": true,
+   "sourced": false
+  },
+  {
+   "where": "Northwind · 6",
+   "text": "Various partner enablement activities, etc.",
+   "result": false,
+   "number": false,
+   "action": false,
+   "specific": false,
+   "sourced": false
+  }
+ ],
+ "structure": [
+  {
+   "check": "Summary is 4 lines or fewer",
+   "pass": false
+  },
+  {
+   "check": "Standard section names",
+   "pass": true
+  },
+  {
+   "check": "2 to 5 bullets per role",
+   "pass": false
+  },
+  {
+   "check": "No bullet longer than 3 lines",
+   "pass": true
+  },
+  {
+   "check": "Clean contact details",
+   "pass": false
+  }
+ ],
+ "jd": {
+  "requirements": [
+   {
+    "req": "Partner recruitment and tiering",
+    "coverage": "direct",
+    "top": false,
+    "evidence": "Northwind · 2"
+   },
+   {
+    "req": "Co-selling with partners",
+    "coverage": "partial",
+    "top": false,
+    "evidence": "Northwind · 5 (co-marketing)"
+   },
+   {
+    "req": "Cloud marketplace experience",
+    "coverage": "none",
+    "top": false,
+    "evidence": "-"
+   }
+  ],
+  "terms": {
+   "supported": [
+    "partner recruitment",
+    "tiering",
+    "co-marketing",
+    "deal registration"
+   ],
+   "used": [
+    "tiering"
+   ]
+  }
+ },
+ "strengths": [
+  {
+   "title": "Active partners 12 → 40",
+   "why": "A clear before-and-after with a number. The strongest line on the page."
+  },
+  {
+   "title": "Four joint webinars, 380 registrants",
+   "why": "Concrete, counted, and the closest evidence to the JD's co-selling ask."
+  }
+ ],
+ "fixes": [
+  {
+   "where": "Northwind · 1",
+   "issue": "Duty-style opener, no result",
+   "fix": "Cut it, or merge into bullet 2, which says the same thing with a result."
+  },
+  {
+   "where": "Northwind order",
+   "issue": "Strongest result sits 2nd",
+   "fix": "Move 'grew active partners from 12 to 40' to the top: it's the JD's first requirement."
+  },
+  {
+   "where": "Northwind · 4",
+   "issue": "'Strong growth' with no number",
+   "fix": "Ask: what was the pipeline figure, and was it pipeline or closed revenue?"
+  },
+  {
+   "where": "Northwind · 3",
+   "issue": "Says who you worked with, not what you did",
+   "fix": "Ask: what was your part (requirements, pilot) and what came of it?"
+  },
+  {
+   "where": "Summary",
+   "issue": "6 lines",
+   "fix": "Cut to 3 or 4: positioning plus the two strongest proof points."
+  }
+ ],
+ "intake": {
+  "items": [
+   {
+    "name": "Partner growth and tiering",
+    "asked": 4,
+    "planned": 4,
+    "status": "Done"
+   },
+   {
+    "name": "Partner pipeline",
+    "asked": 2,
+    "planned": 4,
+    "status": "In progress"
+   },
+   {
+    "name": "Joint webinars",
+    "asked": 0,
+    "planned": 3,
+    "status": "To do"
+   }
+  ]
+ }
+}
+</script>
+
+<script>
+const L = {"kicker_checkup": "RESUME-GATE / CHECKUP", "kicker_job": "RESUME-GATE / JOB FIT", "mode_checkup": "Checkup", "mode_job": "Job fit", "score": "Score", "of100": "out of 100", "bands": ["Needs a rewrite", "Usable, but losing points", "Solid", "Strong"], "dims": "Dimensions", "notscored": "not scored", "weight": "weight", "strengths": "Strongest points", "fixes": "Fix these first", "jd": "JD coverage", "req": "Requirement", "cov": "Coverage", "top": "Near the top", "ev": "Evidence", "cov_direct": "Direct", "cov_partial": "Partial", "cov_none": "None", "yes": "Yes", "no": "No", "terms": "Key terms the evidence supports", "used": "used", "notused": "not used yet", "intake": "Interview progress", "item": "item", "questions": "questions", "details": "Every bullet, marked", "where": "Where", "bullet": "Bullet", "structure": "Structure checks", "summary": "Summary", "method": "Scored on the Resume-Gate checkup standard: Harvard career-office resume guides, common ATS advice, and this kit's sourcing rule. Not a recruiter's score; it doesn't predict interviews. Use it to compare versions of the same resume.", "view_full": "Full report", "view_share": "Share card", "cmp_kicker": "BEFORE → AFTER", "cmp_title": "My resume, before and after", "cmp_before": "Before", "cmp_after": "After", "cmp_note": "Same standard, two checkups", "cmp_partial": "Compared on the dimensions both reports share", "target": "Target", "share_hint": "Screenshot this card to share it. Your name, employer and bullets stay hidden.", "share_hint_full": "Screenshot this card to share it. To send a file instead, make a share copy with scripts/report_share.py. Never send this full report: it holds all your details.", "share_title": "My resume checkup", "share_cta": "Check your own resume. Free and open source.", "share_star": "Star it on GitHub", "share_std": "Resume-Gate checkup standard v1<br>Based on Harvard resume guides<br>and common ATS advice", "status": {"To do": "To do", "In progress": "In progress", "Done": "Done", "Skipped": "Skipped"}, "names": {"R1": "Results", "R2": "Numbers", "R3": "Action-led", "R4": "Specific", "R5": "Structure", "R6": "Sourced", "J1": "JD coverage", "J2": "Placement", "J3": "Wording"}};
+const ICONS = {"file": "<path d=\"M6 3h8l4 4v14H6z\"/><path d=\"M14 3v4h4\"/><path d=\"M9 12h6M9 16h6\"/>", "cards": "<rect x=\"4\" y=\"7\" width=\"13\" height=\"13\" rx=\"1\"/><path d=\"M8 4h11a1 1 0 0 1 1 1v11\"/>", "check": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M8 12.5l2.5 2.5L16 9.5\"/>", "briefcase": "<rect x=\"3\" y=\"7\" width=\"18\" height=\"13\" rx=\"1\"/><path d=\"M9 7V4h6v3M3 12h18\"/>", "sliders": "<path d=\"M4 7h10M18 7h2M4 17h4M12 17h8\"/><circle cx=\"16\" cy=\"7\" r=\"2\"/><circle cx=\"10\" cy=\"17\" r=\"2\"/>", "search": "<circle cx=\"11\" cy=\"11\" r=\"6\"/><path d=\"M20 20l-4.5-4.5\"/>", "map": "<path d=\"M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z\"/><path d=\"M9 4v14M15 6v14\"/>", "edit": "<path d=\"M4 20h4L19 9l-4-4L4 16z\"/><path d=\"M13 7l4 4\"/>", "log": "<path d=\"M8 6h12M8 12h12M8 18h12\"/><circle cx=\"4\" cy=\"6\" r=\"1\"/><circle cx=\"4\" cy=\"12\" r=\"1\"/><circle cx=\"4\" cy=\"18\" r=\"1\"/>", "shield": "<path d=\"M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6z\"/><path d=\"M9 12l2 2 4-4\"/>", "user": "<circle cx=\"9\" cy=\"8\" r=\"4\"/><path d=\"M2 20c0-4 3-6 7-6s7 2 7 6\"/><path d=\"M16 11l2 2 4-4\"/>", "send": "<path d=\"M21 3L10 14\"/><path d=\"M21 3l-7 18-4-7-7-4z\"/>", "target": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><circle cx=\"12\" cy=\"12\" r=\"5\"/><circle cx=\"12\" cy=\"12\" r=\"1\"/>", "hash": "<path d=\"M5 9h15M4 15h15M10 3L8 21M16 3l-2 18\"/>", "arrow": "<path d=\"M4 12h15\"/><path d=\"M13 6l6 6-6 6\"/>", "focus": "<circle cx=\"12\" cy=\"12\" r=\"4\"/><path d=\"M12 2v4M12 18v4M2 12h4M18 12h4\"/>", "layout": "<rect x=\"3\" y=\"3\" width=\"18\" height=\"18\" rx=\"1\"/><path d=\"M3 9h18M9 9v12\"/>", "top": "<path d=\"M5 4h14\"/><path d=\"M12 20V9\"/><path d=\"M7 13l5-5 5 5\"/>", "type": "<path d=\"M5 6V4h14v2\"/><path d=\"M12 4v16M9 20h6\"/>", "star": "<path d=\"M12 3l2.8 5.7 6.2.9-4.5 4.4 1 6.2L12 17.3 6.5 20.2l1-6.2L3 9.6l6.2-.9z\"/>", "wrench": "<path d=\"M14.5 6.5a4 4 0 0 0 5 5L12 19a2.1 2.1 0 0 1-3-3l7.5-7.5\"/><path d=\"M14.5 6.5L17 4\"/>", "chat": "<path d=\"M4 5h16v11H9l-5 4z\"/><path d=\"M8 9h8M8 12h5\"/>", "list": "<path d=\"M9 6h11M9 12h11M9 18h11\"/><path d=\"M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2\"/>", "gauge": "<path d=\"M4 16a8 8 0 1 1 16 0\"/><path d=\"M12 16l4-5\"/>", "x": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M9 9l6 6M15 9l-6 6\"/>", "gate": "<path d=\"M4 21V9l8-5 8 5v12\"/><path d=\"M9 21v-7h6v7\"/>"};
+const ic = (n, c) => `<svg class="ic${c ? " " + c : ""}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[n]}</svg>`;
+const DIM_ICON = {R1:"target",R2:"hash",R3:"arrow",R4:"focus",R5:"layout",R6:"shield",J1:"briefcase",J2:"top",J3:"type"};
+const WEIGHTS = {R1:25,R2:20,R3:15,R4:10,R5:15,R6:15,J1:30,J2:15,J3:10};
+const D = JSON.parse(document.getElementById("report-data").textContent);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const job = D.meta.mode === "job";
+const B = D.bullets || [];
+const frac = (n, d) => ({n, d, p: d ? n / d : 0});
+const count = k => frac(B.filter(b => b[k]).length, B.length);
+const reqs = (D.jd && D.jd.requirements) || [];
+const covered = reqs.filter(r => r.coverage !== "none");
+const terms = (D.jd && D.jd.terms) || {supported: [], used: []};
+const usedSupported = terms.supported.filter(t => terms.used.includes(t));
+const R = {
+  R1: count("result"), R2: count("number"), R3: count("action"), R4: count("specific"),
+  R5: frac((D.structure || []).filter(c => c.pass).length, (D.structure || []).length),
+  R6: count("sourced"),
+  J1: {n: reqs.filter(r => r.coverage === "direct").length + 0.5 * reqs.filter(r => r.coverage === "partial").length, d: reqs.length},
+  J2: frac(covered.filter(r => r.top).length, covered.length),
+  J3: frac(usedSupported.length, terms.supported.length),
+};
+R.J1.p = R.J1.d ? R.J1.n / R.J1.d : 0;
+const ids = ["R1","R2","R3","R4","R5","R6"].concat(job ? ["J1","J2","J3"] : []);
+const on = id => (D.dims ? D.dims[id] !== false : true) && R[id].d > 0;
+let wsum = 0, acc = 0;
+ids.filter(on).forEach(id => { wsum += WEIGHTS[id]; acc += WEIGHTS[id] * R[id].p; });
+const score = wsum ? Math.round(acc / wsum * 100) : 0;
+const bandIdx = score >= 85 ? 3 : score >= 70 ? 2 : score >= 55 ? 1 : 0;
+const band = L.bands[bandIdx];
+const bandOf = p => p >= .85 ? 3 : p >= .70 ? 2 : p >= .55 ? 1 : 0;
+document.body.classList.add("bc" + bandIdx);
+const pct = x => Math.round(x * 100) + "%";
+const fmt = r => (Number.isInteger(r.n) ? r.n : r.n.toFixed(1)) + " / " + r.d;
+const modeName = job ? L.mode_job : L.mode_checkup;
+
+// Score ring with tick marks at the band thresholds (55, 70, 85).
+const ring = (size, r, sw) => {
+  const c = size / 2, C = 2 * Math.PI * r;
+  const ticks = [55, 70, 85].map(v => { const a = (v / 100) * 2 * Math.PI - Math.PI / 2, r1 = r - sw / 2 - 3, r2 = r + sw / 2 + 3;
+    return `<line x1="${c + r1 * Math.cos(a)}" y1="${c + r1 * Math.sin(a)}" x2="${c + r2 * Math.cos(a)}" y2="${c + r2 * Math.sin(a)}" stroke="#858E96" stroke-width="1.5"/>`; }).join("");
+  return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}"><circle cx="${c}" cy="${c}" r="${r}" fill="none" stroke="#ECEBE6" stroke-width="${sw}"/><circle cx="${c}" cy="${c}" r="${r}" fill="none" stroke="var(--bandc,#1A1A1A)" stroke-width="${sw}" stroke-dasharray="${C * score / 100} ${C}" transform="rotate(-90 ${c} ${c})"/>${ticks}</svg>`;
+};
+const wm = cls => `<svg class="${cls}" viewBox="0 0 1200 200" aria-hidden="true"><text x="600" y="168" text-anchor="middle" font-family="Inter,-apple-system,Helvetica,Arial,sans-serif" font-size="190" font-weight="800" fill="#F1F0EC" textLength="1180" lengthAdjust="spacingAndGlyphs">RESUME-GATE</text></svg>`;
+
+let h = "";
+h += `<div class="kicker">${ic(job ? "briefcase" : "gauge")}${job ? L.kicker_job : L.kicker_checkup}</div>`;
+h += `<h1>${esc(D.meta.name)} · ${esc(D.meta.title)}</h1>`;
+h += `<div class="chips"><span class="chip">${ic("log")}${esc(D.meta.date)}</span>${D.meta.target ? `<span class="chip">${ic("briefcase")}${esc(D.meta.target)}</span>` : ""}${D.meta.file ? `<span class="chip">${ic("file")}${esc(D.meta.file)}</span>` : ""}</div>`;
+const sumIcons = ["target", "star", "wrench"];
+h += `<section class="hero"><div class="ring">${ring(210, 90, 12)}<div class="num"><b>${score}</b><small>${L.of100.toUpperCase()}</small></div></div>`;
+h += `<div><div class="band">${ic("gauge")}${band}</div><div class="scale">${L.bands.map((b, i) => `<span class="${i === bandIdx ? "cur" : ""}">${["0", "55", "70", "85"][i]}+ ${b}</span>`).join("")}</div>`;
+h += `<ul class="sum">${(D.summary || []).map((s, i) => `<li>${ic(sumIcons[i] || "target")}<span>${esc(s)}</span></li>`).join("")}</ul></div></section>`;
+
+h += `<h2>${ic("gauge")}${L.dims}</h2><div class="grid">`;
+ids.forEach(id => {
+  const r = R[id], o = on(id);
+  h += `<div class="card${o ? "" : " off"}"><div class="top"><span class="icb">${ic(DIM_ICON[id])}</span><div><div class="name">${L.names[id]}</div><div class="stamp">RG // ${id}</div></div></div><div class="big">${o ? pct(r.p) : "-"}</div><div class="bar"><i class="bc${bandOf(r.p)}" style="width:${o ? pct(r.p) : 0}"></i></div><div class="cnt">${o ? fmt(r) : L.notscored}</div></div>`;
+});
+h += `</div>`;
+if ((D.structure || []).length) h += `<div class="checks">${D.structure.map(c => `<span class="${c.pass ? "" : "fail"}">${ic(c.pass ? "check" : "x")}${esc(c.check)}</span>`).join("")}</div>`;
+
+h += `<div class="two"><div><h2>${ic("star")}${L.strengths}</h2><div class="items">${(D.strengths || []).map(s => `<div class="item"><span class="mk lt">${ic("star")}</span><div><div class="t">${esc(s.title)}</div><div class="d">${esc(s.why)}</div></div></div>`).join("")}</div></div>`;
+h += `<div><h2>${ic("wrench")}${L.fixes}</h2><div class="items">${(D.fixes || []).slice(0, 5).map((f, i) => `<div class="item"><span class="mk">${String(i + 1).padStart(2, "0")}</span><div><div class="t">${esc(f.issue)}</div><div class="w">${esc(f.where)}</div><div class="d">${esc(f.fix)}</div></div></div>`).join("")}</div></div></div>`;
+
+if (job && reqs.length) {
+  const cv = {direct: L.cov_direct, partial: L.cov_partial, none: L.cov_none};
+  h += `<h2>${ic("briefcase")}${L.jd}</h2><table><tr><th>${L.req}</th><th>${L.cov}</th><th>${L.top}</th><th>${L.ev}</th></tr>`;
+  reqs.forEach(r => { h += `<tr><td>${esc(r.req)}</td><td><span class="pill ${r.coverage}">${cv[r.coverage]}</span></td><td class="c">${r.coverage === "none" ? "-" : (r.top ? `<span class="ok">${L.yes}</span>` : `<span class="no">${L.no}</span>`)}</td><td>${esc(r.evidence)}</td></tr>`; });
+  h += `</table>`;
+  if (terms.supported.length) h += `<div class="terms"><div class="lbl">${L.terms}: ${usedSupported.length} ${L.used} · ${terms.supported.length - usedSupported.length} ${L.notused}</div>${terms.supported.map(t => `<span class="t${terms.used.includes(t) ? "" : " miss"}">${esc(t)}</span>`).join("")}</div>`;
+}
+
+const items = (D.intake && D.intake.items) || [];
+if (items.length) {
+  const a = items.reduce((s, i) => s + i.asked, 0), p = items.reduce((s, i) => s + i.planned, 0);
+  h += `<h2>${ic("chat")}${L.intake}</h2><div class="prog"><div class="cells">${Array.from({length: p}, (_, k) => `<i class="${k < a ? "f" : ""}"></i>`).join("")}</div><div class="total">${a} / ${p}</div>`;
+  items.forEach((i, k) => { h += `<div class="row"><span>${k + 1}. ${esc(i.name)}</span><div class="bar"><i style="width:${i.planned ? pct(i.asked / i.planned) : 0}"></i></div><span class="s">${i.asked}/${i.planned} · ${L.status[i.status] || esc(i.status)}</span></div>`; });
+  h += `</div>`;
+}
+
+if (B.length) {
+  const mk = v => v ? `<span class="ok">✓</span>` : `<span class="no">–</span>`;
+  h += `<h2>${ic("list")}${L.details}</h2><details open><summary>${B.length} bullets</summary><table><tr><th>${L.where}</th><th>${L.bullet}</th><th>R1</th><th>R2</th><th>R3</th><th>R4</th><th>R6</th></tr>`;
+  B.forEach(b => { h += `<tr><td style="white-space:nowrap">${esc(b.where)}</td><td>${esc(b.text)}</td><td class="c">${mk(b.result)}</td><td class="c">${mk(b.number)}</td><td class="c">${mk(b.action)}</td><td class="c">${mk(b.specific)}</td><td class="c">${mk(b.sourced)}</td></tr>`; });
+  h += `</table></details>`;
+}
+
+h += `<p class="method">${ic("gauge")}<span>${L.method}</span></p>`;
+h += `<footer><span class="l"><span class="logo">${ic("gate")}</span>MADE WITH RESUME-GATE · <a href="https://github.com/weareheya/Resume-Gate">GITHUB.COM/WEAREHEYA/RESUME-GATE</a></span><span>STANDARD v1 · KIT ${esc(D.meta.kit_version || "")}</span></footer>`;
+document.getElementById("app").innerHTML = h;
+document.title = modeName + " · " + D.meta.name + " · " + score;
+
+// Optional modules the user ticked (headline, target, tags, highlights). None by default: a pure score card.
+function modules() {
+  const m = D.meta; let o = "";
+  if (m.share_headline) o += `<div class="hl">${esc(m.share_headline)}</div>`;
+  const tags = (m.share_tags || []).slice(0, 5);
+  if (m.share_target || tags.length) o += `<div class="tags">${m.share_target ? `<span class="role">${ic("briefcase")}${L.target} · ${esc(m.share_target)}</span>` : ""}${tags.map(x => `<span>${esc(x)}</span>`).join("")}</div>`;
+  const hl = (m.share_highlights || []).slice(0, 2);
+  if (hl.length) o += `<ul class="hls">${hl.map(x => `<li>${ic("star")}<span>${esc(x)}</span></li>`).join("")}</ul>`;
+  return o;
+}
+// Share card: score, band and dimension bars only. No name, employer, target or bullet text unless meta.share_name is set.
+let s = `<div class="sc">${wm("wm")}`;
+s += `<div class="hd"><span class="brand"><span class="logo">${ic("gate")}</span>RESUME-GATE</span><span class="chip">${ic(job ? "briefcase" : "gauge")}${modeName}</span></div>`;
+s += `<h3>${esc(D.meta.share_name || L.share_title)}</h3>`;
+s += modules();
+s += `<div class="mid"><div class="ring">${ring(150, 64, 10)}<div class="num"><b>${score}</b><small>${L.of100.toUpperCase()}</small></div></div><div><div class="band">${ic("gauge")}${band}</div><div class="std">${L.share_std}</div></div></div>`;
+s += `<div class="dl">${ids.filter(on).map(id => `<div>${ic(DIM_ICON[id])}<span>${L.names[id]}</span><div class="bar"><i class="bc${bandOf(R[id].p)}" style="width:${pct(R[id].p)}"></i></div><span>${pct(R[id].p)}</span></div>`).join("")}</div>`;
+s += `<div class="cta"><b>${ic("target")}${L.share_cta}</b><span class="u">github.com/weareheya/Resume-Gate</span><br><span class="st">${ic("star")}${L.share_star}</span></div></div><p class="hint">${D.meta.share_only ? L.share_hint : L.share_hint_full}</p>`;
+if (D.compare) {
+  const cm = D.compare, b0 = cm.before, a0 = cm.after, dlt = a0.score - b0.score;
+  const bOf = v => v >= 85 ? 3 : v >= 70 ? 2 : v >= 55 ? 1 : 0;
+  const mini = (sc) => { const c = 65, r = 56, C = 2 * Math.PI * r; return `<div class="ring bc${bOf(sc)}"><svg width="130" height="130" viewBox="0 0 130 130"><circle cx="${c}" cy="${c}" r="${r}" fill="none" stroke="#ECEBE6" stroke-width="9"/><circle cx="${c}" cy="${c}" r="${r}" fill="none" stroke="var(--bandc)" stroke-width="9" stroke-dasharray="${C * sc / 100} ${C}" transform="rotate(-90 ${c} ${c})"/></svg><div class="num"><b>${sc}</b><small>/ 100</small></div></div>`; };
+  s = `<div class="sc">${wm("wm")}<div class="hd"><span class="brand"><span class="logo">${ic("gate")}</span>RESUME-GATE</span><span class="chip">${L.cmp_kicker}</span></div>`;
+  s += `<h3>${esc(D.meta.share_name || L.cmp_title)}</h3>` + modules();
+  s += `<div class="cmp"><div>${mini(b0.score)}<div class="lab">${L.cmp_before.toUpperCase()}</div></div><div class="arw">${ic("arrow")}</div><div>${mini(a0.score)}<div class="lab">${L.cmp_after.toUpperCase()}</div><span class="delta bc${bOf(a0.score)}" style="color:var(--bandc)">${dlt >= 0 ? "+" : ""}${dlt}</span></div></div>`;
+  s += `<div class="cd">${cm.dims.map(id => { const bp = b0.dims[id], ap = a0.dims[id], d = Math.round((ap - bp) * 100);
+    return `<div>${ic(DIM_ICON[id])}<span>${L.names[id]}</span><div class="pair"><div class="bar b"><i class="bc${bandOf(bp)}" style="width:${pct(bp)}"></i></div><div class="bar"><i class="bc${bandOf(ap)}" style="width:${pct(ap)}"></i></div></div><span class="d">${d > 0 ? "+" : ""}${d}</span></div>`; }).join("")}</div>`;
+  s += `<div class="foot">${esc(b0.date)} → ${esc(a0.date)} · ${L.cmp_note}${cm.partial ? " · " + L.cmp_partial : ""}</div>`;
+  s += `<div class="cta"><b>${ic("target")}${L.share_cta}</b><span class="u">github.com/weareheya/Resume-Gate</span><br><span class="st">${ic("star")}${L.share_star}</span></div></div><p class="hint">${L.share_hint}</p>`;
+  document.title = L.cmp_title + " · " + b0.score + " → " + a0.score;
+}
+document.getElementById("share").innerHTML = s;
+
+const tb = document.getElementById("toolbar");
+const setView = v => { document.body.classList.toggle("sharing", v === "share");
+  tb.innerHTML = `<a class="brand" href="https://github.com/weareheya/Resume-Gate"><span class="logo">${ic("gate")}</span><span class="txt">RESUME-GATE</span></a><div class="views"><button class="${v !== "share" ? "on" : ""}" data-v="full">${ic("list")}${L.view_full}</button><button class="${v === "share" ? "on" : ""}" data-v="share">${ic("send")}${L.view_share}</button></div>`; };
+tb.addEventListener("click", e => { const btn = e.target.closest("button[data-v]"); if (btn) { const v = btn.dataset.v; history.replaceState(null, "", v === "share" ? "#share" : location.pathname); setView(v); } });
+if (D.meta.share_only) { document.body.classList.add("sharing"); tb.innerHTML = `<a class="brand" href="https://github.com/weareheya/Resume-Gate"><span class="logo">${ic("gate")}</span><span class="txt">RESUME-GATE</span></a>`; }
+else setView(location.hash === "#share" ? "share" : "full");
+</script>
+</body>
+</html>

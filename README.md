@@ -10,6 +10,8 @@ A resume workflow for a long job search, where you tailor many versions over wee
 
 ![Resume-Gate overview: one fact, one card, every version traces back](assets/overview-en.svg)
 
+**New in 0.2.0 (2026-11-19):** a scored checkup report with a share card, a shorter Step 0 interview with a progress line, and updates that never overwrite your own rules. [All changes](en/CHANGELOG.md)
+
 ## What's inside
 
 | Feature | What it does | English | 中文 |
@@ -21,7 +23,9 @@ A resume workflow for a long job search, where you tailor many versions over wee
 | AI self-review | Facts, writing, layout, and handoff checks the AI runs before you see anything | [REVIEW-CHECKLIST](en/docs/REVIEW-CHECKLIST.md) | [自审清单](zh-CN/docs/REVIEW-CHECKLIST.md) |
 | Lessons | Real process mistakes and the guardrail each one led to | [LESSONS](en/docs/LESSONS.md) | [LESSONS](zh-CN/docs/LESSONS.md) |
 | Prompts | Copy-paste prompts for the first session, Step 0, a new job, and self-review | [PROMPTS](en/docs/PROMPTS.md) | [PROMPTS](zh-CN/docs/PROMPTS.md) |
-| Scripts | `check_claims.py` (every bullet has a source) and `pdf_fill.swift` (pages are full) | [scripts](en/scripts/) | [scripts](zh-CN/scripts/) |
+| Checkup report | A scored, visual report on a resume, on its own or against a JD, plus a share card | [REPORT](en/docs/REPORT.md) · [sample](en/report/template.html) | [REPORT](zh-CN/docs/REPORT.md) · [示例](zh-CN/report/template.html) |
+| Scripts | `check_claims.py` (every bullet has a source), `report_score.py` (report score) and `pdf_fill.swift` (pages are full) | [scripts](en/scripts/) | [scripts](zh-CN/scripts/) |
+| Updates | Your rules live in their own file, so updating never overwrites them; one prompt checks for a new version | [CHANGELOG](en/CHANGELOG.md) | [更新记录](zh-CN/CHANGELOG.md) |
 | Cases | Ten made-up before-and-after cases, one or two rules each | [cases](en/examples/cases.md) | [案例](zh-CN/examples/cases.md) |
 
 ## Get started
@@ -99,6 +103,8 @@ Not sure about any of this? Ask the AI tool you picked in step 1. It can check w
 
 ![Resume-Gate 总览：事实只写一次，每一版都能追回出处](assets/overview-zh.svg)
 
+**0.2.0 新增（2026-11-19）：** 带分数的体检报告和分享卡、更短且带进度条的 Step 0 采访，以及永远不会冲掉你自己规则的更新机制。[全部更新记录](zh-CN/CHANGELOG.md)
+
 ## 里面有什么
 
 | 功能 | 做什么 | 中文 | English |
@@ -110,7 +116,9 @@ Not sure about any of this? Ask the AI tool you picked in step 1. It can check w
 | AI 自审 | 给你看之前，AI 先过一遍事实、写法、排版和交付格式 | [自审清单](zh-CN/docs/REVIEW-CHECKLIST.md) | [REVIEW-CHECKLIST](en/docs/REVIEW-CHECKLIST.md) |
 | 失误记录 | 真实踩过的过程性错误，以及每条带来的防线 | [LESSONS](zh-CN/docs/LESSONS.md) | [LESSONS](en/docs/LESSONS.md) |
 | 提示词 | 第一次使用、Step 0、新岗位、自审时可直接复制的提示词 | [PROMPTS](zh-CN/docs/PROMPTS.md) | [PROMPTS](en/docs/PROMPTS.md) |
-| 脚本 | `check_claims.py`（每条 bullet 有出处）和 `pdf_fill.swift`（页面填满） | [scripts](zh-CN/scripts/) | [scripts](en/scripts/) |
+| 体检报告 | 带分数的可视化简历报告，可以只看简历，也可以对照 JD，附分享卡 | [REPORT](zh-CN/docs/REPORT.md) · [示例](zh-CN/report/template.html) | [REPORT](en/docs/REPORT.md) · [sample](en/report/template.html) |
+| 脚本 | `check_claims.py`（每条 bullet 有出处）、`report_score.py`（报告分数）和 `pdf_fill.swift`（页面填满） | [scripts](zh-CN/scripts/) | [scripts](en/scripts/) |
+| 更新 | 你的规则单独放一个文件，更新永远不会冲掉；一句提示词就能检查新版本 | [更新记录](zh-CN/CHANGELOG.md) | [CHANGELOG](en/CHANGELOG.md) |
 | 案例 | 10 个虚构的改前改后案例，每个演示一两条规则 | [案例](zh-CN/examples/cases.md) | [cases](en/examples/cases.md) |
 
 ## 开始使用

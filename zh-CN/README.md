@@ -26,13 +26,14 @@
 | 纠正过的强项悄悄又被写弱 | **自审里的语义对比**：protected claim 要和已批准措辞对比，不只检查还在不在 | [自审清单 A](docs/REVIEW-CHECKLIST.md) · [LESSONS L-12](docs/LESSONS.md) |
 | 排版多出几行孤页 | **整页规则 + `pdf_fill`**：PDF 必须整页满，脚本量化检查 | [D-009](docs/DECISIONS.md) · [pdf_fill.swift](scripts/pdf_fill.swift) |
 | AI 自作主张定稿 | **人工审核关卡**：你说通过才算 Approved，投出的版本冻结 | [WORKFLOW S7](docs/WORKFLOW.md) · [D-008、D-010](docs/DECISIONS.md) |
+| 被问很多轮，不知道问到什么时候 | **先体检，再短采访**：第一轮就给带分数的可视化报告；只做最强的 3 项、每项最多 5 问，每个问题都带进度 | [REPORT](docs/REPORT.md) · [WORKFLOW Step 0](docs/WORKFLOW.md) · [示例报告](report/template.html) |
 
 ## 先知道这五个概念
 
 - **Claim Card**：一个成果一个文件，写清事实、每个数字量的是什么、哪部分是你的哪部分是团队的、哪些说法不能用。简历里的事实只能从这里来。[模板](evidence/claims/_TEMPLATE.md)
 - **基线和 Delta**：简历永远不从空白写。每个新岗位复制匹配度最高的已批准版本，只改这个岗位需要改的地方。[WORKFLOW](docs/WORKFLOW.md)
 - **Protected claim**：标了 `protected: true` 的卡，没有你点头不能删、不能写弱。这类强项最容易被 AI 悄悄冲淡。
-- **决策登记**：你定下的规则（「以后都这样」）写进 [DECISIONS](docs/DECISIONS.md)，下一个会话、下一个 AI 也照着做。
+- **决策登记**：你定下的规则（「以后都这样」）写进 [MY-DECISIONS](docs/MY-DECISIONS.md)，下一个会话、下一个 AI 也照着做。[DECISIONS](docs/DECISIONS.md) 里的起步规则保持原样，所以更新不会和你的规则打架。
 - **你是最后一道关**：AI 起草、追问、自审；只有你能把一个版本标为 Approved。
 
 ## 流程一览
@@ -48,7 +49,10 @@
 | [AGENTS.md](AGENTS.md) | 给 AI 的接手规范 | AI 先读；你自己扫一遍 |
 | [docs/WORKFLOW.md](docs/WORKFLOW.md) | Step 0、七步流程、追问清单、Coverage Report 格式 | 做第一份简历之前 |
 | [docs/PROMPTS.md](docs/PROMPTS.md) | 每个时刻可直接复制的提示词 | 每次开工 |
-| [docs/DECISIONS.md](docs/DECISIONS.md) | 决策登记簿，含 16 条起步规则，按你的情况改 | 定新规则或改规则时 |
+| [docs/DECISIONS.md](docs/DECISIONS.md) | 16 条起步规则。不要改：更新时会被整份替换 | 看一次，知道默认规则 |
+| [docs/MY-DECISIONS.md](docs/MY-DECISIONS.md) | 你自己的规则，包括对起步规则的改动。只归你 | 定新规则或改规则时 |
+| [docs/REPORT.md](docs/REPORT.md) · [report/template.html](report/template.html) | 带分数的可视化体检报告和岗位匹配报告：量什么，以及模板 | Step 0，以及任何想看简历现状的时候 |
+| [evidence/INTAKE.md](evidence/INTAKE.md) | Step 0 的采访计划和进度，新会话能接着上次做 | Step 0 |
 | [docs/REVIEW-CHECKLIST.md](docs/REVIEW-CHECKLIST.md) | AI 自审清单：事实 / 写法 / 排版 / 交付格式 | AI 交给你一版时 |
 | [docs/LESSONS.md](docs/LESSONS.md) | 真实踩过的过程性错误和防线 | 看一遍；出问题时再看 |
 | [evidence/claims/](evidence/claims/_TEMPLATE.md) | 证据库：一个成果一张 Claim Card | Step 0，以及想起新经历时 |
@@ -56,6 +60,8 @@
 | [cv/resumes/](cv/resumes/_TEMPLATE.md) | 简历正文，一个版本一个 Markdown 文件 | 每个新岗位 |
 | [cv/changelogs/](cv/changelogs/_TEMPLATE.md) | 每一版改了什么、为什么 | 每个新岗位 |
 | [scripts/check_claims.py](scripts/check_claims.py) | 检查每条 bullet 有出处、claim 可用、受保护的没丢（Python 3） | 你审一版之前 |
+| [scripts/report_score.py](scripts/report_score.py) | 用和模板相同的公式算出报告分数，让对话里说的分数和页面一致（Python 3） | AI 填完报告后 |
+| [scripts/report_share.py](scripts/report_share.py) · [report_compare.py](scripts/report_compare.py) | 分享卡，或用两份报告做改前改后海报。默认只有分数，其余模块由你勾选；不含隐私信息（Python 3） | 想分享时 |
 | [scripts/pdf_fill.swift](scripts/pdf_fill.swift) | 把 PDF 渲染成图片，检查页数和每页内容延伸到哪里（macOS） | 每次导出后 |
 | [examples/](examples/README.md) | 一套完整的虚构小项目（Claim Card、基线、新版本、Change Log、一份故意写错的版本），以及 10 个改前改后的案例 | Step 0 之前，看看要写到多细 |
 
@@ -75,14 +81,14 @@ cd my-job-search && git init
 **2. 用能读文件的 AI 打开这个文件夹**：Claude Code、Codex、Cursor，或任何能读写文件的 agent。然后贴上 [PROMPTS](docs/PROMPTS.md) 里的提示词 0：
 
 ```text
-先读 AGENTS.md，再读 docs/WORKFLOW.md。我第一次用这套工具，带我一步一步做 Step 0。每一步开始前，先告诉我这一步要产出什么、需要我提供什么。我说继续之前，不要进下一步。
+先读 AGENTS.md，再读 docs/WORKFLOW.md。我第一次用这套工具，带我一步一步做 Step 0。先给我现在这份简历做体检报告，开始提问之前先给我看采访计划。每一步开始前，先告诉我这一步要产出什么、需要我提供什么。我说继续之前，不要进下一步。
 ```
 
-**3. 做 Step 0。** 把旧简历放进 `evidence/sources/`，把最强的 5–10 个成果写成 Claim Card，批准第一份基线。第一份基线可以先用 [CV-INDEX](cv/CV-INDEX.md) 里的 `General` 类型；等你清楚要投哪类岗位，再加具体类型。
+**3. 做 Step 0。** 把旧简历放进 `evidence/sources/`。先拿到一份带分数的[体检报告](report/template.html)；然后 AI 就最强的 3 项成果采访你（其余以后再补），每个问题都带进度，写成 Claim Card，你批准第一份基线。第一份基线可以先用 [CV-INDEX](cv/CV-INDEX.md) 里的 `General` 类型；等你清楚要投哪类岗位，再加具体类型。
 
 **4. 每来一个新岗位**，用提示词 3 并贴上 JD。审 AI 交给你的版本，通过后投递，再把它标为 `Sent`。
 
-**5. 每版结束后**：Change Log 写好了、`CV-INDEX.md` 更新了、新定的规则写进了 `DECISIONS.md`。
+**5. 每版结束后**：Change Log 写好了、`CV-INDEX.md` 更新了、新定的规则写进了 `MY-DECISIONS.md`。
 
 **只用网页版聊天 AI（不能读文件）？** 把 `AGENTS.md` 和 `docs/` 里的文件放进聊天工具的项目里当参考资料（例如 Claude Project、ChatGPT Project），Claim Card 放在 AI 能读到的文档或数据库里，每个 JD 贴进这个项目。脚本在那里跑不了，它们的检查要手动做：每条 bullet 都对得上一张卡，PDF 页数正确。
 
@@ -101,6 +107,14 @@ mkdir -p /tmp/cv-check && swift scripts/pdf_fill.swift your-cv.pdf /tmp/cv-check
 ```
 
 输出页数、每页内容延伸到的位置，并为每页生成 `p1.png`、`p2.png`……方便贴给 AI 或自己看。页数不是 1 或 2，或最后一页的内容没到页面高度的 85% 时，退出码为 2，可接进脚本。不用 macOS？打开导出的 PDF，自己看页数和最后一页。
+
+## 保持更新
+
+Resume-Gate 还在持续改进。`VERSION` 写着你手上是哪个版本，[CHANGELOG.md](CHANGELOG.md) 写着每个版本改了什么、你需不需要做什么。
+
+要更新，贴上 [PROMPTS](docs/PROMPTS.md) 里的提示词 5。AI 会拿到最新版，告诉你改了什么，你同意后只替换工具文件。你的证据、简历、报告、`INTAKE.md` 和 `MY-DECISIONS.md` 一律不动。
+
+想第一时间知道新版本：打开[仓库页面](https://github.com/weareheya/Resume-Gate)，选 **Watch → Custom → Releases**（需要一个免费的 GitHub 账号）。或者每隔几周让 AI 帮你查一次。
 
 ## 脚本检查什么，不检查什么
 

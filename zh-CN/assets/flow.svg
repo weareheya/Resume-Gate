@@ -5,7 +5,7 @@
 <marker id="ahg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#858E96"/></marker>
 </defs>
 <rect width="1200" height="800" fill="#FAFAF8"/>
-<text x="600.0" y="470.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="190" font-weight="800" fill="#F1F0EC" text-anchor="middle" letter-spacing="-4">HEYESTELLA</text>
+<text x="600.0" y="462.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="170" font-weight="800" fill="#F1F0EC" text-anchor="middle" textLength="1080" lengthAdjust="spacingAndGlyphs">RESUME-GATE</text>
 <text x="60" y="54" font-family="'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace" font-size="12" fill="#5C5A55" letter-spacing="1.5">RESUME-GATE / FLOW</text>
 <text x="60" y="88" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="26" font-weight="700" fill="#1A1A1A">Step 0 做一次，之后每个岗位七步</text>
 <path d="M 60 106 L 1140 106" stroke="#1A1A1A" stroke-width="1"/>
@@ -16,16 +16,19 @@
 <rect x="175.0" y="180" width="230" height="88" fill="#FFFFFF" stroke="#1A1A1A" stroke-width="1"/>
 <rect x="175.0" y="180" width="230" height="3" fill="#151515"/>
 <text x="185.0" y="198" font-family="'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#858E96" text-anchor="start" letter-spacing="0.5">RG // 0a</text>
+<g transform="translate(377.0 189) scale(0.7083333333333334)" fill="none" stroke="#1A1A1A" stroke-width="1.60" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/><path d="M9 12h6M9 16h6"/></g>
 <text x="290.0" y="226.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="15" font-weight="600" fill="#1A1A1A" text-anchor="middle">旧简历、LinkedIn、</text>
 <text x="290.0" y="246.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="15" font-weight="400" fill="#1A1A1A" text-anchor="middle">绩效评语</text>
 <rect x="485.0" y="180" width="230" height="88" fill="#FFFFFF" stroke="#1A1A1A" stroke-width="1"/>
 <rect x="485.0" y="180" width="230" height="3" fill="#151515"/>
 <text x="495.0" y="198" font-family="'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#858E96" text-anchor="start" letter-spacing="0.5">RG // 0b</text>
+<g transform="translate(687.0 189) scale(0.7083333333333334)" fill="none" stroke="#1A1A1A" stroke-width="1.60" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"><rect x="4" y="7" width="13" height="13" rx="1"/><path d="M8 4h11a1 1 0 0 1 1 1v11"/></g>
 <text x="600.0" y="226.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="15" font-weight="600" fill="#1A1A1A" text-anchor="middle">Claim Card</text>
 <text x="600.0" y="246.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="15" font-weight="400" fill="#1A1A1A" text-anchor="middle">evidence/claims/</text>
 <rect x="795.0" y="180" width="230" height="88" fill="#FFFFFF" stroke="#1A1A1A" stroke-width="1"/>
 <rect x="795.0" y="180" width="230" height="3" fill="#151515"/>
 <text x="805.0" y="198" font-family="'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#858E96" text-anchor="start" letter-spacing="0.5">RG // 0c</text>
+<g transform="translate(997.0 189) scale(0.7083333333333334)" fill="none" stroke="#1A1A1A" stroke-width="1.60" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5"/></g>
 <text x="910.0" y="226.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="15" font-weight="600" fill="#1A1A1A" text-anchor="middle">第一份基线</text>
 <text x="910.0" y="246.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="15" font-weight="400" fill="#1A1A1A" text-anchor="middle">cv/resumes/</text>
 <path d="M 405.0 224.0 L 483.0 224.0" fill="none" stroke="#1A1A1A" stroke-width="1" marker-end="url(#ah)"/>
@@ -33,50 +36,60 @@
 <rect x="90" y="392" width="176" height="88" fill="#FFFFFF" stroke="#1A1A1A" stroke-width="1"/>
 <rect x="90" y="392" width="176" height="3" fill="#151515"/>
 <text x="100" y="410" font-family="'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#858E96" text-anchor="start" letter-spacing="0.5">RG // JD</text>
+<g transform="translate(238 401) scale(0.7083333333333334)" fill="none" stroke="#1A1A1A" stroke-width="1.60" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"><rect x="3" y="7" width="18" height="13" rx="1"/><path d="M9 7V4h6v3M3 12h18"/></g>
 <text x="178.0" y="438.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="15" font-weight="600" fill="#1A1A1A" text-anchor="middle">JD</text>
 <text x="178.0" y="458.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="15" font-weight="400" fill="#1A1A1A" text-anchor="middle">岗位描述</text>
 <rect x="301" y="392" width="176" height="88" fill="#FFFFFF" stroke="#1A1A1A" stroke-width="1"/>
 <rect x="301" y="392" width="176" height="3" fill="#151515"/>
 <text x="311" y="410" font-family="'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#858E96" text-anchor="start" letter-spacing="0.5">RG // S1</text>
+<g transform="translate(449 401) scale(0.7083333333333334)" fill="none" stroke="#1A1A1A" stroke-width="1.60" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></g>
 <text x="389.0" y="438.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="15" font-weight="600" fill="#1A1A1A" text-anchor="middle">选类型</text>
 <text x="389.0" y="458.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="15" font-weight="400" fill="#1A1A1A" text-anchor="middle">和基线</text>
 <rect x="512" y="392" width="176" height="88" fill="#FFFFFF" stroke="#1A1A1A" stroke-width="1"/>
 <rect x="512" y="392" width="176" height="3" fill="#151515"/>
 <text x="522" y="410" font-family="'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#858E96" text-anchor="start" letter-spacing="0.5">RG // S2</text>
+<g transform="translate(660 401) scale(0.7083333333333334)" fill="none" stroke="#1A1A1A" stroke-width="1.60" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></g>
 <text x="600.0" y="438.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="15" font-weight="600" fill="#1A1A1A" text-anchor="middle">Evidence</text>
 <text x="600.0" y="458.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="15" font-weight="400" fill="#1A1A1A" text-anchor="middle">Retrieval Gate</text>
 <rect x="723" y="392" width="176" height="88" fill="#FFFFFF" stroke="#1A1A1A" stroke-width="1"/>
 <rect x="723" y="392" width="176" height="3" fill="#151515"/>
 <text x="733" y="410" font-family="'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#858E96" text-anchor="start" letter-spacing="0.5">RG // S3</text>
+<g transform="translate(871 401) scale(0.7083333333333334)" fill="none" stroke="#1A1A1A" stroke-width="1.60" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/></g>
 <text x="811.0" y="438.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="15" font-weight="600" fill="#1A1A1A" text-anchor="middle">JD 映射</text>
 <text x="811.0" y="458.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="15" font-weight="400" fill="#1A1A1A" text-anchor="middle">+ 追问清单</text>
 <rect x="934" y="392" width="176" height="88" fill="#FFFFFF" stroke="#1A1A1A" stroke-width="1"/>
 <rect x="934" y="392" width="176" height="3" fill="#151515"/>
 <text x="944" y="410" font-family="'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#858E96" text-anchor="start" letter-spacing="0.5">RG // S4</text>
+<g transform="translate(1082 401) scale(0.7083333333333334)" fill="none" stroke="#1A1A1A" stroke-width="1.60" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13 7l4 4"/></g>
 <text x="1022.0" y="438.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="15" font-weight="600" fill="#1A1A1A" text-anchor="middle">改 Delta</text>
 <text x="1022.0" y="458.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="15" font-weight="400" fill="#1A1A1A" text-anchor="middle">只动该动的</text>
 <rect x="90" y="584" width="176" height="88" fill="#FFFFFF" stroke="#1A1A1A" stroke-width="1"/>
 <rect x="90" y="584" width="176" height="3" fill="#151515"/>
 <text x="100" y="602" font-family="'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#858E96" text-anchor="start" letter-spacing="0.5">RG // S5</text>
+<g transform="translate(238 593) scale(0.7083333333333334)" fill="none" stroke="#1A1A1A" stroke-width="1.60" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"><path d="M8 6h12M8 12h12M8 18h12"/><circle cx="4" cy="6" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="18" r="1"/></g>
 <text x="178.0" y="630.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="15" font-weight="600" fill="#1A1A1A" text-anchor="middle">Change Log</text>
 <text x="178.0" y="650.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="15" font-weight="400" fill="#1A1A1A" text-anchor="middle">+ Coverage Report</text>
 <rect x="301" y="584" width="176" height="88" fill="#FFFFFF" stroke="#1A1A1A" stroke-width="1"/>
 <rect x="301" y="584" width="176" height="3" fill="#151515"/>
 <text x="311" y="602" font-family="'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#858E96" text-anchor="start" letter-spacing="0.5">RG // S6</text>
+<g transform="translate(449 593) scale(0.7083333333333334)" fill="none" stroke="#1A1A1A" stroke-width="1.60" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"><path d="M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></g>
 <text x="389.0" y="630.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="15" font-weight="600" fill="#1A1A1A" text-anchor="middle">AI 自审</text>
 <text x="389.0" y="650.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="15" font-weight="400" fill="#1A1A1A" text-anchor="middle">check_claims · pdf_fill</text>
 <rect x="512" y="584" width="176" height="88" fill="#1A1A1A" stroke="#1A1A1A" stroke-width="1"/>
 <text x="522" y="602" font-family="'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#B9B7B0" text-anchor="start" letter-spacing="0.5">RG // S7</text>
+<g transform="translate(660 593) scale(0.7083333333333334)" fill="none" stroke="#FFFFFF" stroke-width="1.60" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"><circle cx="9" cy="8" r="4"/><path d="M2 20c0-4 3-6 7-6s7 2 7 6"/><path d="M16 11l2 2 4-4"/></g>
 <text x="600.0" y="630.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="15" font-weight="600" fill="#FFFFFF" text-anchor="middle">本人审核</text>
 <text x="600.0" y="650.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="15" font-weight="400" fill="#FFFFFF" text-anchor="middle">通过？</text>
 <rect x="723" y="584" width="176" height="88" fill="#FFFFFF" stroke="#1A1A1A" stroke-width="1"/>
 <rect x="723" y="584" width="176" height="3" fill="#151515"/>
 <text x="733" y="602" font-family="'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#858E96" text-anchor="start" letter-spacing="0.5">RG // OK</text>
+<g transform="translate(871 593) scale(0.7083333333333334)" fill="none" stroke="#1A1A1A" stroke-width="1.60" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5"/></g>
 <text x="811.0" y="630.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="15" font-weight="600" fill="#1A1A1A" text-anchor="middle">Approved</text>
 <text x="811.0" y="650.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="15" font-weight="400" fill="#1A1A1A" text-anchor="middle">成为新基线</text>
 <rect x="934" y="584" width="176" height="88" fill="#FFFFFF" stroke="#1A1A1A" stroke-width="1"/>
 <rect x="934" y="584" width="176" height="3" fill="#858E96"/>
 <text x="944" y="602" font-family="'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#858E96" text-anchor="start" letter-spacing="0.5">RG // SENT</text>
+<g transform="translate(1082 593) scale(0.7083333333333334)" fill="none" stroke="#1A1A1A" stroke-width="1.60" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"><path d="M21 3L10 14"/><path d="M21 3l-7 18-4-7-7-4z"/></g>
 <text x="1022.0" y="630.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="15" font-weight="600" fill="#1A1A1A" text-anchor="middle">已投递</text>
 <text x="1022.0" y="650.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="15" font-weight="400" fill="#1A1A1A" text-anchor="middle">冻结</text>
 <path d="M 266 436.0 L 299 436.0" fill="none" stroke="#1A1A1A" stroke-width="1" marker-end="url(#ah)"/>
@@ -95,6 +108,6 @@
 <path d="M 1110 628.0 L 1125 628.0 L 1125 372 L 389.0 372 L 389.0 390" fill="none" stroke="#858E96" stroke-width="1" stroke-dasharray="5 4" marker-end="url(#ahg)"/>
 <text x="757.0" y="366" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="12" font-weight="400" fill="#5C5A55" text-anchor="middle">可作为下一份的基线</text>
 <path d="M 60 744 L 1140 744" stroke="#1A1A1A" stroke-width="1"/>
-<text x="60" y="766" font-family="'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace" font-size="11" fill="#5C5A55" letter-spacing="1">© 2026 HEYESTELLA · RESUME-GATE · MIT LICENSE</text>
+<text x="60" y="766" font-family="'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace" font-size="11" fill="#5C5A55" letter-spacing="1">RESUME-GATE · GITHUB.COM/WEAREHEYA/RESUME-GATE · MIT LICENSE</text>
 <text x="1140" y="767" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="17" font-weight="700" fill="#1A1A1A" text-anchor="end">HeyEstella</text>
 </svg>

@@ -2,7 +2,7 @@
 
 Before you do any resume work in this repo, read these in order:
 
-1. `docs/DECISIONS.md`: every decision marked **Active** is binding
+1. `docs/DECISIONS.md` (starter rules) and `docs/MY-DECISIONS.md` (the user's own rules): every decision marked **Active** is binding. Where they conflict, MY-DECISIONS wins
 2. `docs/WORKFLOW.md`: the seven steps; don't move to the next step until you can state what the current one produced
 3. `cv/CV-INDEX.md`: pick the job type and the baseline resume
 4. `docs/LESSONS.md`: skim the mistakes made before
@@ -27,6 +27,7 @@ Before you do any resume work in this repo, read these in order:
 - Never drop or weaken a claim marked `protected: true` without the user's approval. If a new version leaves one out, say so and explain why.
 - When you say a check is done, attach a Coverage Report: what you covered and what you didn't.
 - Self-review against `docs/REVIEW-CHECKLIST.md` before showing anything to the user.
+- Reports follow `docs/REPORT.md`. Never send or upload a full report: it holds all the user's details. For sharing, make a copy with `scripts/report_share.py`.
 - Before showing a resume to the user, run `python3 scripts/check_claims.py cv/resumes/<id>.md`, fix every error, and report its result.
 - **Human review gate**: until the user says "approved", a version stays `Draft`. Don't edit a version marked `Sent`.
 
@@ -38,9 +39,20 @@ Before you do any resume work in this repo, read these in order:
 | L3 external or irreversible | Submit an application, contact a recruiter, change a confirmed fact | **Get explicit approval from the user first** |
 
 **Decisions**
-- When the user says "from now on" or "let's go with that," **write it into `docs/DECISIONS.md` right then**. Don't leave it in the chat.
-- Before numbering a new decision, run `grep "^## D-" docs/DECISIONS.md`, take the highest number, and add 1. This keeps parallel sessions from colliding (see LESSONS L-06).
-- To overturn an old decision, change its status to `Superseded by D-xxx`. Don't delete it.
+- When the user says "from now on" or "let's go with that," **write it into `docs/MY-DECISIONS.md` right then**. Don't leave it in the chat, and never edit `docs/DECISIONS.md`: it's replaced on every update.
+- Number the user's rules from D-101. Before numbering, run `grep "^## D-" docs/MY-DECISIONS.md`, take the highest number, and add 1. This keeps parallel sessions from colliding (see LESSONS L-06).
+- To change a starter rule, add a rule in MY-DECISIONS with `overrides: D-0xx`. To overturn one of the user's rules, change its status to `Superseded by D-xxx`. Don't delete it.
+
+## Updating the kit
+
+When the user asks to check for updates (prompt 5 in `docs/PROMPTS.md`):
+
+1. Read `VERSION`. Get the latest kit: https://github.com/weareheya/Resume-Gate/releases/latest/download/resume-gate-en.zip. It's a public download: no GitHub account or connector is needed. If your tool needs approval to use the network, ask once; or ask the user to download and unzip it into this folder.
+2. If its `VERSION` isn't newer, say so and stop. If it is, show the user the `CHANGELOG.md` entries since their version, including any "What you need to do" notes.
+3. With the user's go-ahead, replace **only kit files**: `AGENTS.md`, `README.md`, `LICENSE`, `VERSION`, `CHANGELOG.md`, `.gitignore`, everything in `docs/` except `MY-DECISIONS.md`, `scripts/`, `report/`, `examples/`, `assets/`, and the three `_TEMPLATE.md` files.
+4. **Never touch the user's files**: `docs/MY-DECISIONS.md`, `evidence/` (apart from its `_TEMPLATE.md`), `cv/` (apart from the `_TEMPLATE.md` files), `reports/`.
+5. If the user had edited a kit file (for example added rules to `docs/DECISIONS.md` before MY-DECISIONS existed), move their changes into `docs/MY-DECISIONS.md` first and show them what moved.
+6. Run `python3 scripts/check_claims.py` on the newest resume to confirm nothing broke, then commit only after the user approves.
 
 ## Handoff
 
