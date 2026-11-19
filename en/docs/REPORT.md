@@ -7,6 +7,23 @@ A visual, scored report on a resume. The AI fills in the data; the template does
 - **Two views, one file.** *Full report* is for you: every bullet, every fix. *Share card* (the button at the top, or add `#share` to the address) is a portrait card to screenshot and post: score, band and dimension bars, with a link back to Resume-Gate. It hides your name, employer, target job and bullet text; set `"share_name"` in `meta` only if you want a name on it.
 - **Share copy.** The full report file still holds everything, so it must never be sent around. `python3 scripts/report_share.py reports/<file>.html` writes `<file>-share.html`: same score, no private text at all, opens on the share card. Add `--name "…"` to put a name on it.
 
+## Sharing: score only, or with modules the user picks
+
+By default a share card or poster shows **only the score and the dimension bars**. Before making one, show the user this menu with the exact text you'd use for each module, and add only what they tick:
+
+| Module | Flag | What it shows | Rule |
+|---|---|---|---|
+| Name | `--name` | A name on the card | Only if the user asks |
+| Headline | `--headline` | One line of positioning | Offer 3 candidates. Each must come from a `Safe to draft` Claim Card. Concrete beats hype: "Took channel partners from 12 to 40" over "BD guru" |
+| Target | `--target` | The kind of role, e.g. "Channel BD" | A role type, never an employer |
+| Tags | `--tag` (up to 5) | Keyword tags | Short nouns from the Claim Cards: skills or areas the evidence backs |
+| Highlights | `--highlight` (up to 2) | One-line strengths | From the cards, with employer and client names removed |
+
+None of them may name an employer or client, or carry anything the evidence can't support. A playful headline is fine if the user wants one, as long as the cards back it.
+
+- **Share card**: `python3 scripts/report_share.py reports/<file>.html [modules]`
+- **Before-and-after poster**: `python3 scripts/report_compare.py reports/<before>.html reports/<after>.html [modules]`. Both reports are scored with the same formula; the poster shows both scores, each dimension before and after, and the two dates. If the reports were made in different modes, only the shared dimensions are compared and the poster says so. Example: [`examples/jordan-lee/reports/`](../examples/jordan-lee/reports/).
+
 ## Two modes
 
 | Mode | When | Dimensions |
@@ -45,7 +62,7 @@ R6 is 0 before Step 0, and that's expected: no Claim Cards exist yet. It's the p
 - **Strengths, fixes and gaps use only facts already in the resume or the Claim Cards.** A suggested fix never adds a new fact or number. If a fix needs information the resume doesn't have, say what to ask the user.
 - **At most 5 fixes**, most important first.
 - Then run `python3 scripts/report_score.py reports/<file>.html` and quote its score in the chat with a three-line summary: the score and band, the strongest point, and the first fix. The `summary` lines in the data block don't mention the score; the page shows it.
-- **Then ask once: "Want a version you can share?"** If yes, run `scripts/report_share.py`, give the user the `-share.html` path, and remind them to share only that file or a screenshot of the share card, never the full report.
+- **Then ask once: "Want a version you can share?"** If yes, show the module menu above, then run `scripts/report_share.py` with only the ticked modules, give the user the `-share.html` path, and remind them to share only that file or a screenshot of the share card, never the full report.
 
 ## What the score is and isn't
 

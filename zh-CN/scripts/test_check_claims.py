@@ -271,5 +271,24 @@ class ReportShare(unittest.TestCase):
             self.assertIn("34 / 100", s.stdout)
 
 
+class ReportCompare(unittest.TestCase):
+    """report_compare.py: the example poster goes 34 -> 90, with no private text unless a module adds it."""
+
+    def test_poster(self):
+        root = SCRIPT.parent.parent
+        ex = root / "examples" / "jordan-lee" / "reports"
+        with tempfile.TemporaryDirectory() as d:
+            out = Path(d) / "poster.html"
+            r = subprocess.run([sys.executable, "-I", str(SCRIPT.with_name("report_compare.py")),
+                                str(ex / "2026-05-02-checkup.html"), str(ex / "2026-05-10-checkup.html"), "--out", str(out),
+                                "--tag", "Partner programs"], capture_output=True, text=True)
+            self.assertEqual(r.returncode, 0, r.stdout)
+            self.assertIn("34 -> 90", r.stdout)
+            body = out.read_text(encoding="utf-8")
+            self.assertIn("Partner programs", body)
+            for private in ("Jordan", "Northwind", "Acme", "old-resume", "webinar"):
+                self.assertNotIn(private, body)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

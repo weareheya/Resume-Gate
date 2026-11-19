@@ -10,6 +10,7 @@
 | [cv/changelogs/ACME-01.md](cv/changelogs/ACME-01.md) | 它的 Change Log：读了什么、Delta、Coverage Report、自审 |
 | [cv/CV-INDEX.md](cv/CV-INDEX.md) | 做完这一版之后的索引 |
 | [cv/resumes/acme-pdm-with-traps.md](cv/resumes/acme-pdm-with-traps.md) | 同一版本，故意埋了七个错误 |
+| [reports/](reports/) | Step 0 之前（34 分）和新版本（90 分）的体检报告。在这个文件夹里试试 `python3 ../../scripts/report_compare.py reports/2026-05-02-checkup.html reports/2026-05-10-checkup.html` |
 
 ## 自己跑一遍
 

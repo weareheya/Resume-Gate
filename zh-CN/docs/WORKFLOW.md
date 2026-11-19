@@ -27,7 +27,7 @@
 | 0c | **采访计划。** AI 挑出**最强的 3 项**成果（够出第一份基线，其余以后再补），读完材料后只列每项还缺什么，把计划写进 `evidence/INTAKE.md`：一共几个问题、大约多久。本人选一种问法（见下文） | `evidence/INTAKE.md` |
 | 0d | **采访并写卡。** 用提示词 2。每个问题前都带一行进度。任何问题都可以跳过，随时可以停：没答的记在卡上「待补」，不再追问。卡先是 `需复核`；本人读过、确认无误后，改成 `Safe to draft` | `evidence/claims/` 里的 Claim Card，`INTAKE.md` 同步更新 |
 | 0e | **起草第一份基线**，只用 `Safe to draft` 的卡。复制 `cv/resumes/_TEMPLATE.md`，每条 bullet 都标上 Claim ID | `cv/resumes/<id>.md` |
-| 0f | **审核并批准**，流程同 S6、S7。把它登记进 `cv/CV-INDEX.md`，作为该类型的起点 | 一份 Approved 的基线 |
+| 0f | **审核并批准**，流程同 S6、S7。把它登记进 `cv/CV-INDEX.md`，作为该类型的起点。然后 AI 会提议再跑一次体检，做一张改前改后海报（提示词 6） | 一份 Approved 的基线；想要的话，一张海报 |
 
 `cv/CV-INDEX.md` 里至少有一个 Approved 的起点，就算完成。之后每个新岗位都走 S1 到 S7。想补卡随时用提示词 2；再跑一次体检（提示词 1），能看到分数的变化。
 

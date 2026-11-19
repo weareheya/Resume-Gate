@@ -52,3 +52,9 @@ Review cv/resumes/[file].md against docs/REVIEW-CHECKLIST.md. Report your findin
 ```text
 Check whether there's a newer Resume-Gate. Follow "Updating the kit" in AGENTS.md: compare VERSION, show me what changed and anything I need to do, and replace only the kit files after I say yes. Never touch my own files.
 ```
+
+## 6. Before-and-after poster
+
+```text
+Rerun the checkup on [cv/resumes/file.md] the same way as the first one, then make a before-and-after poster from reports/[first report] and the new one with scripts/report_compare.py. Before you make it, show me the module menu in docs/REPORT.md with the exact text you'd use for each; add only what I tick.
+```

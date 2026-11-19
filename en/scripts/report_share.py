@@ -6,7 +6,14 @@ be sent around. This script writes <report>-share.html next to it: the same scor
 but no name, employer, job, file path, bullet text, strengths, fixes or JD wording. It opens straight
 on the share card. Standard library only.
 
-Usage:  python3 scripts/report_share.py reports/<file>.html [--name "Name to show on the card"]
+Usage:  python3 scripts/report_share.py reports/<file>.html [modules]
+
+By default the card shows only the score and the dimension bars. Add only the modules the user ticked:
+  --name "…"          a name on the card
+  --headline "…"      a one-line positioning
+  --target "…"        the kind of role, never an employer (e.g. "Channel BD")
+  --tag "…"           a keyword tag; repeat, up to 5
+  --highlight "…"     a de-identified strength; repeat, up to 2
 Exit code: 0 = written, 2 = could not read the report.
 """
 import argparse
@@ -18,7 +25,29 @@ from pathlib import Path
 BLOCK = re.compile(r'(<script type="application/json" id="report-data">)(.*?)(</script>)', re.S)
 
 
-def strip(d, name=None):
+def add_module_args(ap):
+    ap.add_argument("--name", help="optional name on the card")
+    ap.add_argument("--headline", help="optional one-line positioning")
+    ap.add_argument("--target", help="optional kind of role (never an employer)")
+    ap.add_argument("--tag", action="append", default=[], help="optional keyword tag (repeat, up to 5)")
+    ap.add_argument("--highlight", action="append", default=[], help="optional de-identified strength (repeat, up to 2)")
+
+
+def apply_modules(meta, a):
+    if a.name:
+        meta["share_name"] = a.name
+    if a.headline:
+        meta["share_headline"] = a.headline
+    if a.target:
+        meta["share_target"] = a.target
+    if a.tag:
+        meta["share_tags"] = a.tag[:5]
+    if a.highlight:
+        meta["share_highlights"] = a.highlight[:2]
+    return meta
+
+
+def strip(d):
     meta = d.get("meta", {})
     out = {
         "meta": {"name": "", "title": "", "date": "", "mode": meta.get("mode", "checkup"), "target": "", "file": "",
@@ -29,8 +58,6 @@ def strip(d, name=None):
                     for b in d.get("bullets", [])],
         "structure": [{"check": "", "pass": bool(c.get("pass"))} for c in d.get("structure", [])],
     }
-    if name:
-        out["meta"]["share_name"] = name
     jd = d.get("jd")
     if jd:
         supported = jd.get("terms", {}).get("supported", [])
@@ -47,7 +74,7 @@ def strip(d, name=None):
 def main():
     ap = argparse.ArgumentParser(description="Make a shareable copy of a Resume-Gate report.")
     ap.add_argument("report")
-    ap.add_argument("--name", help="optional name to show on the card")
+    add_module_args(ap)
     a = ap.parse_args()
     src = Path(a.report)
     try:
@@ -58,7 +85,9 @@ def main():
         data = None
     if not data:
         print(f"Could not read the report: {src}"); return 2
-    clean = json.dumps(strip(data, a.name), ensure_ascii=False, indent=1)
+    stripped = strip(data)
+    apply_modules(stripped["meta"], a)
+    clean = json.dumps(stripped, ensure_ascii=False, indent=1)
     dest = src.with_name(src.stem + "-share" + src.suffix)
     dest.write_text(BLOCK.sub(lambda mm: mm.group(1) + "\n" + clean + "\n" + mm.group(3), html, count=1), encoding="utf-8")
     print(f"Written: {dest}")
