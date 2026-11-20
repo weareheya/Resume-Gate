@@ -104,5 +104,6 @@ D-001 to D-019 are starter rules, each born from a real mistake. D-001 to D-010 
 - scope: cv · status: Active
 - A resume can be accurate and still undersell the candidate. In S2, look at every Claim Card and record which ones are used and why the others aren't.
 - If an unused card is stronger for this job than something already in the resume, swap it in or say why not. Stop when no swap clearly adds value; don't keep rewriting a version that's already good.
+- Keep the record light: unused cards can share one line by reason; a protected card, or one that clearly fits the job, gets its own row. `check_claims.py` warns when a card is missing from the table.
 
 ---

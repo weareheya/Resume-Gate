@@ -97,6 +97,37 @@ class CheckClaims(unittest.TestCase):
         self.assertEqual(code, 0, out)
         self.assertIn("OK: 2 lines checked", out)
 
+    def evidence_table(self, rows, name="ok"):
+        (self.root / "cv/changelogs").mkdir(exist_ok=True)
+        (self.root / "cv/changelogs/JOB-1.md").write_text(
+            f"---\nresume: {name}\n---\n## Evidence table (every card)\n\n| Card | Used? |\n|---|---|\n{rows}\n## Delta\n\nC-003 named here doesn't count.\n",
+            encoding="utf-8")
+
+    def test_evidence_table_gap_is_a_warning(self):
+        self.test_clean_resume_passes()
+        self.evidence_table("| C-001 | Yes |\n| C-002 | No |\n")
+        code, out = self.run_check("ok")
+        self.assertEqual(code, 0, out)  # a reminder, never an error (D-017)
+        self.assertIn("doesn't mention C-003", out)
+
+    def test_unused_cards_can_share_one_line(self):
+        self.test_clean_resume_passes()
+        self.evidence_table("| C-001 | Yes |\n| Low: C-002, C-003 | No, unrelated |\n")
+        code, out = self.run_check("ok")
+        self.assertNotIn("doesn't mention", out)
+
+    def test_no_evidence_table_or_frozen_version_is_not_checked(self):
+        self.test_clean_resume_passes()
+        (self.root / "cv/changelogs").mkdir(exist_ok=True)
+        (self.root / "cv/changelogs/OLD.md").write_text("---\nresume: ok\n---\n## Delta\nC-001\n", encoding="utf-8")
+        self.assertNotIn("doesn't mention", self.run_check("ok")[1])
+        self.evidence_table("| C-001 | Yes |\n")
+        (self.root / "cv/changelogs/OLD.md").unlink()
+        import hashlib
+        h = hashlib.sha256((self.root / "cv/resumes/ok.md").read_bytes()).hexdigest()
+        (self.root / "cv/frozen.txt").write_text(f"{h}  cv/resumes/ok.md\n", encoding="utf-8")
+        self.assertNotIn("doesn't mention", self.run_check("ok")[1])
+
     def test_template_front_matter_comment_is_not_a_base(self):
         # `base:   # comment` used to be read as base = "# comment" and look for that file
         self.resume("first", """
@@ -668,6 +699,45 @@ class ReportScore(unittest.TestCase):
         self.assertIn("38 / 100", r.stdout)
 
 
+class ListClaims(unittest.TestCase):
+    """list_claims.py: one line per card, protected cards marked, and the read-in-full advice by size."""
+
+    def test_lists_every_card(self):
+        ex = SCRIPT.parent.parent / "examples" / "jordan-lee"
+        r = subprocess.run([sys.executable, "-I", str(SCRIPT.with_name("list_claims.py"))], cwd=ex, capture_output=True, text=True)
+        self.assertEqual(r.returncode, 0, r.stdout)
+        rows = [l for l in r.stdout.splitlines() if l.startswith("| C-")]
+        self.assertEqual(len(rows), 5)
+        self.assertIn("5 ", r.stdout.splitlines()[-1].replace("共 ", ""))
+
+    def test_big_bank_names_the_protected_cards(self):
+        with tempfile.TemporaryDirectory() as d:
+            claims = Path(d) / "evidence" / "claims"
+            claims.mkdir(parents=True)
+            for i in range(1, 18):
+                claims.joinpath(f"C-{i:03}.md").write_text(
+                    f"---\nid: C-{i:03}\nstatus: Safe to draft\nprotected: {'true' if i == 7 else 'false'}\n---\n# C-{i:03} · Card {i}\n",
+                    encoding="utf-8")
+            r = subprocess.run([sys.executable, "-I", str(SCRIPT.with_name("list_claims.py"))], cwd=d, capture_output=True, text=True)
+            self.assertIn("17", r.stdout.splitlines()[-1])
+            self.assertIn("(C-007)" if "(C-007)" in r.stdout else "（C-007）", r.stdout)
+
+
+class ReportRounding(unittest.TestCase):
+    """report_score.py rounds like the page (JavaScript Math.round): 62.5 is 63, not Python's 62."""
+
+    def test_half_rounds_up_like_the_page(self):
+        sys.path.insert(0, str(SCRIPT.parent))
+        import report_score
+        self.assertEqual(report_score.half_up(62.5), 63)
+        self.assertEqual(report_score.half_up(62.4), 62)
+        bullets = [{"result": i < 5} for i in range(8)]  # R1 only: 5 of 8 = 62.5%
+        d = {"meta": {"mode": "checkup"}, "bullets": bullets, "dims": {k: k == "R1" for k in ("R2", "R3", "R4", "R5", "R1")}}
+        self.assertEqual(report_score.score(d)[0], 63)
+        page = (SCRIPT.parent.parent / "report" / "template.html").read_text(encoding="utf-8")
+        self.assertIn("Math.round(acc / wsum * 100)", page)  # the page's formula this mirrors
+
+
 class ReportShare(unittest.TestCase):
     """report_share.py keeps the score and removes every private string from the sample report."""
 
@@ -682,8 +752,28 @@ class ReportShare(unittest.TestCase):
             body = out.read_text(encoding="utf-8")
             for private in ("Jordan", "Northwind", "Acme", "old-resume", "webinar", "tiering"):
                 self.assertNotIn(private, body)
+            self.assertIn('"gate": true', body)
             s = subprocess.run([sys.executable, "-I", str(SCRIPT.with_name("report_score.py")), str(out)], capture_output=True, text=True)
             self.assertIn("38 / 100", s.stdout)
+
+
+    def test_share_copy_ignores_text_outside_the_data_block(self):
+        root = SCRIPT.parent.parent
+        with tempfile.TemporaryDirectory() as d:
+            src = Path(d) / "r.html"
+            page = (root / "report" / "template.html").read_text(encoding="utf-8")
+            src.write_text(page.replace("<title>", "<title>Private note Zephyrine ", 1), encoding="utf-8")
+            subprocess.run([sys.executable, "-I", str(SCRIPT.with_name("report_share.py")), str(src)], capture_output=True, text=True)
+            self.assertNotIn("Zephyrine", (Path(d) / "r-share.html").read_text(encoding="utf-8"))
+
+    def test_embedded_data_cannot_close_the_script_block(self):
+        sys.path.insert(0, str(SCRIPT.parent))
+        import json, re, report_share
+        data = {"meta": {"share_name": "</script><script>alert(1)</script><!--"}}
+        html = report_share.embed('<script type="application/json" id="report-data">{}</script>', data)
+        inner = re.search(r'id="report-data">(.*)</script>$', html, re.S).group(1)
+        self.assertNotIn("<", inner)
+        self.assertEqual(json.loads(inner), data)
 
 
 class ReportCompare(unittest.TestCase):

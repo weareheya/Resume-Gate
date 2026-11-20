@@ -2,6 +2,8 @@
 
 One section per run, newest first. Record the kit versions compared, how many runs per side, and what changed because of the run.
 
+**Scorer change in 0.6.0**: critical recall now counts a card only when its ID is tagged on a visible resume line, and a crashed `check_claims.py` is "could not run" instead of zero errors. Runs before 0.6.0 used the looser count, so their recall figures may read slightly high; compare new rounds with new rounds. The saved outputs of the rounds below weren't kept (`evals/runs/` is local), so they weren't re-scored. The reference answers pass under the new rules.
+
 ## 2026-11-20 · v0.2.3 vs v0.5.1 · three runs per side, plus a blind read
 
 **Setup**: as in the first run below. v0.2.3 reuses that run plus two new ones; v0.5.1 had three fresh runs. 18 resumes in all. Scored with `score.py`. `check_claims.py` from 0.5.1 was also run on every output. A blind read compared the three product-manager pairs: one AI reviewer acting as a recruiter, given only the job posting and the A/B files from `blind.py`.

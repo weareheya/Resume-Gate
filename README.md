@@ -12,6 +12,8 @@ A resume workflow for a long job search, where you tailor many versions over wee
 
 ![Resume-Gate overview: one fact, one card; every version and every interview traces back](assets/overview-en.svg)
 
+**New in 0.6.0 (2026-11-20):** your cards and resumes stay out of Git by default; quick edit / tailor / finalize modes, so a small fix doesn't run the whole pipeline; layout check works on Windows and Linux (you confirm the last page); a lighter evidence table that the script checks; hard requirements shown on the report. No hard rule was removed. [Details](en/CHANGELOG.md)
+
 **New in 0.5.0 (2026-11-20):** sent resumes can be frozen (`scripts/freeze.py`), and the repo has an [eval set](evals/README.md) with blind A/B/C review to check that kit changes make resumes better. 0.4.0 made the kit check what a resume leaves out, not only what it gets wrong; 0.3.0 made the evidence checks much harder to slip past. [All changes](en/CHANGELOG.md)
 
 ## What's inside
@@ -107,6 +109,8 @@ Not sure about any of this? Ask the AI tool you picked in step 1. It can check w
 **为什么不直接让 AI 改？** 随便一个 AI 都能把简历改得更好看。它不知道的是：这个数字当时怎么算的，哪部分是你做的，哪句话一被追问就会卡壳。这些只有你知道。Resume-Gate 把它们写进证据库，只写一次，之后的一切都从同一套事实里长出来：每一版简历、每一次体检，还有每场面试前的追问卡。新开一个对话，AI 每次都从零开始；这个文件夹会留下你确认过的每一件事。
 
 ![Resume-Gate 总览：事实只写一次，简历和面试都从这里来](assets/overview-zh.svg)
+
+**0.6.0 新增（2026-11-20）：** 卡片和简历默认不进 Git；分快改 / 定制 / 定稿三种模式，小改动不再走整套流程；Windows 和 Linux 上也能做排版检查（由你确认最后一页）；证据表更轻，并由脚本把关；报告上标出硬性要求。没有删掉任何硬规则。[详情](zh-CN/CHANGELOG.md)
 
 **0.5.0 新增（2026-11-20）：** 已投递的简历可以冻结（`scripts/freeze.py`），仓库里加了[评测集](evals/README.md)和 A/B/C 盲评，用来确认工具的改动真的让简历变好。0.4.0 开始查漏写了什么，0.3.0 让证据检查更难被绕过。[全部更新记录](zh-CN/CHANGELOG.md)
 

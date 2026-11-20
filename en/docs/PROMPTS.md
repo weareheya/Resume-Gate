@@ -50,7 +50,7 @@ Review cv/resumes/[file].md against docs/REVIEW-CHECKLIST.md. Report your findin
 ## 5. Check for updates
 
 ```text
-Check whether there's a newer Resume-Gate. Follow "Updating the kit" in AGENTS.md: compare VERSION, show me what changed and anything I need to do, and replace only the kit files after I say yes. Never touch my own files.
+Check whether there's a newer Resume-Gate. Follow docs/UPDATING.md: compare VERSION, show me what changed and anything I need to do, and replace only the kit files after I say yes. Never touch my own files.
 ```
 
 ## 6. Before-and-after poster

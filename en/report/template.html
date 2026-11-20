@@ -11,11 +11,11 @@
   3. Never type scores or percentages: the script below counts the marks and computes them.
 -->
 <style>
-:root{--bg:#FAFAF8;--ink:#1A1A1A;--ink2:#5C5A55;--soft:#D9D7D0;--track:#ECEBE6;--tint:#F3F2EE;--acc:#151515;--acc2:#858E96;--card:#FFFFFF;
+:root{--bg:#FAFAF8;--ink:#1A1A1A;--ink2:#5C5A55;--soft:#D9D7D0;--track:#ECEBE6;--tint:#F3F2EE;--acc:#151515;--acc2:#646C73;--card:#FFFFFF;
  --sans:Inter,-apple-system,"Helvetica Neue","PingFang SC","Source Han Sans SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif;
  --mono:"JetBrains Mono","SF Mono",Menlo,Consolas,monospace;
  --serif:Charter,Georgia,"Songti SC","Noto Serif SC","Source Han Serif SC",serif;
- --display:var(--serif);--b0:#C65B3D;--b1:#9B7B58;--b2:#5D748C;--b3:#6F8662}
+ --display:var(--serif);--b0:#B4502F;--b1:#8A6A48;--b2:#5D748C;--b3:#5E7552}
 .bc0{--bandc:var(--b0)}.bc1{--bandc:var(--b1)}.bc2{--bandc:var(--b2)}.bc3{--bandc:var(--b3)}
 .bar i.bc0{background:var(--b0)}.bar i.bc1{background:var(--b1)}.bar i.bc2{background:var(--b2)}.bar i.bc3{background:var(--b3)}
 h1,.sc h3,.ring .num b,.card .big{font-family:var(--display)}
@@ -58,7 +58,7 @@ h2{display:flex;align-items:center;gap:9px;font-size:13px;font-family:var(--mono
 h2 .ic{width:17px;height:17px}
 .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
 .card{background:var(--card);border:1px solid var(--ink);padding:16px 18px 16px;position:relative}
-.card.off{opacity:.5;border-style:dashed}
+.card.off{opacity:.65;border-style:dashed}
 .card .top{display:flex;align-items:center;gap:10px}
 .card .icb{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;background:var(--tint);border:1px solid var(--soft)}
 .card .name{font-weight:600;font-size:15px}
@@ -106,6 +106,9 @@ body.png .toolbar,body.png .hint,body.png .bgmark{display:none!important}
 body.png-share .share{display:block;padding:0}
 body.png-share .sc{zoom:2;max-width:none}
 .key{margin:8px 0 0;font-size:12px;line-height:1.6;color:var(--ink2)}
+.gates{display:flex;align-items:flex-start;gap:8px;margin-top:14px;padding:12px 16px;background:var(--card);border:1px solid var(--ink);border-left:4px solid var(--ink);font-size:14px;line-height:1.5}
+.gates.open{border-left-color:var(--b0)}
+.gtag{display:inline-block;margin-left:6px;font-size:11px;padding:1px 6px;border:1px solid var(--ink);font-family:var(--mono);letter-spacing:.04em}
 .terms{margin-top:14px}
 .terms .lbl{font-size:13px;color:var(--ink2);margin-bottom:6px}
 .terms span.t{display:inline-block;margin:4px 6px 0 0;padding:3px 10px;font-size:13px;border:1px solid var(--ink);background:var(--card)}
@@ -306,6 +309,7 @@ body.sharing .share{display:flex;flex-direction:column;align-items:center}
    {
     "req": "Cloud marketplace experience",
     "coverage": "none",
+    "gate": true,
     "top": false,
     "evidence": "-"
    }
@@ -385,7 +389,7 @@ body.sharing .share{display:flex;flex-direction:column;align-items:center}
 </script>
 
 <script>
-const L = {"kicker_checkup": "RESUME-GATE / CHECKUP", "kicker_job": "RESUME-GATE / JOB FIT", "mode_checkup": "Checkup", "mode_job": "Job fit", "score": "Score", "of100": "out of 100", "bands": ["Needs a rewrite", "Usable, but losing points", "Solid", "Strong"], "dims": "Dimensions", "notscored": "not scored", "weight": "weight", "strengths": "Strongest points", "fixes": "Fix these first", "jd": "JD coverage", "req": "Requirement", "cov": "Coverage", "top": "Near the top", "ev": "Evidence", "cov_direct": "Direct", "cov_partial": "Partial", "cov_none": "None", "yes": "Yes", "no": "No", "terms": "Key terms the evidence supports", "used": "used", "notused": "not used yet", "intake": "Interview progress", "item": "item", "questions": "questions", "details": "Every bullet, marked", "where": "Where", "bullet": "Bullet", "structure": "Structure checks", "summary": "Summary", "method": "Scored on the Resume-Gate checkup standard: Harvard career-office resume guides and common ATS advice. Not a recruiter's score; it doesn't predict interviews. Use it to compare versions of the same resume.", "view_full": "Full report", "view_share": "Share card", "cmp_kicker": "BEFORE → AFTER", "cmp_title": "My resume, before and after", "cmp_before": "Before", "cmp_after": "After", "cmp_note": "Same standard, two checkups", "cmp_partial": "Compared on the dimensions both reports share", "target": "Target", "share_hint": "Screenshot this card to share it. Your name, employer and bullets stay hidden.", "share_hint_full": "Screenshot this card to share it. To send a file instead, make a share copy with scripts/report_share.py. Never send this full report: it holds all your details.", "share_title": "My resume checkup", "share_cta": "Check your own resume. Free and open source.", "share_star": "Star it on GitHub", "share_std": "Resume-Gate checkup standard v2<br>Based on Harvard resume guides<br>and common ATS advice", "status": {"To do": "To do", "In progress": "In progress", "Done": "Done", "Skipped": "Skipped"}, "names": {"R1": "Results", "R2": "Numbers", "R3": "Action-led", "R4": "Specific", "R5": "Structure", "R6": "Evidence-backed", "J1": "JD coverage", "J2": "Placement", "J3": "Wording"}, "r6_key": "Evidence: ✓ = a Safe to draft Claim Card covers the whole bullet · ½ = a card exists but is under review, or covers only part · – = no card yet. Claim IDs are listed under each bullet. Not part of the score.", "ready": "Interview readiness", "ready_tag": "not scored", "ready_why": "This doesn't change how the resume reads, so it isn't in the score. It shows whether you can back each bullet when an interviewer digs in: where a number came from, which part was yours and which was the team's.", "ready_locked": "Stage 2 · unlocks after the Step 0 interview", "ready_locked_d": "No Claim Cards yet, so there's nothing to check against. That's normal for a first checkup. After the Step 0 interview, this shows which bullets have evidence behind them.", "ready_ok": "Confirmed", "ready_pend": "Card under review or partial", "ready_none": "No card yet", "ready_next": "Next: read the cards under review and mark them Safe to draft, then write cards for the bullets that have none.", "share_lock": "Stage 2 · unlocks after the interview", "share_ready_tag": "not scored", "share_ready": "Interview prep"};
+const L = {"gate_tag": "Hard requirement", "gate_ok": "Hard requirements: all met directly", "gate_open": "hard requirement(s) not met directly. Worth a look before you send:", "mk_yes": "yes", "mk_part": "partly", "mk_no": "no", "kicker_checkup": "RESUME-GATE / CHECKUP", "kicker_job": "RESUME-GATE / JOB FIT", "mode_checkup": "Checkup", "mode_job": "Job fit", "score": "Score", "of100": "out of 100", "bands": ["Needs a rewrite", "Usable, but losing points", "Solid", "Strong"], "dims": "Dimensions", "notscored": "not scored", "weight": "weight", "strengths": "Strongest points", "fixes": "Fix these first", "jd": "JD coverage", "req": "Requirement", "cov": "Coverage", "top": "Near the top", "ev": "Evidence", "cov_direct": "Direct", "cov_partial": "Partial", "cov_none": "None", "yes": "Yes", "no": "No", "terms": "Key terms the evidence supports", "used": "used", "notused": "not used yet", "intake": "Interview progress", "item": "item", "questions": "questions", "details": "Every bullet, marked", "where": "Where", "bullet": "Bullet", "structure": "Structure checks", "summary": "Summary", "method": "Scored on the Resume-Gate checkup standard: Harvard career-office resume guides and common ATS advice. Not a recruiter's score; it doesn't predict interviews. Use it to compare versions of the same resume.", "view_full": "Full report", "view_share": "Share card", "cmp_kicker": "BEFORE → AFTER", "cmp_title": "My resume, before and after", "cmp_before": "Before", "cmp_after": "After", "cmp_note": "Same standard, two checkups", "cmp_partial": "Compared on the dimensions both reports share", "target": "Target", "share_hint": "Screenshot this card to share it. Your name, employer and bullets stay hidden.", "share_hint_full": "Screenshot this card to share it. To send a file instead, make a share copy with scripts/report_share.py. Never send this full report: it holds all your details.", "share_title": "My resume checkup", "share_cta": "Check your own resume. Free and open source.", "share_star": "Star it on GitHub", "share_std": "Resume-Gate checkup standard v2<br>Based on Harvard resume guides<br>and common ATS advice", "status": {"To do": "To do", "In progress": "In progress", "Done": "Done", "Skipped": "Skipped"}, "names": {"R1": "Results", "R2": "Numbers", "R3": "Action-led", "R4": "Specific", "R5": "Structure", "R6": "Evidence-backed", "J1": "JD coverage", "J2": "Placement", "J3": "Wording"}, "r6_key": "Evidence: ✓ = a Safe to draft Claim Card covers the whole bullet · ½ = a card exists but is under review, or covers only part · – = no card yet. Claim IDs are listed under each bullet. Not part of the score.", "ready": "Interview readiness", "ready_tag": "not scored", "ready_why": "This doesn't change how the resume reads, so it isn't in the score. It shows whether you can back each bullet when an interviewer digs in: where a number came from, which part was yours and which was the team's.", "ready_locked": "Stage 2 · unlocks after the Step 0 interview", "ready_locked_d": "No Claim Cards yet, so there's nothing to check against. That's normal for a first checkup. After the Step 0 interview, this shows which bullets have evidence behind them.", "ready_ok": "Confirmed", "ready_pend": "Card under review or partial", "ready_none": "No card yet", "ready_next": "Next: read the cards under review and mark them Safe to draft, then write cards for the bullets that have none.", "share_lock": "Stage 2 · unlocks after the interview", "share_ready_tag": "not scored", "share_ready": "Interview prep"};
 const ICONS = {"file": "<path d=\"M6 3h8l4 4v14H6z\"/><path d=\"M14 3v4h4\"/><path d=\"M9 12h6M9 16h6\"/>", "cards": "<rect x=\"4\" y=\"7\" width=\"13\" height=\"13\" rx=\"1\"/><path d=\"M8 4h11a1 1 0 0 1 1 1v11\"/>", "check": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M8 12.5l2.5 2.5L16 9.5\"/>", "briefcase": "<rect x=\"3\" y=\"7\" width=\"18\" height=\"13\" rx=\"1\"/><path d=\"M9 7V4h6v3M3 12h18\"/>", "sliders": "<path d=\"M4 7h10M18 7h2M4 17h4M12 17h8\"/><circle cx=\"16\" cy=\"7\" r=\"2\"/><circle cx=\"10\" cy=\"17\" r=\"2\"/>", "search": "<circle cx=\"11\" cy=\"11\" r=\"6\"/><path d=\"M20 20l-4.5-4.5\"/>", "map": "<path d=\"M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z\"/><path d=\"M9 4v14M15 6v14\"/>", "edit": "<path d=\"M4 20h4L19 9l-4-4L4 16z\"/><path d=\"M13 7l4 4\"/>", "log": "<path d=\"M8 6h12M8 12h12M8 18h12\"/><circle cx=\"4\" cy=\"6\" r=\"1\"/><circle cx=\"4\" cy=\"12\" r=\"1\"/><circle cx=\"4\" cy=\"18\" r=\"1\"/>", "shield": "<path d=\"M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6z\"/><path d=\"M9 12l2 2 4-4\"/>", "user": "<circle cx=\"9\" cy=\"8\" r=\"4\"/><path d=\"M2 20c0-4 3-6 7-6s7 2 7 6\"/><path d=\"M16 11l2 2 4-4\"/>", "send": "<path d=\"M21 3L10 14\"/><path d=\"M21 3l-7 18-4-7-7-4z\"/>", "target": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><circle cx=\"12\" cy=\"12\" r=\"5\"/><circle cx=\"12\" cy=\"12\" r=\"1\"/>", "hash": "<path d=\"M5 9h15M4 15h15M10 3L8 21M16 3l-2 18\"/>", "arrow": "<path d=\"M4 12h15\"/><path d=\"M13 6l6 6-6 6\"/>", "focus": "<circle cx=\"12\" cy=\"12\" r=\"4\"/><path d=\"M12 2v4M12 18v4M2 12h4M18 12h4\"/>", "layout": "<rect x=\"3\" y=\"3\" width=\"18\" height=\"18\" rx=\"1\"/><path d=\"M3 9h18M9 9v12\"/>", "top": "<path d=\"M5 4h14\"/><path d=\"M12 20V9\"/><path d=\"M7 13l5-5 5 5\"/>", "type": "<path d=\"M5 6V4h14v2\"/><path d=\"M12 4v16M9 20h6\"/>", "star": "<path d=\"M12 3l2.8 5.7 6.2.9-4.5 4.4 1 6.2L12 17.3 6.5 20.2l1-6.2L3 9.6l6.2-.9z\"/>", "wrench": "<path d=\"M14.5 6.5a4 4 0 0 0 5 5L12 19a2.1 2.1 0 0 1-3-3l7.5-7.5\"/><path d=\"M14.5 6.5L17 4\"/>", "chat": "<path d=\"M4 5h16v11H9l-5 4z\"/><path d=\"M8 9h8M8 12h5\"/>", "list": "<path d=\"M9 6h11M9 12h11M9 18h11\"/><path d=\"M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2\"/>", "gauge": "<path d=\"M4 16a8 8 0 1 1 16 0\"/><path d=\"M12 16l4-5\"/>", "x": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M9 9l6 6M15 9l-6 6\"/>", "lock": "<rect x=\"5\" y=\"11\" width=\"14\" height=\"10\" rx=\"1\"/><path d=\"M8 11V7a4 4 0 0 1 8 0v4\"/>", "gate": "<path d=\"M4 21V9l8-5 8 5v12\"/><path d=\"M9 21v-7h6v7\"/>"};
 const ic = (n, c) => `<svg class="ic${c ? " " + c : ""}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[n]}</svg>`;
 const DIM_ICON = {R1:"target",R2:"hash",R3:"arrow",R4:"focus",R5:"layout",R6:"shield",J1:"briefcase",J2:"top",J3:"type"};
@@ -442,6 +446,12 @@ h += `<section class="hero"><div class="ring">${ring(210, 90, 12)}<div class="nu
 h += `<div><div class="band">${ic("gauge")}${band}</div><div class="scale">${L.bands.map((b, i) => `<span class="${i === bandIdx ? "cur" : ""}">${["0", "55", "70", "85"][i]}+ ${b}</span>`).join("")}</div>`;
 h += `<ul class="sum">${(D.summary || []).map((s, i) => `<li>${ic(sumIcons[i] || "target")}<span>${esc(s)}</span></li>`).join("")}</ul></div></section>`;
 
+// Hard requirements first: a high score doesn't mean a must-have is covered. Facts only, never "don't apply".
+const gatesOpen = job ? reqs.filter(r => r.gate && r.coverage !== "direct") : [];
+if (job && reqs.some(r => r.gate)) h += gatesOpen.length
+  ? `<div class="gates open" role="status">${ic("gate")}<span><b>${gatesOpen.length}</b> ${L.gate_open} ${gatesOpen.map(r => esc(r.req)).join(" · ")}</span></div>`
+  : `<div class="gates" role="status">${ic("check")}<span>${L.gate_ok}</span></div>`;
+
 h += `<h2>${ic("gauge")}${L.dims}</h2><div class="grid">`;
 ids.forEach(id => {
   const r = R[id], o = on(id);
@@ -469,8 +479,8 @@ h += `<div><h2>${ic("wrench")}${L.fixes}</h2><div class="items">${(D.fixes || []
 
 if (job && reqs.length) {
   const cv = {direct: L.cov_direct, partial: L.cov_partial, none: L.cov_none};
-  h += `<h2>${ic("briefcase")}${L.jd}</h2><table><tr><th>${L.req}</th><th>${L.cov}</th><th>${L.top}</th><th>${L.ev}</th></tr>`;
-  reqs.forEach(r => { h += `<tr><td>${esc(r.req)}</td><td><span class="pill ${r.coverage}">${cv[r.coverage]}</span></td><td class="c">${r.coverage === "none" ? "-" : (r.top ? `<span class="ok">${L.yes}</span>` : `<span class="no">${L.no}</span>`)}</td><td>${esc(r.evidence)}</td></tr>`; });
+  h += `<h2>${ic("briefcase")}${L.jd}</h2><table><tr><th scope="col">${L.req}</th><th scope="col">${L.cov}</th><th scope="col">${L.top}</th><th scope="col">${L.ev}</th></tr>`;
+  reqs.forEach(r => { h += `<tr><td>${esc(r.req)}${r.gate ? `<span class="gtag">${L.gate_tag}</span>` : ""}</td><td><span class="pill ${r.coverage}">${cv[r.coverage]}</span></td><td class="c">${r.coverage === "none" ? "-" : (r.top ? `<span class="ok">${L.yes}</span>` : `<span class="no">${L.no}</span>`)}</td><td>${esc(r.evidence)}</td></tr>`; });
   h += `</table>`;
   if (terms.supported.length) h += `<div class="terms"><div class="lbl">${L.terms}: ${usedSupported.length} ${L.used} · ${terms.supported.length - usedSupported.length} ${L.notused}</div>${terms.supported.map(t => `<span class="t${terms.used.includes(t) ? "" : " miss"}">${esc(t)}</span>`).join("")}</div>`;
 }
@@ -484,9 +494,9 @@ if (items.length) {
 }
 
 if (B.length) {
-  const mk = v => v === "partial" ? `<span class="pt">½</span>` : v ? `<span class="ok">✓</span>` : `<span class="no">–</span>`;
+  const mk = v => v === "partial" ? `<span class="pt" title="${L.mk_part}" aria-label="${L.mk_part}">½</span>` : v ? `<span class="ok" title="${L.mk_yes}" aria-label="${L.mk_yes}">✓</span>` : `<span class="no" title="${L.mk_no}" aria-label="${L.mk_no}">–</span>`;
   const cl = b => b.claims && [].concat(b.claims).length ? `<div class="cl">${esc([].concat(b.claims).join(" · "))}</div>` : "";
-  h += `<h2>${ic("list")}${L.details}</h2><details open><summary>${B.length} bullets</summary><table><tr><th>${L.where}</th><th>${L.bullet}</th><th>R1</th><th>R2</th><th>R3</th><th>R4</th>${hasEv ? `<th>${L.ev}</th>` : ""}</tr>`;
+  h += `<h2>${ic("list")}${L.details}</h2><details open><summary>${B.length} bullets</summary><table><tr><th scope="col">${L.where}</th><th scope="col">${L.bullet}</th><th scope="col">R1</th><th scope="col">R2</th><th scope="col">R3</th><th scope="col">R4</th>${hasEv ? `<th scope="col">${L.ev}</th>` : ""}</tr>`;
   B.forEach(b => { h += `<tr><td style="white-space:nowrap">${esc(b.where)}</td><td>${esc(b.text)}${cl(b)}</td><td class="c">${mk(b.result)}</td><td class="c">${mk(b.number)}</td><td class="c">${mk(b.action)}</td><td class="c">${mk(b.specific)}</td>${hasEv ? `<td class="c">${mk(b.sourced)}</td>` : ""}</tr>`; });
   h += `</table>${hasEv ? `<p class="key">${L.r6_key}</p>` : ""}</details>`;
 }

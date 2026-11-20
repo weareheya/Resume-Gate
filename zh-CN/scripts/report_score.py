@@ -8,12 +8,18 @@ Usage:  python3 scripts/report_score.py reports/<file>.html
 Exit code: 0 = printed, 2 = could not read the report.
 """
 import json
+import math
 import re
 import sys
 from pathlib import Path
 
 WEIGHTS = {"R1": 25, "R2": 20, "R3": 15, "R4": 10, "R5": 15, "R6": 15, "J1": 30, "J2": 15, "J3": 10}
 BANDS = [(85, "很强"), (70, "扎实"), (55, "能用，但在丢分"), (0, "需要重写")]
+
+
+def half_up(x):
+    """和模板里 JavaScript 的 Math.round 一样取整（62.5 -> 63）。Python 的 round() 会得到 62。"""
+    return int(math.floor(x + 0.5))
 
 
 def load(path):
@@ -55,7 +61,7 @@ def score(d):
     job = d.get("meta", {}).get("mode") == "job"
     on = [i for i in ids if (job and i == "J1") or (dims.get(i, True) is not False and r[i][1] > 0)]
     wsum = sum(WEIGHTS[i] for i in on)
-    total = round(sum(WEIGHTS[i] * r[i][2] for i in on) / wsum * 100) if wsum else 0
+    total = half_up(sum(WEIGHTS[i] * r[i][2] for i in on) / wsum * 100) if wsum else 0
     return total, {i: r[i] for i in on}
 
 
@@ -71,7 +77,7 @@ def main():
     print(f"总分：{total} / 100（{band}）")
     for i, (n, den, p) in parts.items():
         n_txt = int(n) if float(n).is_integer() else round(n, 1)
-        print(f"  {i}: {n_txt}/{den} = {round(p * 100)}%")
+        print(f"  {i}: {n_txt}/{den} = {half_up(p * 100)}%")
     if d.get("meta", {}).get("mode") == "job":
         reqs = (d.get("jd") or {}).get("requirements", [])
         if not reqs:

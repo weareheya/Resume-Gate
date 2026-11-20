@@ -9,3 +9,24 @@ p[0-9]*.png
 # 原始素材（旧简历、绩效评语）可能含隐私
 evidence/sources/
 __pycache__/
+
+# ── 你的个人资料默认不进 Git ─────────────────────────────────────────────────
+# 卡片、简历、岗位、面试记录和报告里是你真实的工作经历。
+# 下面这些行让它们不进任何仓库，推到公开的 GitHub 仓库也不会泄露。
+# 用的是私有仓库、想让 Git 帮你备份？删掉这一段（到下一条 ── 线为止）。
+/evidence/claims/*
+!/evidence/claims/_TEMPLATE.md
+/evidence/profile.md
+/evidence/INTAKE.md
+/cv/CV-INDEX.md
+/cv/frozen.txt
+/cv/resumes/*
+!/cv/resumes/_TEMPLATE.md
+/cv/changelogs/*
+!/cv/changelogs/_TEMPLATE.md
+/jobs/*
+!/jobs/_TEMPLATE.md
+/interview/*
+!/interview/_TEMPLATE.md
+/reports/
+# ─────────────────────────────────────────────────────────────────────────────

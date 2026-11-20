@@ -1,5 +1,6 @@
 ---
 job_id: 
+resume:          # id of the resume this log is for; check_claims.py uses it to find the evidence table
 role: 
 status: Draft   # Draft | Approved | Sent | Unused
 base: (baseline resume name / version)
@@ -20,6 +21,8 @@ JD: `jobs/<job-id>.md`
 |---|---|---|---|
 | C-0xx | High / Medium / Low | Yes / No | |
 | Low: C-0xx, C-0yy | Low | No | Unrelated to this job (one line for all of them) |
+
+Every card appears once: used cards on their own row, unused ones grouped by reason. A protected card, or one that clearly fits the job, gets its own row even when unused. `check_claims.py` warns if a card is missing.
 
 **Unused but strong?** (Any card that would beat something already in the resume, and what was decided.)
 
@@ -50,7 +53,7 @@ JD: `jobs/<job-id>.md`
 |---|---|
 | | |
 
-Layout: pages , reach per page , (result from your resume tool's checker)
+Layout (at Finalize): pages , reach per page , or "the user checked the PDF" on a computer without `pdf_fill` (result from your resume tool's checker)
 
 ## Open questions for the user
 

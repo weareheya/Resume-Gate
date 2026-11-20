@@ -4,7 +4,9 @@
 The full report file keeps all its data inside, even when it shows the share card, so it must never
 be sent around. This script writes <report>-share.html next to it: the same score and dimension bars,
 but no name, employer, job, file path, bullet text, strengths, fixes or JD wording. It opens straight
-on the share card. Standard library only.
+on the share card. The copy is built from the kit's clean report/template.html, not from the report
+file, so nothing outside the data block (a title, a note someone typed into the page) comes along.
+Standard library only.
 
 Usage:  python3 scripts/report_share.py reports/<file>.html [modules]
 
@@ -23,6 +25,18 @@ import sys
 from pathlib import Path
 
 BLOCK = re.compile(r'(<script type="application/json" id="report-data">)(.*?)(</script>)', re.S)
+TEMPLATE = Path(__file__).resolve().parent.parent / "report" / "template.html"
+
+
+def safe_json(data):
+    """嵌进 <script> 块的 JSON：每个 "<" 都写成 \\u003c，数据里即使有 "</script>" 或 "<!--"
+    也不会提前结束这个块。JSON.parse 读回来一模一样。"""
+    return json.dumps(data, ensure_ascii=False, indent=1).replace("<", "\\u003c")
+
+
+def embed(html, data):
+    """把页面的数据块换成 data。"""
+    return BLOCK.sub(lambda m: m.group(1) + "\n" + safe_json(data) + "\n" + m.group(3), html, count=1)
 
 
 def add_module_args(ap):
@@ -65,7 +79,8 @@ def strip(d):
         used = set(jd.get("terms", {}).get("used", []))
         labels = {t: f"t{i + 1}" for i, t in enumerate(supported)}
         out["jd"] = {
-            "requirements": [{"req": "", "coverage": r.get("coverage", "none"), "top": bool(r.get("top")), "evidence": ""}
+            "requirements": [{"req": "", "coverage": r.get("coverage", "none"), "top": bool(r.get("top")),
+                              "gate": bool(r.get("gate")), "evidence": ""}
                              for r in jd.get("requirements", [])],
             "terms": {"supported": list(labels.values()), "used": [labels[t] for t in supported if t in used]},
         }
@@ -79,8 +94,7 @@ def main():
     a = ap.parse_args()
     src = Path(a.report)
     try:
-        html = src.read_text(encoding="utf-8")
-        m = BLOCK.search(html)
+        m = BLOCK.search(src.read_text(encoding="utf-8"))
         data = json.loads(m.group(2)) if m else None
     except (OSError, ValueError):
         data = None
@@ -88,9 +102,8 @@ def main():
         print(f"读不了这份报告：{src}"); return 2
     stripped = strip(data)
     apply_modules(stripped["meta"], a)
-    clean = json.dumps(stripped, ensure_ascii=False, indent=1)
     dest = src.with_name(src.stem + "-share" + src.suffix)
-    dest.write_text(BLOCK.sub(lambda mm: mm.group(1) + "\n" + clean + "\n" + mm.group(3), html, count=1), encoding="utf-8")
+    dest.write_text(embed(TEMPLATE.read_text(encoding="utf-8"), stripped), encoding="utf-8")
     print(f"已生成：{dest}")
     print("分享这个文件或它的截图。不要发完整报告：里面有你的全部信息。")
     return 0

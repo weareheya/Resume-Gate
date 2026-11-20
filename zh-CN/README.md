@@ -66,12 +66,14 @@
 | [cv/resumes/](cv/resumes/_TEMPLATE.md) | 简历正文，一个版本一个 Markdown 文件 | 每个新岗位 |
 | [cv/changelogs/](cv/changelogs/_TEMPLATE.md) | 每一版改了什么、为什么 | 每个新岗位 |
 | [interview/](interview/_TEMPLATE.md) | 每场面试的追问卡 | 拿到面试邀约之后 |
-| [scripts/validate_evidence.py](scripts/validate_evidence.py) | 检查证据库：ID 不重复、状态合法、每个数字都标了 ✓ 或待核实（Python 3） | [scripts/freeze.py](scripts/freeze.py) | 冻结已投递的简历：把 SHA-256 记进 `cv/frozen.txt`；`--check` 确认冻结的文件都没变（Python 3） | 投递一个版本时 |
-| [scripts/check_claims.py](scripts/check_claims.py) | 检查每一行有出处、数字的数值和币种不变、职位与档案一致、受保护的没丢（Python 3） | 你审一版之前 |
+| [scripts/validate_evidence.py](scripts/validate_evidence.py) | 检查证据库：ID 不重复、状态合法、每个数字都标了 ✓ 或待核实（Python 3） | 检查一份简历之前 |
+| [scripts/freeze.py](scripts/freeze.py) | 冻结已投递的简历：把 SHA-256 记进 `cv/frozen.txt`；`--check` 确认冻结的文件都没变（Python 3） | 投递一个版本时 |
+| [scripts/check_claims.py](scripts/check_claims.py) | 检查每一行有出处、数字的数值和币种不变、职位与档案一致、受保护的没丢；Change Log 的证据表漏了卡会提醒（Python 3） | 你审一版之前 |
+| [scripts/list_claims.py](scripts/list_claims.py) | 每张 Claim Card 列一行，证据库大了也能很快过一遍；不写任何文件（Python 3） | 卡片超过 15 张时 |
 | [scripts/report_score.py](scripts/report_score.py) | 用和模板相同的公式算出报告分数，让对话里说的分数和页面一致（Python 3） | AI 填完报告后 |
 | [scripts/report_png.py](scripts/report_png.py) | 把分享卡（加 `--full` 就是整份报告）存成 PNG，给打不开报告的对话窗口用。用你已有的 Chrome、Edge 或 Brave（Python 3） | AI 填完报告后 |
 | [scripts/report_share.py](scripts/report_share.py) · [report_compare.py](scripts/report_compare.py) | 分享卡，或用两份报告做改前改后海报。默认只有分数，其余模块由你勾选；不含隐私信息（Python 3） | 想分享时 |
-| [scripts/pdf_fill.swift](scripts/pdf_fill.swift) | 把 PDF 渲染成图片，检查页数和每页内容延伸到哪里（macOS） | 每次导出后 |
+| [scripts/pdf_fill.swift](scripts/pdf_fill.swift) | 把 PDF 渲染成图片，检查页数和每页内容延伸到哪里（只能在 macOS 上跑；其他电脑上你自己看一眼最后一页） | 定稿、准备投递时 |
 | [examples/](examples/README.md) | 一套完整的虚构小项目（Claim Card、基线、新版本、Change Log、一份故意写错的版本），以及 10 个改前改后的案例 | Step 0 之前，看看要写到多细 |
 
 ## 快速开始
@@ -85,7 +87,7 @@ cp -R Resume-Gate/zh-CN/. my-job-search/
 cd my-job-search && git init
 ```
 
-只推到**私有**仓库（见[工作副本务必保持私有](#工作副本务必保持私有)）。
+工具包的 `.gitignore` 已经让你的卡片、简历、岗位和报告不进 Git（见[工作副本务必保持私有](#工作副本务必保持私有)）。
 
 **2. 用能读文件的 AI 打开这个文件夹**（Claude Code、Codex、Cursor，或任何能读写文件的 agent），**然后说一句「开始」。** 说什么都行：AI 会先看你进行到哪，再带着你往下走。在 Claude Code 里也可以输入 `/start`，之后还有 `/checkup`、`/job`、`/prep`、`/poster`、`/update`。如果你的工具不会自己读 `AGENTS.md`，就改贴 [PROMPTS](docs/PROMPTS.md) 里的提示词 0。
 
@@ -111,7 +113,7 @@ Windows 上，这里和文档里的 `python3` 都换成 `python`。想先看看�
 mkdir -p /tmp/cv-check && swift scripts/pdf_fill.swift your-cv.pdf /tmp/cv-check
 ```
 
-输出页数、每页内容延伸到的位置，并为每页生成 `p1.png`、`p2.png`……方便贴给 AI 或自己看。页数不是 1 或 2，或最后一页的内容没到页面高度的 85% 时，退出码为 2，可接进脚本。不用 macOS？打开导出的 PDF，自己看页数和最后一页。
+输出页数、每页内容延伸到的位置，并为每页生成 `p1.png`、`p2.png`……方便贴给 AI 或自己看。页数不是 1 或 2，或最后一页的内容没到页面高度的 85% 时，退出码为 2，可接进脚本。**在 Windows 或 Linux 上**这个脚本跑不了：定稿时，AI 会请你打开导出的 PDF，确认页数，以及最后一页不是只有零星几行。只要几秒钟，而且每个要投的版本只看一次。
 
 ## 保持更新
 
@@ -155,7 +157,11 @@ Resume-Gate 还在持续改进。`VERSION` 写着你手上是哪个版本，[CHA
 
 ## 工作副本务必保持私有
 
-证据库里是你真实的工作经历：雇主、数字、合作过的人。**把本套内容复制到你自己的项目里，并让那个项目保持私有仓库。** 不要 fork 本仓库后公开填写。如果一定要用公开仓库，先把 `evidence/` 和 `cv/` 加进 `.gitignore`。
+证据库里是你真实的工作经历：雇主、数字、合作过的人。**把本套内容复制到你自己的项目里，不要 fork 本仓库后公开填写。**
+
+工具包的 `.gitignore` 默认让你的个人文件不进 Git：Claim Card、`evidence/profile.md` 和 `INTAKE.md`、`cv/CV-INDEX.md`、简历、Change Log、岗位、面试记录和报告。所以即使推到 GitHub 的公开仓库，也不会把它们传上去。代价是 Git 也不会备份它们。如果你的仓库是**私有**的、想让 Git 帮你保存，删掉 `.gitignore` 末尾标出的那一段就行。之后升级工具包，不会在没问你的情况下把它加回来。
+
+0.6.0 之前已经把个人文件提交进 Git 了？新的 `.gitignore` 不会把它们移出去。先跑 `git rm -r --cached --ignore-unmatch evidence/claims evidence/profile.md evidence/INTAKE.md cv jobs interview reports`，再跑 `git add .`（文件还留在你电脑上，模板会被重新加回来），然后提交。如果这个仓库公开过，就当推上去的内容已经被人看过了。
 
 ## 设计取舍
 

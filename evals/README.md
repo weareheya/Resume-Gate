@@ -29,13 +29,13 @@ All cases use the evidence bank in `en/examples/jordan-lee`, so anyone can rerun
 | Field | Meaning | Gate? |
 |---|---|---|
 | `bank` | Evidence bank the case uses, from the repo root | |
-| `must_use` | Cards a good answer cites. Missing one is underselling (D-019) | yes: critical recall must be 100% |
+| `must_use` | Cards a good answer cites. Missing one is underselling (D-019). A card counts only when its ID is tagged on a line a reader sees (or on the line right under a wrapped bullet), not when it's named in a note | yes: critical recall must be 100% |
 | `should_use` | Cards that usually help. Reported as a score | no |
 | `must_not_use` | Cards that can't go in a resume (e.g. `Needs review`) | yes |
 | `forbidden` | Regexes for overselling, matched case-insensitively against what a reader sees (no front matter, no comments) | yes |
 | `gaps` | Expected kind for each requirement: Direct, Transferable or combined, Not found yet, Buildable, Hard gap. Give a list when more than one is defensible (e.g. `["Hard gap", "Not found yet"]`: Not found yet is right if the user hasn't been asked yet) | no: reported as accuracy, since reviewers can reasonably differ |
 
-`score.py` also runs the kit's `check_claims.py` on the resume (any error fails the case) and, given a change log, checks that its evidence table lists every card in the bank.
+`score.py` also runs the kit's `check_claims.py` on the resume (any error fails the case) and, given a change log, checks that its evidence table lists every card in the bank. It fails closed: if `check_claims.py` crashes or ends without its verdict line, the score is "could not run" (exit 2), never a pass.
 
 ## Running it
 
@@ -51,7 +51,7 @@ To evaluate a change: for each case, start a fresh session in a copy of the exam
 
 ## Blind A/B/C review
 
-Scores catch overselling and missing evidence. Whether a resume is *persuasive* still needs people.
+Scores catch overselling and missing evidence. Whether a resume is *persuasive* still needs people. **Do a blind read in every eval round**, at least on the case the change touches: in round 2 the scores were perfect on both sides and only the blind read showed that the new version undersold (RESULTS.md).
 
 1. Pick the versions to compare for one job, for example the old kit's answer (A), the new kit's (B) and the user's own resume (C).
 2. `python3 evals/blind.py evals/runs/<date>-<case> a.md b.md c.md`. It strips Claim IDs, notes and front matter, shuffles the order, and writes `A.md`, `B.md`, `C.md`, `rating-sheet.md` and `key.json`. (`evals/runs/` is ignored by git.)
@@ -72,7 +72,8 @@ Write `job.md` with numbered requirements and `gold.json`, then a reference answ
 这个文件夹是维护者用的：改了提示词、规则、脚本，或换了模型之后，用它确认简历是真的变好了，而不只是变了。普通用户用不到它，它也不在 `en/`、`zh-CN/` 的下载包里。
 
 - `cases/<case>/`：一个虚构岗位（`job.md`）、标准答案要求（`gold.json`）和一份 100 分的参考答案（`reference/`）。三个案例都用 `en/examples/jordan-lee` 的证据库，各自考一个陷阱：渠道销售岗要营收指标但只有 pipeline；产品岗不能说门户是自己「搭建 / 上线」的，也不能声称管过路线图；客户成功岗要入驻时间和成本节省，但从来没量过，webinar 报名人数也不是到场人数。
-- `score.py`：先跑工具里的 `check_claims.py`（有错误就不通过），再算关键卡召回率（必须 100%，漏用就是写低了自己）、建议卡召回率、不能用的卡、夸大措辞、缺口分类准确率，以及证据表是否列了每张卡。缺口分类和建议卡只打分不卡关，因为合理的人也会有不同判断。
+- `score.py`：先跑工具里的 `check_claims.py`（有错误就不通过；它崩溃或没跑完时判为「跑不了」，绝不算通过），再算关键卡召回率（必须 100%，漏用就是写低了自己；只有标在读者看得到的那一行上的卡才算用过，写在备注里的不算）、建议卡召回率、不能用的卡、夸大措辞、缺口分类准确率，以及证据表是否列了每张卡。缺口分类和建议卡只打分不卡关，因为合理的人也会有不同判断。
 - `blind.py`：A/B/C 盲评。去掉 Claim ID、注释和 front matter，打乱顺序，生成评分表；`key.json` 等所有人评完再看（`--reveal`）。新版本在「匹配度」上应该赢或打平，在「可信度」上不能输。
 - 每边至少跑三次再比较，因为每次生成的结果会不一样。
+- **每一轮评测都要做盲评**，至少做改动涉及的那个案例：第二轮两边分数都满分，只有盲评发现新版写低了自己（RESULTS.md）。
 - 加新案例时，`forbidden` 要依据卡片上的「不要改写成」或归属说明，考的是真实的夸大方式，而不是文风偏好（D-017）。

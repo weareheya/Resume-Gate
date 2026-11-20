@@ -60,11 +60,12 @@ Each step has an output you must be able to show before moving on. Details in [d
 | [interview/](interview/_TEMPLATE.md) | Follow-up cards for each interview | Once you're invited to interview |
 | [scripts/validate_evidence.py](scripts/validate_evidence.py) | Checks the evidence bank: unique IDs, valid statuses, every number marked ✓ or to verify (Python 3) | Before checking a resume |
 | [scripts/freeze.py](scripts/freeze.py) | Freezes a sent resume: records its SHA-256 in `cv/frozen.txt`; `--check` confirms nothing frozen changed (Python 3) | When you send a version |
-| [scripts/check_claims.py](scripts/check_claims.py) | Checks every line has a source, numbers keep their value and currency, roles match your profile, protected claims stay (Python 3) | Before you review a version |
+| [scripts/check_claims.py](scripts/check_claims.py) | Checks every line has a source, numbers keep their value and currency, roles match your profile, protected claims stay; reminds you if the Change Log's evidence table skips a card (Python 3) | Before you review a version |
+| [scripts/list_claims.py](scripts/list_claims.py) | Lists every Claim Card on one line, so a big evidence bank is quick to scan; writes nothing (Python 3) | When you have more than 15 cards |
 | [scripts/report_score.py](scripts/report_score.py) | Prints a report's score with the same formula as the template, so the chat and the page agree (Python 3) | After the AI fills a report |
 | [scripts/report_png.py](scripts/report_png.py) | Saves the share card (or, with `--full`, the whole report) as a PNG, for chat windows that can't run the report. Uses the Chrome, Edge or Brave you already have (Python 3) | After the AI fills a report |
 | [scripts/report_share.py](scripts/report_share.py) · [report_compare.py](scripts/report_compare.py) | A shareable card, or a before-and-after poster from two reports. Score only by default; you pick any extra modules. No private details (Python 3) | When you want to share |
-| [scripts/pdf_fill.swift](scripts/pdf_fill.swift) | Renders the PDF to images, checks page count and how far down each page the content reaches (macOS) | After every export |
+| [scripts/pdf_fill.swift](scripts/pdf_fill.swift) | Renders the PDF to images, checks page count and how far down each page the content reaches (macOS only; elsewhere you check the last page by eye) | When you finalize a version to send |
 | [examples/](examples/README.md) | A full made-up mini project (claims, baseline, a new version, its Change Log, and a version with planted mistakes), plus ten before-and-after cases | Before Step 0, to see the level of detail |
 
 ## Quick start
@@ -78,7 +79,7 @@ cp -R Resume-Gate/en/. my-job-search/
 cd my-job-search && git init
 ```
 
-Push it only to a **private** repository (see [Keep your working copy private](#keep-your-working-copy-private)).
+The kit's `.gitignore` already keeps your cards, resumes, jobs and reports out of Git (see [Keep your working copy private](#keep-your-working-copy-private)).
 
 **2. Open the folder in an AI that can read files** (Claude Code, Codex, Cursor, or any agent with file access) **and say "start".** Any message works: the AI checks where you are and walks you through. In Claude Code you can also type `/start`, and `/checkup`, `/job`, `/prep`, `/poster` or `/update` later. If your tool doesn't read `AGENTS.md` by itself, paste prompt 0 from [PROMPTS](docs/PROMPTS.md) instead.
 
@@ -104,7 +105,7 @@ To check layout (macOS, needs the Xcode command line tools):
 mkdir -p /tmp/cv-check && swift scripts/pdf_fill.swift your-cv.pdf /tmp/cv-check
 ```
 
-It prints the page count and how far down the content reaches on each page, and writes `p1.png`, `p2.png`, … so you can paste them to your AI or just look. If the page count isn't 1 or 2, or the content on the last page reaches less than 85% of the way down, it exits with code 2, so you can wire it into a script. Not on macOS? Open the exported PDF and check the page count and the last page by eye.
+It prints the page count and how far down the content reaches on each page, and writes `p1.png`, `p2.png`, … so you can paste them to your AI or just look. If the page count isn't 1 or 2, or the content on the last page reaches less than 85% of the way down, it exits with code 2, so you can wire it into a script. **On Windows or Linux** this script can't run: when you finalize a version, your AI will ask you to open the exported PDF and check the page count and that the last page isn't just a few stray lines. It's a few seconds, and only once per version you send.
 
 ## Staying up to date
 
@@ -148,7 +149,11 @@ Before you adopt one, check three things: can you export all your data, can you 
 
 ## Keep your working copy private
 
-The evidence bank holds your real work history: employers, numbers, and who you worked with. **Copy this kit into your own project and keep that project in a private repository.** Don't fork this repo and then fill it in publicly. If you use a public repo anyway, add `evidence/` and `cv/` to `.gitignore` first.
+The evidence bank holds your real work history: employers, numbers, and who you worked with. **Copy this kit into your own project; don't fork this repo and fill it in publicly.**
+
+By default the kit's `.gitignore` keeps your personal files out of Git: Claim Cards, `evidence/profile.md` and `INTAKE.md`, `cv/CV-INDEX.md`, resumes, Change Logs, jobs, interview notes and reports. So pushing to GitHub, even a public repo, doesn't upload them. The catch: Git doesn't back them up either. If your repository is **private** and you want Git to keep them, delete the marked block at the end of `.gitignore`. Updates never put it back without asking.
+
+Already committed personal files before 0.6.0? The new `.gitignore` doesn't remove them from Git. Run `git rm -r --cached --ignore-unmatch evidence/claims evidence/profile.md evidence/INTAKE.md cv jobs interview reports` and then `git add .` (your files stay on disk; the templates come back), then commit. If the repo was ever public, treat what was pushed as already seen.
 
 ## Design choices
 
