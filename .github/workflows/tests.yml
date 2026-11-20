@@ -1,0 +1,36 @@
+# Run the kit's tests on every pull request and every push to main, in both languages.
+name: Tests
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        kit: [en, zh-CN]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Unit tests
+        run: python3 ${{ matrix.kit }}/scripts/test_check_claims.py
+      - name: Example evidence bank is valid
+        working-directory: ${{ matrix.kit }}/examples/jordan-lee
+        run: python3 -I ../../scripts/validate_evidence.py
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: en and zh-CN kits match
+        run: python3 tools/check_sync.py

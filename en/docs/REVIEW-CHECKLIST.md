@@ -11,7 +11,7 @@ Plus common ATS advice (single column, standard section names). Specific statist
 
 ## A. Facts (pass this first; if it fails, stop here)
 
-Run `python3 scripts/check_claims.py cv/resumes/<id>.md` first. It checks the first two items below mechanically, and also that every number on a checked line appears in the card it cites. It fails if it can't find a Summary or Experience section, and it lists any other section (Skills, Projects…) as not verified: check those by hand. The rest still need judgment.
+Run `python3 scripts/validate_evidence.py` and `python3 scripts/check_claims.py cv/resumes/<id>.md` first. They check the first two items below mechanically, and also that every number on a checked line comes from the card it cites (same value, scale and currency), that no banned word from the card is used, that role headings and Education match `evidence/profile.md`, and that protected claims keep their numbers. It fails if it can't find a Summary or Experience section, and it lists any other section (Skills, Projects…) as not verified: check those by hand. The rest still need judgment.
 
 - [ ] Every line traces to a Claim Card. An approved or sent resume is not evidence, only approved wording
 - [ ] Every bullet carries its Claim ID in an HTML comment, and each one points to a card marked `Safe to draft`; no number used is marked `to verify` on its card
@@ -19,7 +19,7 @@ Run `python3 scripts/check_claims.py cv/resumes/<id>.md` first. It checks the fi
 - [ ] Individual contribution is separate from team results; titles match the employment record and aren't inflated
 - [ ] Start and end dates, company type, and role are correct
 - [ ] A result that happened at the same time isn't credited entirely to the candidate (causality); a link that *can* be shown is written, not split apart by reflex (D-014)
-- [ ] Claims marked `protected` aren't just present; **their meaning hasn't been weakened**. Compare them sentence by sentence with the approved wording. `check_claims.py` only checks that the Claim ID is there and can't catch this (LESSONS L-12)
+- [ ] Claims marked `protected` aren't just present; **their meaning hasn't been weakened**. Compare them sentence by sentence with the approved wording. `check_claims.py` checks that the ID and its confirmed numbers are still there, but can't judge wording (LESSONS L-12)
 - [ ] Anything the JD asks for without evidence is **not written** and is listed in the Coverage Report
 - [ ] No sensitive information (a former employer's confidential details, other people's private information)
 

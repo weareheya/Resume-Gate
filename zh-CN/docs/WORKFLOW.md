@@ -11,7 +11,7 @@
 | S3 | **JD 映射**：JD 的每条核心要求 → 有直接证据 / 只有可迁移证据 / 没有证据。标「没有证据」之前，先过一遍下面的[追问清单](#追问清单)（D-014）；追问后仍然没有证据的，不硬写 | 三栏映射表 |
 | S4 | **Delta**：复制 `cv/resumes/` 里的基线文件，只改需要改的：定位句、Summary、bullet 顺序、关键词。不重写已批准的部分 | 新版本草稿 |
 | S5 | **Change Log**：每处改动写 Before / After / Why，附 JD Coverage Report 和检查范围 | `cv/changelogs/<id>.md` |
-| S6 | **AI 自审**：按 [REVIEW-CHECKLIST](REVIEW-CHECKLIST.md) 逐项过；跑 `python3 scripts/check_claims.py cv/resumes/<id>.md`（必须通过），再导出 PDF 并跑 `scripts/pdf_fill.swift` | 截图 + 页数 + 每页内容位置 + 自审改动表 |
+| S6 | **AI 自审**：按 [REVIEW-CHECKLIST](REVIEW-CHECKLIST.md) 逐项过；跑 `python3 scripts/validate_evidence.py` 和 `python3 scripts/check_claims.py cv/resumes/<id>.md`（都必须通过），再导出 PDF 并跑 `scripts/pdf_fill.swift` | 截图 + 页数 + 每页内容位置 + 自审改动表 |
 | S7 | **人工审核**：把全文 + 改动对照交给本人，本人说通过才改状态为 `Approved` | 本人批准记录 |
 
 投递之后：版本改状态为 `Sent` 并**冻结**；`cv/CV-INDEX.md` 里记下是哪个岗位用了它、导出文件的 SHA-256。
@@ -26,6 +26,7 @@
 | 0b | **体检报告。** 用 [PROMPTS](PROMPTS.md) 里的提示词 1。AI 读简历，按 [REPORT](REPORT.md) 的标准数数，填进 `report/template.html`。采访之前就先拿到一份带分数的可视化报告：哪里强、哪里含糊、最该先改的 5 处。然后问你要不要一份可以分享的版本 | `reports/<日期>-checkup.html` 和它的卡片图、对话里的三行摘要，要的话还有 `-share.html` |
 | 0c | **采访计划。** AI 挑出**最强的 3 项**成果（够出第一份基线，其余以后再补），读完材料后只列每项还缺什么，把计划写进 `evidence/INTAKE.md`：一共几个问题、大约多久。本人选一种问法（见下文） | `evidence/INTAKE.md` |
 | 0d | **采访并写卡。** 用提示词 2。每个问题前都带一行进度。任何问题都可以跳过，随时可以停：没答的记在卡上「待补」，不再追问。每做完一项，AI 把卡的要点（准备用的写法、数字、不能说的）给本人看一眼，本人说「对」或改几处，这张卡就是 `Safe to draft`，不用另外再复核一轮；有风险的说法（见「什么算有风险」）除外 | `evidence/claims/` 里的 Claim Card，`INTAKE.md` 同步更新 |
+| 0d+ | **填好 `evidence/profile.md`**：任职（职位、公司、开始、结束）和教育背景，从现有简历里摘出来，由本人确认。`check_claims.py` 会拿每个职位标题和教育那一行来对照它 | `evidence/profile.md` |
 | 0e | **起草第一份基线**，只用 `Safe to draft` 的卡。复制 `cv/resumes/_TEMPLATE.md`，每条 bullet 都标上 Claim ID | `cv/resumes/<id>.md` |
 | 0f | **审核并批准**，流程同 S6、S7。把它登记进 `cv/CV-INDEX.md`，作为该类型的起点。然后 AI 会提议再跑一次体检，做一张改前改后海报（提示词 6） | 一份 Approved 的基线；想要的话，一张海报 |
 

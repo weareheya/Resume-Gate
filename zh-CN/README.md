@@ -64,7 +64,8 @@
 | [cv/resumes/](cv/resumes/_TEMPLATE.md) | 简历正文，一个版本一个 Markdown 文件 | 每个新岗位 |
 | [cv/changelogs/](cv/changelogs/_TEMPLATE.md) | 每一版改了什么、为什么 | 每个新岗位 |
 | [interview/](interview/_TEMPLATE.md) | 每场面试的追问卡 | 拿到面试邀约之后 |
-| [scripts/check_claims.py](scripts/check_claims.py) | 检查每条 bullet 有出处、claim 可用、受保护的没丢（Python 3） | 你审一版之前 |
+| [scripts/validate_evidence.py](scripts/validate_evidence.py) | 检查证据库：ID 不重复、状态合法、每个数字都标了 ✓ 或待核实（Python 3） | 检查简历之前 |
+| [scripts/check_claims.py](scripts/check_claims.py) | 检查每一行有出处、数字的数值和币种不变、职位与档案一致、受保护的没丢（Python 3） | 你审一版之前 |
 | [scripts/report_score.py](scripts/report_score.py) | 用和模板相同的公式算出报告分数，让对话里说的分数和页面一致（Python 3） | AI 填完报告后 |
 | [scripts/report_png.py](scripts/report_png.py) | 把分享卡（加 `--full` 就是整份报告）存成 PNG，给打不开报告的对话窗口用。用你已有的 Chrome、Edge 或 Brave（Python 3） | AI 填完报告后 |
 | [scripts/report_share.py](scripts/report_share.py) · [report_compare.py](scripts/report_compare.py) | 分享卡，或用两份报告做改前改后海报。默认只有分数，其余模块由你勾选；不含隐私信息（Python 3） | 想分享时 |
@@ -120,7 +121,7 @@ Resume-Gate 还在持续改进。`VERSION` 写着你手上是哪个版本，[CHA
 
 ## 脚本检查什么，不检查什么
 
-`check_claims.py` 机械地检查出处：每条 bullet 都有 Claim ID，每个 ID 都指向一张 `Safe to draft` 的卡，每个数字都能在所引用的卡里找到，受保护的 claim 没丢。找不到 Summary 或 Experience 栏目时判为未通过，没验证的栏目会逐一列出。`pdf_fill.swift` 检查页数和内容延伸到的位置。它量不出每页用了多少面积，所以也要看生成的图。其余都是 AI 靠读规则来执行的：claim 是否属实、措辞有没有越过卡的限制、选择是否贴合岗位。这些靠你来把关。
+`validate_evidence.py` 检查证据库本身：Claim ID 不重复、状态合法、每个数字都标了 ✓ 或「待核实」。`check_claims.py` 机械地检查出处：Summary、Experience、Projects 里每一行都有 Claim ID，每个 ID 都指向一张 `Safe to draft` 的卡，每个数字都来自所引用的卡且数值、量级、币种一致，没有用卡上的禁用词，职位标题和教育背景与 `evidence/profile.md` 一致，受保护的 claim 连同已确认的数字都还在。找不到 Summary 或 Experience 栏目时判为未通过，没验证的栏目会逐一列出。`pdf_fill.swift` 检查页数和内容延伸到的位置。它量不出每页用了多少面积，所以也要看生成的图。其余都是 AI 靠读规则来执行的：claim 是否属实、措辞有没有越过卡的限制、选择是否贴合岗位。这些靠你来把关。
 
 ## 工具：自己选
 

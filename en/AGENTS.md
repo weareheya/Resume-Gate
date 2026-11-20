@@ -41,7 +41,8 @@ Before you do any resume work in this repo, read these in order:
 - When you say a check is done, attach a Coverage Report: what you covered and what you didn't.
 - Self-review against `docs/REVIEW-CHECKLIST.md` before showing anything to the user.
 - Reports follow `docs/REPORT.md`. Never send or upload a full report: it holds all the user's details. For sharing, make a copy with `scripts/report_share.py`.
-- Before showing a resume to the user, run `python3 scripts/check_claims.py cv/resumes/<id>.md`, fix every error, and report its result.
+- Before showing a resume to the user, run `python3 scripts/validate_evidence.py` and `python3 scripts/check_claims.py cv/resumes/<id>.md`, fix every error, and report the result.
+- Roles, employers, dates and education come only from `evidence/profile.md`. Never change that file without the user's explicit approval.
 - **Human review gate**: until the user says "approved", a version stays `Draft`. Don't edit a version marked `Sent`.
 
 **Permissions**

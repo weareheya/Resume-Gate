@@ -45,6 +45,8 @@ def main():
         # Re-score both on the shared dimensions only, so the two totals are comparable.
         for d in (before, after):
             d["dims"] = {i: (i in shared) for i in ORDER}
+            if "J1" not in shared:  # compare as checkups; job mode always scores J1
+                d.setdefault("meta", {})["mode"] = "checkup"
         sb, _ = score(before)
         sa, _ = score(after)
     both_job = before.get("meta", {}).get("mode") == "job" and after.get("meta", {}).get("mode") == "job"

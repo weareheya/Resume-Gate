@@ -50,7 +50,10 @@ def score(d):
     # R6 (evidence) is reported as interview readiness, not scored.
     ids = ["R1", "R2", "R3", "R4", "R5"] + (["J1", "J2", "J3"] if d.get("meta", {}).get("mode") == "job" else [])
     dims = d.get("dims") or {}
-    on = [i for i in ids if dims.get(i, True) is not False and r[i][1] > 0]
+    # In job mode, JD coverage (J1) is always scored: a job-fit report with no requirements, or with J1
+    # switched off, would otherwise drop it and renormalize the rest up to 100.
+    job = d.get("meta", {}).get("mode") == "job"
+    on = [i for i in ids if (job and i == "J1") or (dims.get(i, True) is not False and r[i][1] > 0)]
     wsum = sum(WEIGHTS[i] for i in on)
     total = round(sum(WEIGHTS[i] * r[i][2] for i in on) / wsum * 100) if wsum else 0
     return total, {i: r[i] for i in on}
@@ -69,6 +72,17 @@ def main():
     for i, (n, den, p) in parts.items():
         n_txt = int(n) if float(n).is_integer() else round(n, 1)
         print(f"  {i}: {n_txt}/{den} = {round(p * 100)}%")
+    if d.get("meta", {}).get("mode") == "job":
+        reqs = (d.get("jd") or {}).get("requirements", [])
+        if not reqs:
+            print("WARNING: job-fit report with no JD requirements. JD coverage scores 0 until they are filled in.")
+        else:
+            met = sum(1 for x in reqs if x.get("coverage") == "direct")
+            part = sum(1 for x in reqs if x.get("coverage") == "partial")
+            print(f"JD requirements: {met} direct · {part} partial · {len(reqs) - met - part} none (of {len(reqs)})")
+            gates = [x.get("req", "?") for x in reqs if x.get("gate") and x.get("coverage") != "direct"]
+            if gates:
+                print("Hard requirements not directly met: " + "; ".join(gates))
     b = d.get("bullets", [])
     if any(x.get("sourced") or x.get("claims") for x in b):
         ok = sum(1 for x in b if x.get("sourced") and x.get("sourced") != "partial")

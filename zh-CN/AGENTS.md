@@ -41,7 +41,8 @@
 - 宣称「检查完成」时附 Coverage Report：查了什么范围、没查什么。
 - 给本人看之前先按 `docs/REVIEW-CHECKLIST.md` 自审。
 - 报告按 `docs/REPORT.md` 做。不要发送或上传完整报告：里面有本人的全部信息。要分享时，用 `scripts/report_share.py` 生成分享版。
-- 给本人看简历之前，先跑 `python3 scripts/check_claims.py cv/resumes/<id>.md`，修掉所有错误，并报告结果。
+- 给本人看简历之前，先跑 `python3 scripts/validate_evidence.py` 和 `python3 scripts/check_claims.py cv/resumes/<id>.md`，修掉所有错误，并报告结果。
+- 职位、雇主、任职时间和教育背景只能来自 `evidence/profile.md`。没有本人明确同意，不得修改这个文件。
 - **人工审核关卡**：本人说「通过」之前，版本状态保持 `Draft`；已投递（`Sent`）的版本不再修改。
 
 **权限**

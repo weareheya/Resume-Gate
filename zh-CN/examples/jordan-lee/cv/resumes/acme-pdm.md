@@ -14,13 +14,13 @@ Remote · jordan-lee.example · portfolio link
 ## Summary
 
 Partner development manager who recruits and tiers partners, then gets them selling: grew active partners from 12 to 40 in 18 months. <!-- C-001 -->
-Partner-sourced leads rose from 18% to 34% of new pipeline, and partner-sourced pipeline reached US$2.1M in FY2023. <!-- C-001, C-003 -->
+Partners' share of new leads rose from 18% to 34%, and partner-sourced pipeline reached US$2.1M in FY2023. <!-- C-001, C-003 -->
 
 ## Experience
 
 ### Partnerships Manager · Northwind Labs · 2022–2023
 
-- Rebuilt the partner program into a three-tier model and grew active partners from 12 to 40 in 18 months; partner-sourced leads rose from 18% to 34% of new pipeline. <!-- C-001 -->
+- Rebuilt the partner program into a three-tier model and grew active partners from 12 to 40 in 18 months; partners' share of new leads rose from 18% to 34%. <!-- C-001 -->
 - Ran four co-branded webinars with three strategic partners, drawing 380 registrants. <!-- C-004 -->
 - Set up partner deal registration; partner-sourced pipeline reached US$2.1M in FY2023. <!-- C-003 -->
 

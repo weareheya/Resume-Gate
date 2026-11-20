@@ -2,6 +2,25 @@
 
 What changed in each version, and whether you need to do anything. Your version is in `VERSION`. To update, paste prompt 5 from `docs/PROMPTS.md`.
 
+## 0.3.0 · 2026-11-20
+
+Evidence checks are much harder to slip past. Every case below used to pass `check_claims.py` and now fails.
+
+- **Numbers keep their meaning.** A number only counts if it comes from the card's title, What happened, Attribution, Approved wording or Numbers table. Numbers in "Don't rephrase as", Source, Notes or the Claim ID itself no longer count, so "Closed 003 deals" citing C-003 fails. Scaled amounts are compared by value (US$2.1M = US$2,100,000, but not US$2.1B or US$2M+), and the currency must match the card's (EUR 2.1M against a USD card fails). Single digits and "two" to "twenty" are checked too.
+- **Banned words.** A card can list them in "Don't rephrase as": `- Banned words: revenue, closed`. Any line citing the card that uses one fails. The example's revenue trap is now caught by the script.
+- **Only ✓ means confirmed.** A blank, misspelt or unknown value in the Verified column used to count as confirmed; now only `✓` does.
+- **Duplicate Claim IDs fail.** Before, a second card with the same ID silently replaced the first.
+- **New `scripts/validate_evidence.py`** checks the evidence bank itself: unique IDs, valid statuses, `protected` true or false, a ✓ or `to verify` on every number, and a filled-in profile.
+- **Roles and education are checked.** New `evidence/profile.md` holds your roles (title, company, start, end) and education. Every role heading in Experience and every Education line must match it.
+- **Every line counts.** Plain lines in Experience (not just bullets) need a Claim ID, a line indented under a bullet is read as part of that bullet, Projects / Achievements / Highlights sections are checked like Experience, and a line holding a number in any other section needs a Claim ID.
+- **Baseline can't be dodged.** If `cv/CV-INDEX.md` already has a starting point for the resume's type and the file isn't in its resume list, it must have `base:`. Removing `base:` no longer switches off the protected-claims check.
+- **Protected claims keep their numbers.** A protected claim that stays in the resume but loses the confirmed numbers the baseline gave it now fails.
+- **Job-fit scores can't be inflated by leaving the JD out.** In a job-fit report JD coverage (J1) is always scored: with no requirements it counts 0, and switching it off no longer renormalizes the rest to 100. `report_score.py` also prints how many requirements are direct, partial or none, and lists any requirement marked `"gate": true` that isn't directly met.
+- Fixed the example card C-001: its two descriptions of who signed the 28 partners disagreed, and its approved wording called a share of leads a share of "pipeline".
+- The repo now runs the tests in both languages on every pull request.
+
+**What you need to do**: copy `evidence/profile.md` from the new kit into your `evidence/` folder (an update doesn't touch your evidence) and fill in your roles and education. Then run `python3 scripts/validate_evidence.py` and fix what it reports, usually blank Verified cells. Then rerun `check_claims.py` on your newest resume: numbers that came only from a card's Notes or "Don't rephrase as" will now need a home in the Numbers table.
+
 ## 0.2.3 · 2026-11-20
 
 - **Follow-up cards.** Once you're invited to interview, prompt 7 or `/prep` takes the resume version you sent and lists, for each bullet, the questions it's likely to draw, answers that hold up, and what not to say. Every answer comes from your Claim Cards; anything they don't cover goes under "Fill before the interview", never made up. Example: `examples/jordan-lee/interview/ACME-01.md`.
