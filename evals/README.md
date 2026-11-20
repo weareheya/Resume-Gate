@@ -14,6 +14,7 @@ Maintainer tools for checking that a change to the kit (a prompt, a rule, a scri
 | `score.py` | Scores one resume (and optionally its change log) against a case |
 | `blind.py` | Prepares an A/B/C blind comparison for human raters |
 | `test_evals.py` | Checks the cases, the scorer and the blind tool; runs in CI |
+| `RESULTS.md` | What each eval run found and what changed because of it |
 
 All cases use the evidence bank in `en/examples/jordan-lee`, so anyone can rerun them. Each one tests a different trap:
 
@@ -32,7 +33,7 @@ All cases use the evidence bank in `en/examples/jordan-lee`, so anyone can rerun
 | `should_use` | Cards that usually help. Reported as a score | no |
 | `must_not_use` | Cards that can't go in a resume (e.g. `Needs review`) | yes |
 | `forbidden` | Regexes for overselling, matched case-insensitively against what a reader sees (no front matter, no comments) | yes |
-| `gaps` | Expected kind for each requirement: Direct, Transferable or combined, Not found yet, Buildable, Hard gap | no: reported as accuracy, since reviewers can reasonably differ |
+| `gaps` | Expected kind for each requirement: Direct, Transferable or combined, Not found yet, Buildable, Hard gap. Give a list when more than one is defensible (e.g. `["Hard gap", "Not found yet"]`: Not found yet is right if the user hasn't been asked yet) | no: reported as accuracy, since reviewers can reasonably differ |
 
 `score.py` also runs the kit's `check_claims.py` on the resume (any error fails the case) and, given a change log, checks that its evidence table lists every card in the bank.
 

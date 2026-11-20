@@ -29,7 +29,8 @@ class Cases(unittest.TestCase):
             for r in gold.get("gaps", {}):
                 self.assertIn(f"| {r} |", job, f"{case.name}: {r} not in job.md")
             for kind in gold.get("gaps", {}).values():
-                self.assertIn(kind, score.KINDS.values(), case.name)
+                for k in score.accepted(kind):
+                    self.assertIn(k, score.KINDS.values(), case.name)
 
     def test_reference_answers_pass(self):
         for case in CASES:
@@ -69,6 +70,11 @@ class Catches(unittest.TestCase):
         self.assertFalse(r["pass"])
         self.assertEqual(len(r["errors"]), 6)
         self.assertEqual(r["must_not_used"], ["C-005"])
+
+    def test_kind_with_a_note_is_read(self):
+        self.assertEqual(score.kind_of("Direct (marketing only)"), "Direct")
+        self.assertEqual(score.kind_of("**Not found yet**, likely a hard gap"), "Not found yet")
+        self.assertEqual(score.kind_of("可迁移或组合（部分）"), "Transferable or combined")
 
     def test_chinese_gap_kinds_are_read(self):
         kinds, listed = score.read_changelog(

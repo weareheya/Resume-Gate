@@ -10,7 +10,7 @@ cv/resumes/_eval.md, runs the kit's check_claims.py there, and then measures:
   should recall    share of should_use cards cited (reported, not required)
   must-not-use     cards the resume must not cite (e.g. Needs review)
   forbidden        phrases that would oversell (regex, case-insensitive, comments stripped)
-  gap kinds        with --changelog: share of requirements whose Coverage Report kind matches gold
+  gap kinds        with --changelog: share of requirements whose Coverage Report kind is one gold accepts
   evidence table   with --changelog: share of the bank's cards listed in the evidence table (D-019)
 
 PASS needs: no integrity errors, full critical recall, no must-not-use card, no forbidden phrase,
@@ -40,6 +40,20 @@ KINDS = {
     "buildable": "Buildable", "可补足": "Buildable",
     "hard gap": "Hard gap", "硬缺口": "Hard gap",
 }
+
+
+def kind_of(cell):
+    """The kind a Coverage Report cell starts with: "Direct (marketing only)" -> Direct."""
+    low = cell.strip("* ").lower()
+    for k in sorted(KINDS, key=len, reverse=True):
+        if low.startswith(k):
+            return KINDS[k]
+    return cell.strip("* ")
+
+
+def accepted(gold):
+    """A gold gap kind, or a list of kinds a careful reviewer could defend."""
+    return [gold] if isinstance(gold, str) else list(gold)
 
 
 def strip(text):
@@ -76,7 +90,7 @@ def read_changelog(text):
                 continue
             for r in rows:
                 if len(r) > col:
-                    kinds[r[0]] = KINDS.get(r[col].strip("* ").lower(), r[col].strip("* "))
+                    kinds[r[0]] = kind_of(r[col])
     return kinds, listed
 
 
@@ -119,7 +133,7 @@ def score(case, resume_text, changelog_text=None):
         kinds, listed = read_changelog(changelog_text)
         want = gold.get("gaps", {})
         r["gap_kinds"] = {k: {"gold": v, "got": kinds.get(k)} for k, v in want.items()}
-        r["gap_accuracy"] = sum(kinds.get(k) == v for k, v in want.items()) / len(want) if want else None
+        r["gap_accuracy"] = sum(kinds.get(k) in accepted(v) for k, v in want.items()) / len(want) if want else None
         cards = sorted(p.stem for p in (bank / "evidence" / "claims").glob("C-*.md"))
         r["evidence_table_missing"] = [c for c in cards if c not in listed]
     r["pass"] = (not errors and r["critical_recall"] == 1.0 and not r["must_not_used"]
@@ -143,8 +157,8 @@ def report(r):
     if "gap_accuracy" in r:
         out.append(f"  gap kinds        {pct(r['gap_accuracy'])}")
         for k, v in r["gap_kinds"].items():
-            if v["gold"] != v["got"]:
-                out.append(f"    {k}: expected {v['gold']}, got {v['got'] or '(missing)'}")
+            if v["got"] not in accepted(v["gold"]):
+                out.append(f"    {k}: expected {' or '.join(accepted(v['gold']))}, got {v['got'] or '(missing)'}")
         out.append(f"  evidence table   {'complete' if not r['evidence_table_missing'] else 'missing ' + ', '.join(r['evidence_table_missing'])}")
     return "\n".join(out)
 
