@@ -10,7 +10,8 @@ A small, made-up job search laid out exactly like your own project. Jordan Lee, 
 | [cv/changelogs/ACME-01.md](cv/changelogs/ACME-01.md) | Its Change Log: what was read, Delta, Coverage Report, self-review |
 | [cv/CV-INDEX.md](cv/CV-INDEX.md) | The index after that version |
 | [cv/resumes/acme-pdm-with-traps.md](cv/resumes/acme-pdm-with-traps.md) | The same version with seven deliberate mistakes |
-| [reports/](reports/) | Checkup reports before Step 0 (34) and for the new version (90). Try `python3 ../../scripts/report_compare.py reports/2026-05-02-checkup.html reports/2026-05-10-checkup.html` from this folder |
+| [interview/ACME-01.md](interview/ACME-01.md) | Follow-up cards for the Acme interview: likely questions, answers taken from the cards, what not to say, and what to fill in first |
+| [reports/](reports/) | Checkup reports before Step 0 (38) and for the new version (89). Try `python3 ../../scripts/report_compare.py reports/2026-05-02-checkup.html reports/2026-05-10-checkup.html` from this folder |
 
 ## Run the check yourself
 

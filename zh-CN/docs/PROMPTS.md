@@ -15,7 +15,7 @@
 
 [把简历贴在这里]
 
-做一份简历体检报告［或：针对这份 JD 的岗位匹配报告：贴上 JD］。把 report/template.html 复制到 reports/，只填数据块，然后跑 scripts/report_score.py，给我三行摘要。先不要写任何 Claim Card。问我要不要一份可以分享的版本。最后列出你建议先采访的 3 项成果，以及每项还缺什么。
+做一份简历体检报告［或：针对这份 JD 的岗位匹配报告：贴上 JD］。把 report/template.html 复制到 reports/，只填数据块，然后跑 scripts/report_score.py，给我三行摘要，再用 scripts/report_png.py 把卡片图给我看。先不要写任何 Claim Card。问我要不要一份可以分享的版本。最后列出你建议先采访的 3 项成果，以及每项还缺什么。
 ```
 
 ## 2. 采访我，写一张 Claim Card（Step 0）
@@ -28,7 +28,7 @@
 - 我不能说的因果
 - 我能怎么证明
 
-不要奉承我，也不要用猜测补空白：我跳过的记在卡上「待补」。我说「好了」或「先到这」时，写出状态为 `需复核` 的 Claim Card，更新 evidence/INTAKE.md，两样都给我看。
+不要奉承我，也不要用猜测补空白：我跳过的记在卡上「待补」。我说「好了」或「先到这」时，写出 Claim Card，把要点给我看一眼；我说「对」就标 `Safe to draft`，没确认的、或踩到 docs/WORKFLOW.md「什么算有风险」的，先问我一个问题，问清之前留 `需复核`。`evidence:` 按我能讲多清楚来填；我亲口说的数字标 `✓`，我说「大概」的标 `待核实`。然后更新 evidence/INTAKE.md，两样都给我看。
 ```
 
 ## 3. 给某个岗位做一版
@@ -57,4 +57,10 @@
 
 ```text
 用和第一次相同的方式，给 [cv/resumes/文件.md] 再做一次体检，然后用 scripts/report_compare.py 把 reports/[第一份报告] 和新报告做成改前改后海报。生成之前，先把 docs/REPORT.md 里的模块菜单给我看，每个模块写明打算放的文字；只加我勾选的。
+```
+
+## 7. 面试追问卡（拿到面试之后）
+
+```text
+我拿到了 [岗位编号] 的面试。按 docs/WORKFLOW.md「拿到面试之后：追问卡」，用 interview/_TEMPLATE.md 的格式，给 [cv/resumes/文件.md] 做追问卡，存到 interview/[岗位编号].md。先读这一版用到的每张 Claim Card 和 cv/changelogs/ 里的 Coverage Report，列出你读了哪些 Claim ID。回答只用卡上的事实；卡上没有的放进「面试前要补」，问我，不要编。
 ```

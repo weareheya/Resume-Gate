@@ -86,7 +86,26 @@ td.c{text-align:center;white-space:nowrap}
 .pill{display:inline-block;font-size:12px;padding:2px 9px;border:1px solid var(--ink)}
 .pill.direct{background:var(--ink);color:#fff}
 .pill.none{border-style:dashed;border-color:var(--acc2);color:var(--acc2)}
-.ok{font-weight:700}.no{color:var(--acc2)}
+.ok{font-weight:700}.no{color:var(--acc2)}.pt{font-weight:700;color:var(--ink2)}
+.cl{margin-top:3px;font-size:11.5px;color:var(--ink2);letter-spacing:.02em}
+.rd{background:var(--card);border:1px solid var(--soft);padding:16px 18px;margin-top:6px}
+.rd .tag{font-family:var(--mono);font-size:11px;color:var(--ink2);border:1px solid var(--soft);padding:1px 6px;margin-left:8px;vertical-align:middle}
+.rd p{margin:0 0 12px;font-size:13.5px;line-height:1.65;color:var(--ink2)}
+.rd .lk{font-weight:700;color:var(--ink);margin-bottom:4px}
+.rd .stk{display:flex;height:10px;background:var(--track);margin:4px 0 10px}
+.rd .stk i{display:block;height:100%}.rd .stk .a{background:var(--b3)}.rd .stk .b{background:var(--b1)}
+.rd .lg{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13px;margin-bottom:10px}
+.rd .lg b{font-family:var(--mono);margin-right:5px}
+.rd .lg .sw{display:inline-block;width:9px;height:9px;margin-right:6px;background:var(--track);border:1px solid var(--soft)}.rd .lg .sw.a{background:var(--b3);border:0}.rd .lg .sw.b{background:var(--b1);border:0}
+.sc .dl>div.rdx{opacity:.55;font-size:12px}
+.sc .dl>div.rdx .lockt{font-size:11px;color:var(--ink2);letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sc .dl>div.rdx .bar{display:flex}.sc .dl>div.rdx .bar i.a{background:var(--b3)}.sc .dl>div.rdx .bar i.b{background:var(--b1)}
+.sc .dl>div.rdx>span:last-child .ic{width:13px;height:13px;vertical-align:-2px}
+.nojs{max-width:640px;margin:15vh auto 0;font-size:15px;line-height:1.7;color:var(--ink2);position:relative;z-index:1}
+body.png .toolbar,body.png .hint,body.png .bgmark{display:none!important}
+body.png-share .share{display:block;padding:0}
+body.png-share .sc{zoom:2;max-width:none}
+.key{margin:8px 0 0;font-size:12px;line-height:1.6;color:var(--ink2)}
 .terms{margin-top:14px}
 .terms .lbl{font-size:13px;color:var(--ink2);margin-bottom:6px}
 .terms span.t{display:inline-block;margin:4px 6px 0 0;padding:3px 10px;font-size:13px;border:1px solid var(--ink);background:var(--card)}
@@ -162,7 +181,7 @@ body.sharing .share{display:flex;flex-direction:column;align-items:center}
 <body>
 <svg class="bgmark" viewBox="0 0 1200 200" aria-hidden="true"><text x="600" y="168" text-anchor="middle" font-family="Inter,-apple-system,Helvetica,Arial,sans-serif" font-size="190" font-weight="800" fill="#F1F0EC" textLength="1180" lengthAdjust="spacingAndGlyphs">RESUME-GATE</text></svg>
 <nav class="toolbar" id="toolbar"></nav>
-<main class="wrap" id="app"></main>
+<main class="wrap" id="app"><p class="nojs">This report draws itself with JavaScript, so a preview pane shows only the watermark. Open the file in Chrome, Safari or Edge, or turn it into an image with <code>python3 scripts/report_png.py</code>.</p></main>
 <section class="share" id="share"></section>
 
 <script type="application/json" id="report-data">
@@ -174,7 +193,7 @@ body.sharing .share{display:flex;flex-direction:column;align-items:center}
   "mode": "job",
   "target": "Acme Cloud · Partner Development Manager (fictional)",
   "file": "evidence/sources/old-resume.pdf",
-  "kit_version": "0.2.2"
+  "kit_version": "0.2.3"
  },
  "dims": {
   "R1": true,
@@ -258,7 +277,7 @@ body.sharing .share{display:flex;flex-direction:column;align-items:center}
    "pass": true
   },
   {
-   "check": "2 to 5 bullets per role",
+   "check": "Recent roles 2 to 5 bullets, earlier 1 to 3",
    "pass": false
   },
   {
@@ -366,8 +385,8 @@ body.sharing .share{display:flex;flex-direction:column;align-items:center}
 </script>
 
 <script>
-const L = {"kicker_checkup": "RESUME-GATE / CHECKUP", "kicker_job": "RESUME-GATE / JOB FIT", "mode_checkup": "Checkup", "mode_job": "Job fit", "score": "Score", "of100": "out of 100", "bands": ["Needs a rewrite", "Usable, but losing points", "Solid", "Strong"], "dims": "Dimensions", "notscored": "not scored", "weight": "weight", "strengths": "Strongest points", "fixes": "Fix these first", "jd": "JD coverage", "req": "Requirement", "cov": "Coverage", "top": "Near the top", "ev": "Evidence", "cov_direct": "Direct", "cov_partial": "Partial", "cov_none": "None", "yes": "Yes", "no": "No", "terms": "Key terms the evidence supports", "used": "used", "notused": "not used yet", "intake": "Interview progress", "item": "item", "questions": "questions", "details": "Every bullet, marked", "where": "Where", "bullet": "Bullet", "structure": "Structure checks", "summary": "Summary", "method": "Scored on the Resume-Gate checkup standard: Harvard career-office resume guides, common ATS advice, and this kit's sourcing rule. Not a recruiter's score; it doesn't predict interviews. Use it to compare versions of the same resume.", "view_full": "Full report", "view_share": "Share card", "cmp_kicker": "BEFORE → AFTER", "cmp_title": "My resume, before and after", "cmp_before": "Before", "cmp_after": "After", "cmp_note": "Same standard, two checkups", "cmp_partial": "Compared on the dimensions both reports share", "target": "Target", "share_hint": "Screenshot this card to share it. Your name, employer and bullets stay hidden.", "share_hint_full": "Screenshot this card to share it. To send a file instead, make a share copy with scripts/report_share.py. Never send this full report: it holds all your details.", "share_title": "My resume checkup", "share_cta": "Check your own resume. Free and open source.", "share_star": "Star it on GitHub", "share_std": "Resume-Gate checkup standard v1<br>Based on Harvard resume guides<br>and common ATS advice", "status": {"To do": "To do", "In progress": "In progress", "Done": "Done", "Skipped": "Skipped"}, "names": {"R1": "Results", "R2": "Numbers", "R3": "Action-led", "R4": "Specific", "R5": "Structure", "R6": "Sourced", "J1": "JD coverage", "J2": "Placement", "J3": "Wording"}};
-const ICONS = {"file": "<path d=\"M6 3h8l4 4v14H6z\"/><path d=\"M14 3v4h4\"/><path d=\"M9 12h6M9 16h6\"/>", "cards": "<rect x=\"4\" y=\"7\" width=\"13\" height=\"13\" rx=\"1\"/><path d=\"M8 4h11a1 1 0 0 1 1 1v11\"/>", "check": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M8 12.5l2.5 2.5L16 9.5\"/>", "briefcase": "<rect x=\"3\" y=\"7\" width=\"18\" height=\"13\" rx=\"1\"/><path d=\"M9 7V4h6v3M3 12h18\"/>", "sliders": "<path d=\"M4 7h10M18 7h2M4 17h4M12 17h8\"/><circle cx=\"16\" cy=\"7\" r=\"2\"/><circle cx=\"10\" cy=\"17\" r=\"2\"/>", "search": "<circle cx=\"11\" cy=\"11\" r=\"6\"/><path d=\"M20 20l-4.5-4.5\"/>", "map": "<path d=\"M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z\"/><path d=\"M9 4v14M15 6v14\"/>", "edit": "<path d=\"M4 20h4L19 9l-4-4L4 16z\"/><path d=\"M13 7l4 4\"/>", "log": "<path d=\"M8 6h12M8 12h12M8 18h12\"/><circle cx=\"4\" cy=\"6\" r=\"1\"/><circle cx=\"4\" cy=\"12\" r=\"1\"/><circle cx=\"4\" cy=\"18\" r=\"1\"/>", "shield": "<path d=\"M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6z\"/><path d=\"M9 12l2 2 4-4\"/>", "user": "<circle cx=\"9\" cy=\"8\" r=\"4\"/><path d=\"M2 20c0-4 3-6 7-6s7 2 7 6\"/><path d=\"M16 11l2 2 4-4\"/>", "send": "<path d=\"M21 3L10 14\"/><path d=\"M21 3l-7 18-4-7-7-4z\"/>", "target": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><circle cx=\"12\" cy=\"12\" r=\"5\"/><circle cx=\"12\" cy=\"12\" r=\"1\"/>", "hash": "<path d=\"M5 9h15M4 15h15M10 3L8 21M16 3l-2 18\"/>", "arrow": "<path d=\"M4 12h15\"/><path d=\"M13 6l6 6-6 6\"/>", "focus": "<circle cx=\"12\" cy=\"12\" r=\"4\"/><path d=\"M12 2v4M12 18v4M2 12h4M18 12h4\"/>", "layout": "<rect x=\"3\" y=\"3\" width=\"18\" height=\"18\" rx=\"1\"/><path d=\"M3 9h18M9 9v12\"/>", "top": "<path d=\"M5 4h14\"/><path d=\"M12 20V9\"/><path d=\"M7 13l5-5 5 5\"/>", "type": "<path d=\"M5 6V4h14v2\"/><path d=\"M12 4v16M9 20h6\"/>", "star": "<path d=\"M12 3l2.8 5.7 6.2.9-4.5 4.4 1 6.2L12 17.3 6.5 20.2l1-6.2L3 9.6l6.2-.9z\"/>", "wrench": "<path d=\"M14.5 6.5a4 4 0 0 0 5 5L12 19a2.1 2.1 0 0 1-3-3l7.5-7.5\"/><path d=\"M14.5 6.5L17 4\"/>", "chat": "<path d=\"M4 5h16v11H9l-5 4z\"/><path d=\"M8 9h8M8 12h5\"/>", "list": "<path d=\"M9 6h11M9 12h11M9 18h11\"/><path d=\"M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2\"/>", "gauge": "<path d=\"M4 16a8 8 0 1 1 16 0\"/><path d=\"M12 16l4-5\"/>", "x": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M9 9l6 6M15 9l-6 6\"/>", "gate": "<path d=\"M4 21V9l8-5 8 5v12\"/><path d=\"M9 21v-7h6v7\"/>"};
+const L = {"kicker_checkup": "RESUME-GATE / CHECKUP", "kicker_job": "RESUME-GATE / JOB FIT", "mode_checkup": "Checkup", "mode_job": "Job fit", "score": "Score", "of100": "out of 100", "bands": ["Needs a rewrite", "Usable, but losing points", "Solid", "Strong"], "dims": "Dimensions", "notscored": "not scored", "weight": "weight", "strengths": "Strongest points", "fixes": "Fix these first", "jd": "JD coverage", "req": "Requirement", "cov": "Coverage", "top": "Near the top", "ev": "Evidence", "cov_direct": "Direct", "cov_partial": "Partial", "cov_none": "None", "yes": "Yes", "no": "No", "terms": "Key terms the evidence supports", "used": "used", "notused": "not used yet", "intake": "Interview progress", "item": "item", "questions": "questions", "details": "Every bullet, marked", "where": "Where", "bullet": "Bullet", "structure": "Structure checks", "summary": "Summary", "method": "Scored on the Resume-Gate checkup standard: Harvard career-office resume guides and common ATS advice. Not a recruiter's score; it doesn't predict interviews. Use it to compare versions of the same resume.", "view_full": "Full report", "view_share": "Share card", "cmp_kicker": "BEFORE → AFTER", "cmp_title": "My resume, before and after", "cmp_before": "Before", "cmp_after": "After", "cmp_note": "Same standard, two checkups", "cmp_partial": "Compared on the dimensions both reports share", "target": "Target", "share_hint": "Screenshot this card to share it. Your name, employer and bullets stay hidden.", "share_hint_full": "Screenshot this card to share it. To send a file instead, make a share copy with scripts/report_share.py. Never send this full report: it holds all your details.", "share_title": "My resume checkup", "share_cta": "Check your own resume. Free and open source.", "share_star": "Star it on GitHub", "share_std": "Resume-Gate checkup standard v2<br>Based on Harvard resume guides<br>and common ATS advice", "status": {"To do": "To do", "In progress": "In progress", "Done": "Done", "Skipped": "Skipped"}, "names": {"R1": "Results", "R2": "Numbers", "R3": "Action-led", "R4": "Specific", "R5": "Structure", "R6": "Evidence-backed", "J1": "JD coverage", "J2": "Placement", "J3": "Wording"}, "r6_key": "Evidence: ✓ = a Safe to draft Claim Card covers the whole bullet · ½ = a card exists but is under review, or covers only part · – = no card yet. Claim IDs are listed under each bullet. Not part of the score.", "ready": "Interview readiness", "ready_tag": "not scored", "ready_why": "This doesn't change how the resume reads, so it isn't in the score. It shows whether you can back each bullet when an interviewer digs in: where a number came from, which part was yours and which was the team's.", "ready_locked": "Stage 2 · unlocks after the Step 0 interview", "ready_locked_d": "No Claim Cards yet, so there's nothing to check against. That's normal for a first checkup. After the Step 0 interview, this shows which bullets have evidence behind them.", "ready_ok": "Confirmed", "ready_pend": "Card under review or partial", "ready_none": "No card yet", "ready_next": "Next: read the cards under review and mark them Safe to draft, then write cards for the bullets that have none.", "share_lock": "Stage 2 · unlocks after the interview", "share_ready_tag": "not scored", "share_ready": "Interview prep"};
+const ICONS = {"file": "<path d=\"M6 3h8l4 4v14H6z\"/><path d=\"M14 3v4h4\"/><path d=\"M9 12h6M9 16h6\"/>", "cards": "<rect x=\"4\" y=\"7\" width=\"13\" height=\"13\" rx=\"1\"/><path d=\"M8 4h11a1 1 0 0 1 1 1v11\"/>", "check": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M8 12.5l2.5 2.5L16 9.5\"/>", "briefcase": "<rect x=\"3\" y=\"7\" width=\"18\" height=\"13\" rx=\"1\"/><path d=\"M9 7V4h6v3M3 12h18\"/>", "sliders": "<path d=\"M4 7h10M18 7h2M4 17h4M12 17h8\"/><circle cx=\"16\" cy=\"7\" r=\"2\"/><circle cx=\"10\" cy=\"17\" r=\"2\"/>", "search": "<circle cx=\"11\" cy=\"11\" r=\"6\"/><path d=\"M20 20l-4.5-4.5\"/>", "map": "<path d=\"M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z\"/><path d=\"M9 4v14M15 6v14\"/>", "edit": "<path d=\"M4 20h4L19 9l-4-4L4 16z\"/><path d=\"M13 7l4 4\"/>", "log": "<path d=\"M8 6h12M8 12h12M8 18h12\"/><circle cx=\"4\" cy=\"6\" r=\"1\"/><circle cx=\"4\" cy=\"12\" r=\"1\"/><circle cx=\"4\" cy=\"18\" r=\"1\"/>", "shield": "<path d=\"M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6z\"/><path d=\"M9 12l2 2 4-4\"/>", "user": "<circle cx=\"9\" cy=\"8\" r=\"4\"/><path d=\"M2 20c0-4 3-6 7-6s7 2 7 6\"/><path d=\"M16 11l2 2 4-4\"/>", "send": "<path d=\"M21 3L10 14\"/><path d=\"M21 3l-7 18-4-7-7-4z\"/>", "target": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><circle cx=\"12\" cy=\"12\" r=\"5\"/><circle cx=\"12\" cy=\"12\" r=\"1\"/>", "hash": "<path d=\"M5 9h15M4 15h15M10 3L8 21M16 3l-2 18\"/>", "arrow": "<path d=\"M4 12h15\"/><path d=\"M13 6l6 6-6 6\"/>", "focus": "<circle cx=\"12\" cy=\"12\" r=\"4\"/><path d=\"M12 2v4M12 18v4M2 12h4M18 12h4\"/>", "layout": "<rect x=\"3\" y=\"3\" width=\"18\" height=\"18\" rx=\"1\"/><path d=\"M3 9h18M9 9v12\"/>", "top": "<path d=\"M5 4h14\"/><path d=\"M12 20V9\"/><path d=\"M7 13l5-5 5 5\"/>", "type": "<path d=\"M5 6V4h14v2\"/><path d=\"M12 4v16M9 20h6\"/>", "star": "<path d=\"M12 3l2.8 5.7 6.2.9-4.5 4.4 1 6.2L12 17.3 6.5 20.2l1-6.2L3 9.6l6.2-.9z\"/>", "wrench": "<path d=\"M14.5 6.5a4 4 0 0 0 5 5L12 19a2.1 2.1 0 0 1-3-3l7.5-7.5\"/><path d=\"M14.5 6.5L17 4\"/>", "chat": "<path d=\"M4 5h16v11H9l-5 4z\"/><path d=\"M8 9h8M8 12h5\"/>", "list": "<path d=\"M9 6h11M9 12h11M9 18h11\"/><path d=\"M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2\"/>", "gauge": "<path d=\"M4 16a8 8 0 1 1 16 0\"/><path d=\"M12 16l4-5\"/>", "x": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M9 9l6 6M15 9l-6 6\"/>", "lock": "<rect x=\"5\" y=\"11\" width=\"14\" height=\"10\" rx=\"1\"/><path d=\"M8 11V7a4 4 0 0 1 8 0v4\"/>", "gate": "<path d=\"M4 21V9l8-5 8 5v12\"/><path d=\"M9 21v-7h6v7\"/>"};
 const ic = (n, c) => `<svg class="ic${c ? " " + c : ""}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[n]}</svg>`;
 const DIM_ICON = {R1:"target",R2:"hash",R3:"arrow",R4:"focus",R5:"layout",R6:"shield",J1:"briefcase",J2:"top",J3:"type"};
 const WEIGHTS = {R1:25,R2:20,R3:15,R4:10,R5:15,R6:15,J1:30,J2:15,J3:10};
@@ -384,13 +403,15 @@ const usedSupported = terms.supported.filter(t => terms.used.includes(t));
 const R = {
   R1: count("result"), R2: count("number"), R3: count("action"), R4: count("specific"),
   R5: frac((D.structure || []).filter(c => c.pass).length, (D.structure || []).length),
-  R6: count("sourced"),
+  // R6: a Safe to draft card covering the whole bullet counts 1; a card under review, or covering part of it, counts ½.
+  R6: frac(B.reduce((s, b) => s + (b.sourced === "partial" ? 0.5 : b.sourced ? 1 : 0), 0), B.length),
   J1: {n: reqs.filter(r => r.coverage === "direct").length + 0.5 * reqs.filter(r => r.coverage === "partial").length, d: reqs.length},
   J2: frac(covered.filter(r => r.top).length, covered.length),
   J3: frac(usedSupported.length, terms.supported.length),
 };
 R.J1.p = R.J1.d ? R.J1.n / R.J1.d : 0;
-const ids = ["R1","R2","R3","R4","R5","R6"].concat(job ? ["J1","J2","J3"] : []);
+// R6 (evidence) is not part of the score: it shows in the interview-readiness panel instead.
+const ids = ["R1","R2","R3","R4","R5"].concat(job ? ["J1","J2","J3"] : []);
 const on = id => (D.dims ? D.dims[id] !== false : true) && R[id].d > 0;
 let wsum = 0, acc = 0;
 ids.filter(on).forEach(id => { wsum += WEIGHTS[id]; acc += WEIGHTS[id] * R[id].p; });
@@ -429,6 +450,20 @@ ids.forEach(id => {
 h += `</div>`;
 if ((D.structure || []).length) h += `<div class="checks">${D.structure.map(c => `<span class="${c.pass ? "" : "fail"}">${ic(c.pass ? "check" : "x")}${esc(c.check)}</span>`).join("")}</div>`;
 
+// Interview readiness: evidence behind each bullet. Not scored. Locked until Claim Cards exist.
+const hasEv = B.some(b => b.sourced || (b.claims && [].concat(b.claims).length));
+if (B.length) {
+  h += `<h2>${ic("shield")}${L.ready}<span class="tag">${L.ready_tag}</span></h2><div class="rd"><p>${L.ready_why}</p>`;
+  if (!hasEv) h += `<div class="lk">${ic("cards")} ${L.ready_locked}</div><p style="margin:0">${L.ready_locked_d}</p>`;
+  else {
+    const nOk = B.filter(b => b.sourced && b.sourced !== "partial").length, nP = B.filter(b => b.sourced === "partial").length, nN = B.length - nOk - nP;
+    h += `<div class="stk"><i class="a" style="width:${pct(nOk / B.length)}"></i><i class="b" style="width:${pct(nP / B.length)}"></i></div>`;
+    h += `<div class="lg"><span><i class="sw a"></i><b>${nOk}</b>${L.ready_ok}</span><span><i class="sw b"></i><b>${nP}</b>${L.ready_pend}</span><span><i class="sw"></i><b>${nN}</b>${L.ready_none}</span></div>`;
+    if (nP + nN) h += `<p style="margin:0">${L.ready_next}</p>`;
+  }
+  h += `</div>`;
+}
+
 h += `<div class="two"><div><h2>${ic("star")}${L.strengths}</h2><div class="items">${(D.strengths || []).map(s => `<div class="item"><span class="mk lt">${ic("star")}</span><div><div class="t">${esc(s.title)}</div><div class="d">${esc(s.why)}</div></div></div>`).join("")}</div></div>`;
 h += `<div><h2>${ic("wrench")}${L.fixes}</h2><div class="items">${(D.fixes || []).slice(0, 5).map((f, i) => `<div class="item"><span class="mk">${String(i + 1).padStart(2, "0")}</span><div><div class="t">${esc(f.issue)}</div><div class="w">${esc(f.where)}</div><div class="d">${esc(f.fix)}</div></div></div>`).join("")}</div></div></div>`;
 
@@ -449,14 +484,15 @@ if (items.length) {
 }
 
 if (B.length) {
-  const mk = v => v ? `<span class="ok">✓</span>` : `<span class="no">–</span>`;
-  h += `<h2>${ic("list")}${L.details}</h2><details open><summary>${B.length} bullets</summary><table><tr><th>${L.where}</th><th>${L.bullet}</th><th>R1</th><th>R2</th><th>R3</th><th>R4</th><th>R6</th></tr>`;
-  B.forEach(b => { h += `<tr><td style="white-space:nowrap">${esc(b.where)}</td><td>${esc(b.text)}</td><td class="c">${mk(b.result)}</td><td class="c">${mk(b.number)}</td><td class="c">${mk(b.action)}</td><td class="c">${mk(b.specific)}</td><td class="c">${mk(b.sourced)}</td></tr>`; });
-  h += `</table></details>`;
+  const mk = v => v === "partial" ? `<span class="pt">½</span>` : v ? `<span class="ok">✓</span>` : `<span class="no">–</span>`;
+  const cl = b => b.claims && [].concat(b.claims).length ? `<div class="cl">${esc([].concat(b.claims).join(" · "))}</div>` : "";
+  h += `<h2>${ic("list")}${L.details}</h2><details open><summary>${B.length} bullets</summary><table><tr><th>${L.where}</th><th>${L.bullet}</th><th>R1</th><th>R2</th><th>R3</th><th>R4</th>${hasEv ? `<th>${L.ev}</th>` : ""}</tr>`;
+  B.forEach(b => { h += `<tr><td style="white-space:nowrap">${esc(b.where)}</td><td>${esc(b.text)}${cl(b)}</td><td class="c">${mk(b.result)}</td><td class="c">${mk(b.number)}</td><td class="c">${mk(b.action)}</td><td class="c">${mk(b.specific)}</td>${hasEv ? `<td class="c">${mk(b.sourced)}</td>` : ""}</tr>`; });
+  h += `</table>${hasEv ? `<p class="key">${L.r6_key}</p>` : ""}</details>`;
 }
 
 h += `<p class="method">${ic("gauge")}<span>${L.method}</span></p>`;
-h += `<footer><span class="l"><span class="logo">${ic("gate")}</span>MADE WITH RESUME-GATE · <a href="https://github.com/weareheya/Resume-Gate">GITHUB.COM/WEAREHEYA/RESUME-GATE</a></span><span>STANDARD v1 · KIT ${esc(D.meta.kit_version || "")}</span></footer>`;
+h += `<footer><span class="l"><span class="logo">${ic("gate")}</span>MADE WITH RESUME-GATE · <a href="https://github.com/weareheya/Resume-Gate">GITHUB.COM/WEAREHEYA/RESUME-GATE</a></span><span>STANDARD v2 · KIT ${esc(D.meta.kit_version || "")}</span></footer>`;
 document.getElementById("app").innerHTML = h;
 document.title = modeName + " · " + D.meta.name + " · " + score;
 
@@ -476,7 +512,12 @@ s += `<div class="hd"><span class="brand"><span class="logo">${ic("gate")}</span
 s += `<h3>${esc(D.meta.share_name || L.share_title)}</h3>`;
 s += modules();
 s += `<div class="mid"><div class="ring">${ring(150, 64, 10)}<div class="num"><b>${score}</b><small>${L.of100.toUpperCase()}</small></div></div><div><div class="band">${ic("gauge")}${band}</div><div class="std">${L.share_std}</div></div></div>`;
-s += `<div class="dl">${ids.filter(on).map(id => `<div>${ic(DIM_ICON[id])}<span>${L.names[id]}</span><div class="bar"><i class="bc${bandOf(R[id].p)}" style="width:${pct(R[id].p)}"></i></div><span>${pct(R[id].p)}</span></div>`).join("")}</div>`;
+// Interview readiness on the share card: dimmed and not scored. Locked (stage 2) until Claim Cards exist.
+const rdRow = () => { if (!B.length) return "";
+  if (!hasEv) return `<div class="rdx">${ic("shield")}<span style="white-space:nowrap">${L.share_ready || L.ready}</span><span class="lockt">${L.share_lock}</span><span>${ic("lock")}</span></div>`;
+  const nOk = B.filter(b => b.sourced && b.sourced !== "partial").length, a = nOk / B.length, b = B.filter(b => b.sourced === "partial").length / B.length;
+  return `<div class="rdx">${ic("shield")}<span style="white-space:nowrap">${L.share_ready || L.ready}</span><div class="bar" title="${L.share_ready_tag}"><i class="a" style="width:${pct(a)}"></i><i class="b" style="width:${pct(b)}"></i></div><span>${nOk}/${B.length}</span></div>`; };
+s += `<div class="dl">${ids.filter(on).map(id => `<div>${ic(DIM_ICON[id])}<span>${L.names[id]}</span><div class="bar"><i class="bc${bandOf(R[id].p)}" style="width:${pct(R[id].p)}"></i></div><span>${pct(R[id].p)}</span></div>`).join("")}${rdRow()}</div>`;
 s += `<div class="cta"><b>${ic("target")}${L.share_cta}</b><span class="u">github.com/weareheya/Resume-Gate</span><br><span class="st">${ic("star")}${L.share_star}</span></div></div><p class="hint">${D.meta.share_only ? L.share_hint : L.share_hint_full}</p>`;
 if (D.compare) {
   const cm = D.compare, b0 = cm.before, a0 = cm.after, dlt = a0.score - b0.score;
@@ -499,6 +540,13 @@ const setView = v => { document.body.classList.toggle("sharing", v === "share");
 tb.addEventListener("click", e => { const btn = e.target.closest("button[data-v]"); if (btn) { const v = btn.dataset.v; history.replaceState(null, "", v === "share" ? "#share" : location.pathname); setView(v); } });
 if (D.meta.share_only) { document.body.classList.add("sharing"); tb.innerHTML = `<a class="brand" href="https://github.com/weareheya/Resume-Gate"><span class="logo">${ic("gate")}</span><span class="txt">RESUME-GATE</span></a>`; }
 else setView(location.hash === "#share" ? "share" : "full");
+if (/^#png/.test(location.hash)) {
+  const full = location.hash === "#png-full" && !D.meta.share_only;
+  document.body.classList.add("png", full ? "png-full" : "png-share");
+  document.body.classList.toggle("sharing", !full);
+  const de = document.documentElement;
+  document.body.dataset.png = String(de.scrollHeight);
+}
 </script>
 </body>
 </html>

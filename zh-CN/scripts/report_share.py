@@ -54,7 +54,8 @@ def strip(d):
                  "kit_version": meta.get("kit_version", ""), "share_only": True},
         "dims": d.get("dims", {}),
         "summary": [], "strengths": [], "fixes": [],
-        "bullets": [{k: bool(b.get(k)) for k in ("result", "number", "action", "specific", "sourced")} | {"where": "", "text": ""}
+        "bullets": [{k: bool(b.get(k)) for k in ("result", "number", "action", "specific")}
+                    | {"sourced": "partial" if b.get("sourced") == "partial" else bool(b.get("sourced")), "where": "", "text": ""}
                     for b in d.get("bullets", [])],
         "structure": [{"check": "", "pass": bool(c.get("pass"))} for c in d.get("structure", [])],
     }

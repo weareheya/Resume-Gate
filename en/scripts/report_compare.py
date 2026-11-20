@@ -22,7 +22,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from report_score import load, score  # noqa: E402
 from report_share import BLOCK, add_module_args, apply_modules  # noqa: E402
 
-ORDER = ["R1", "R2", "R3", "R4", "R5", "R6", "J1", "J2", "J3"]
+ORDER = ["R1", "R2", "R3", "R4", "R5", "J1", "J2", "J3"]
 
 
 def main():

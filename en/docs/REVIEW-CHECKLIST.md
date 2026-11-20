@@ -14,7 +14,7 @@ Plus common ATS advice (single column, standard section names). Specific statist
 Run `python3 scripts/check_claims.py cv/resumes/<id>.md` first. It checks the first two items below mechanically, and also that every number on a checked line appears in the card it cites. It fails if it can't find a Summary or Experience section, and it lists any other section (Skills, Projects…) as not verified: check those by hand. The rest still need judgment.
 
 - [ ] Every line traces to a Claim Card. An approved or sent resume is not evidence, only approved wording
-- [ ] Every bullet carries its Claim ID in an HTML comment, and each one points to a card marked `Safe to draft`
+- [ ] Every bullet carries its Claim ID in an HTML comment, and each one points to a card marked `Safe to draft`; no number used is marked `to verify` on its card
 - [ ] Numbers keep their units and scope (currency, time window, qualifiers like "potential" or "cumulative")
 - [ ] Individual contribution is separate from team results; titles match the employment record and aren't inflated
 - [ ] Start and end dates, company type, and role are correct
@@ -31,7 +31,7 @@ These are defaults. A structure the user has already approved takes priority ove
 - [ ] Bullets start with a strong verb where that's accurate. Avoid duty-style openers like "Responsible for" or "Duties included." "Helped" and "Served as" are fine when they're the honest description: the wording must never claim more than the role was
 - [ ] Each bullet tries to say what you did, how, and what came of it, with numbers where you have them
 - [ ] Check each strong bullet against STAR: the candidate's own action (A) and the result (R) are both there; the situation (S) and task (T) appear only if the bullet makes no sense without them. On paper, compress it to action + key judgment or deliverable + result, not four sentences. Save the full STAR for the interview
-- [ ] Each bullet is at most 3 lines once laid out, with roughly 2–5 bullets per role (more for recent, relevant roles)
+- [ ] Each bullet is at most 3 lines once laid out, with 2–5 bullets for each of the two most recent roles and 1–3 for earlier ones
 - [ ] The bullet most relevant to the target JD comes first in each role
 - [ ] Nothing reads like a disclaimer: while staying accurate, the words go to proving what was done, not to explaining what wasn't (D-015)
 - [ ] Capitalization, punctuation, and currency formats are consistent

@@ -8,7 +8,9 @@
 
 所以我把规矩写成了文件：事实先进证据库，一个成果一张 Claim Card；简历永远从批准过的版本改起；AI 改完先自审，最后本人点头才算数。
 
-**证据库 → 基线 → 按岗位改 Delta → AI 自审 → 本人审核 → 冻结。**
+**证据库 → 基线 → 按岗位改 Delta → AI 自审 → 本人审核 → 冻结 → 面试准备。**
+
+**为什么不直接让 AI 改？** 随便一个 AI 都能把简历改得更好看。它不知道的是：这个数字当时怎么算的，哪部分是你做的，哪句话一被追问就会卡壳。这些只有你知道。Resume-Gate 把它们写进证据库，只写一次，之后的一切都从同一套事实里长出来：每一版简历、每一次体检，还有每场面试前的追问卡。新开一个对话，AI 每次都从零开始；这个文件夹会留下你确认过的每一件事。
 
 不绑定任何 AI 或简历工具。Claude Code、Codex 会自动读 `AGENTS.md`；别的工具，让 AI 先读它就行。
 
@@ -26,6 +28,8 @@
 | 纠正过的强项悄悄又被写弱 | **自审里的语义对比**：protected claim 要和已批准措辞对比，不只检查还在不在 | [自审清单 A](docs/REVIEW-CHECKLIST.md) · [LESSONS L-12](docs/LESSONS.md) |
 | 排版多出几行孤页 | **整页规则 + `pdf_fill`**：PDF 必须整页满，脚本量化检查 | [D-009](docs/DECISIONS.md) · [pdf_fill.swift](scripts/pdf_fill.swift) |
 | AI 自作主张定稿 | **人工审核关卡**：你说通过才算 Approved，投出的版本冻结 | [WORKFLOW S7](docs/WORKFLOW.md) · [D-008、D-010](docs/DECISIONS.md) |
+| 面试官一问「这个数怎么算的」就卡壳，或者顺口把数字说大 | **面试追问卡**：每场面试前，按 bullet 列出最可能的追问，回答取自你的 Claim Card，并写明哪些话别说 | [WORKFLOW](docs/WORKFLOW.md#拿到面试之后追问卡) · [示例](examples/jordan-lee/interview/ACME-01.md) |
+| AI 写出来的说法，比你能讲清的更大 | **什么算有风险**：说法很大、把集体结果算在自己头上、面试大概率要证据的，上简历之前先问一个问题 | [WORKFLOW](docs/WORKFLOW.md#什么算有风险) |
 | 被问很多轮，不知道问到什么时候 | **先体检，再短采访**：第一轮就给带分数的可视化报告；只做最强的 3 项、每项最多 5 问，每个问题都带进度 | [REPORT](docs/REPORT.md) · [WORKFLOW Step 0](docs/WORKFLOW.md) · [示例报告](report/template.html) |
 
 ## 先知道这五个概念
@@ -38,7 +42,7 @@
 
 ## 流程一览
 
-![Resume-Gate 流程：Step 0 做一次，之后每个岗位七步](assets/flow.svg)
+![Resume-Gate 流程：Step 0 做一次，之后每个岗位七步，面试前做追问卡](assets/flow.svg)
 
 每一步都要有能拿出来的产出，才进下一步。详见 [docs/WORKFLOW.md](docs/WORKFLOW.md)。
 
@@ -59,8 +63,10 @@
 | [cv/CV-INDEX.md](cv/CV-INDEX.md) | 岗位类型、每类当前起点、每个版本投去了哪里 | 每个新岗位开始时 |
 | [cv/resumes/](cv/resumes/_TEMPLATE.md) | 简历正文，一个版本一个 Markdown 文件 | 每个新岗位 |
 | [cv/changelogs/](cv/changelogs/_TEMPLATE.md) | 每一版改了什么、为什么 | 每个新岗位 |
+| [interview/](interview/_TEMPLATE.md) | 每场面试的追问卡 | 拿到面试邀约之后 |
 | [scripts/check_claims.py](scripts/check_claims.py) | 检查每条 bullet 有出处、claim 可用、受保护的没丢（Python 3） | 你审一版之前 |
 | [scripts/report_score.py](scripts/report_score.py) | 用和模板相同的公式算出报告分数，让对话里说的分数和页面一致（Python 3） | AI 填完报告后 |
+| [scripts/report_png.py](scripts/report_png.py) | 把分享卡（加 `--full` 就是整份报告）存成 PNG，给打不开报告的对话窗口用。用你已有的 Chrome、Edge 或 Brave（Python 3） | AI 填完报告后 |
 | [scripts/report_share.py](scripts/report_share.py) · [report_compare.py](scripts/report_compare.py) | 分享卡，或用两份报告做改前改后海报。默认只有分数，其余模块由你勾选；不含隐私信息（Python 3） | 想分享时 |
 | [scripts/pdf_fill.swift](scripts/pdf_fill.swift) | 把 PDF 渲染成图片，检查页数和每页内容延伸到哪里（macOS） | 每次导出后 |
 | [examples/](examples/README.md) | 一套完整的虚构小项目（Claim Card、基线、新版本、Change Log、一份故意写错的版本），以及 10 个改前改后的案例 | Step 0 之前，看看要写到多细 |
@@ -78,7 +84,7 @@ cd my-job-search && git init
 
 只推到**私有**仓库（见[工作副本务必保持私有](#工作副本务必保持私有)）。
 
-**2. 用能读文件的 AI 打开这个文件夹**（Claude Code、Codex、Cursor，或任何能读写文件的 agent），**然后说一句「开始」。** 说什么都行：AI 会先看你进行到哪，再带着你往下走。在 Claude Code 里也可以输入 `/start`，之后还有 `/checkup`、`/job`、`/poster`、`/update`。如果你的工具不会自己读 `AGENTS.md`，就改贴 [PROMPTS](docs/PROMPTS.md) 里的提示词 0。
+**2. 用能读文件的 AI 打开这个文件夹**（Claude Code、Codex、Cursor，或任何能读写文件的 agent），**然后说一句「开始」。** 说什么都行：AI 会先看你进行到哪，再带着你往下走。在 Claude Code 里也可以输入 `/start`，之后还有 `/checkup`、`/job`、`/prep`、`/poster`、`/update`。如果你的工具不会自己读 `AGENTS.md`，就改贴 [PROMPTS](docs/PROMPTS.md) 里的提示词 0。
 
 **3. 做 Step 0。** 把旧简历放进 `evidence/sources/`。先拿到一份带分数的[体检报告](report/template.html)；然后 AI 就最强的 3 项成果采访你（其余以后再补），每个问题都带进度，写成 Claim Card，你批准第一份基线。第一份基线可以先用 [CV-INDEX](cv/CV-INDEX.md) 里的 `General` 类型；等你清楚要投哪类岗位，再加具体类型。
 
