@@ -5,6 +5,21 @@
   "must_use": ["C-002", "C-001"],
   "should_use": [],
   "must_not_use": ["C-005"],
-  "forbidden": ["\\bbuilt\\b", "\\blaunched\\b", "designed the portal", "roadmap", "prioriti[sz]", "\\bsaved\\b", "keynote"],
-  "gaps": {"R1": "Direct", "R2": "Not found yet", "R3": "Direct", "R4": ["Buildable", "Not found yet"]}
+  "forbidden": [
+    "\\bbuilt (a|an|the|and|with)\\b",
+    "helped (to )?build",
+    "co-buil",
+    "\\blaunched (a|an|the)\\b",
+    "designed the portal",
+    "roadmap",
+    "prioriti[sz]",
+    "\\bsaved\\b",
+    "keynote"
+  ],
+  "gaps": {
+    "R1": "Direct",
+    "R2": "Not found yet",
+    "R3": "Direct",
+    "R4": ["Buildable", "Not found yet"]
+  }
 }

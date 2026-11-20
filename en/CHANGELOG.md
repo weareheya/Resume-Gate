@@ -2,6 +2,12 @@
 
 What changed in each version, and whether you need to do anything. Your version is in `VERSION`. To update, paste prompt 5 from `docs/PROMPTS.md`.
 
+## 0.5.2 · 2026-11-20
+
+- Self-review: when a "Don't rephrase as" warning fires, fix the wording without dropping the true part. "Wrote the requirements with engineering, who built it" is accurate and strong. The eval run after 0.5.1 found every product-manager version going quiet about engineering instead (LESSONS L-14).
+
+**What you need to do**: nothing.
+
 ## 0.5.1 · 2026-11-20
 
 A nudge for wording a card warns against, found by the first eval run.
