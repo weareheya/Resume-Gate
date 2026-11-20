@@ -15,7 +15,7 @@ No baseline resume yet? Do [Step 0](#step-0-cold-start) first.
 | S6 | **AI self-review.** Go through the [REVIEW-CHECKLIST](REVIEW-CHECKLIST.md) item by item. Run `python3 scripts/validate_evidence.py` and `python3 scripts/check_claims.py cv/resumes/<id>.md` (both must pass), then export the PDF and run `scripts/pdf_fill.swift` | Screenshots, page count and reach per page, table of self-review fixes |
 | S7 | **Human review.** Give the user the full text and a diff against the baseline. Only when they say it's approved does the status become `Approved` | The user's approval on record |
 
-After you apply, mark the version `Sent` and **freeze** it. In `cv/CV-INDEX.md`, record which job used it and the SHA-256 of the exported file.
+After you apply, mark the version `Sent` and **freeze** it: `python3 scripts/freeze.py cv/resumes/<id>.md <exported.pdf>` records both files' SHA-256 in `cv/frozen.txt`, and `check_claims.py` fails if a frozen resume is edited later. In `cv/CV-INDEX.md`, record which job used it.
 
 ## Step 0: Cold start
 

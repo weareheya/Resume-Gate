@@ -2,6 +2,16 @@
 
 What changed in each version, and whether you need to do anything. Your version is in `VERSION`. To update, paste prompt 5 from `docs/PROMPTS.md`.
 
+## 0.5.0 · 2026-11-20
+
+Sent versions can now be frozen, and a protected-claim false alarm is fixed.
+
+- **Freeze a sent resume.** `python3 scripts/freeze.py cv/resumes/<id>.md <file.pdf>` records the SHA-256 of each file in `cv/frozen.txt` (the `shasum -a 256` format). `check_claims.py` fails if a frozen resume is edited later, and `freeze.py --check` checks every frozen file. To change a sent version, copy it into a new one (D-010). Nothing is frozen unless you run it.
+- **Fix: a line citing two cards no longer trips the protected check.** If a baseline line cited a protected card and another card (`<!-- C-001, C-003 -->`), dropping the other card's number was reported as weakening the protected one. Now only the protected card's own numbers count.
+- For maintainers: the repo now has `evals/`, three job cases with expected answers, a scorer and a blind A/B/C review tool, to check that a kit change makes resumes better and not just different. It isn't part of the download.
+
+**What you need to do**: nothing. Next time you send a resume, freeze it instead of noting its hash in `cv/CV-INDEX.md`.
+
 ## 0.4.0 · 2026-11-20
 
 The kit now checks what a resume leaves out, not only what it gets wrong: the goal is a resume that neither oversells nor undersells you.

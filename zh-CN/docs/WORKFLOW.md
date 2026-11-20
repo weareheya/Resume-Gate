@@ -15,7 +15,7 @@
 | S6 | **AI 自审**：按 [REVIEW-CHECKLIST](REVIEW-CHECKLIST.md) 逐项过；跑 `python3 scripts/validate_evidence.py` 和 `python3 scripts/check_claims.py cv/resumes/<id>.md`（都必须通过），再导出 PDF 并跑 `scripts/pdf_fill.swift` | 截图 + 页数 + 每页内容位置 + 自审改动表 |
 | S7 | **人工审核**：把全文 + 改动对照交给本人，本人说通过才改状态为 `Approved` | 本人批准记录 |
 
-投递之后：版本改状态为 `Sent` 并**冻结**；`cv/CV-INDEX.md` 里记下是哪个岗位用了它、导出文件的 SHA-256。
+投递之后：版本改状态为 `Sent` 并**冻结**：`python3 scripts/freeze.py cv/resumes/<id>.md <导出的.pdf>` 会把两个文件的 SHA-256 记进 `cv/frozen.txt`，之后冻结的简历被改动，`check_claims.py` 就会报错。`cv/CV-INDEX.md` 里记下是哪个岗位用了它。
 
 ## Step 0：冷启动
 

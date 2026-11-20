@@ -52,7 +52,7 @@ D-001 to D-019 are starter rules, each born from a real mistake. D-001 to D-010 
 
 ## D-010 · Sent versions are frozen
 - scope: process · status: Active
-- Once a version is `Sent`, don't edit it. To change anything, copy it into a new version. Record the SHA-256 of the exported file in `CV-INDEX`.
+- Once a version is `Sent`, don't edit it. To change anything, copy it into a new version. Freeze it with `scripts/freeze.py`, which records the SHA-256 of the resume and the exported file in `cv/frozen.txt`.
 
 ## D-011 · Choose evidence by how much it sets you apart, not by keyword overlap with the JD
 - scope: cv · status: Active

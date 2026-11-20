@@ -52,7 +52,7 @@
 
 ## D-010 · 已投递的版本冻结
 - scope: process · status: Active
-- 状态改为 `Sent` 后不再修改；要改就复制成新版本。`CV-INDEX` 里记录导出文件的 SHA-256。
+- 状态改为 `Sent` 后不再修改；要改就复制成新版本。用 `scripts/freeze.py` 冻结，它会把简历和导出文件的 SHA-256 记进 `cv/frozen.txt`。
 
 ## D-011 · 选证据看区分度，不看和 JD 的关键词重合度
 - scope: cv · status: Active

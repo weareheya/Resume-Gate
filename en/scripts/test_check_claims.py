@@ -573,6 +573,31 @@ class HonestResume(unittest.TestCase):
             self.assertEqual(v.returncode, 0, v.stdout)
 
 
+class Freeze(unittest.TestCase):
+    def test_freeze_then_edit_fails(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            (root / "evidence/claims").mkdir(parents=True)
+            (root / "cv/resumes").mkdir(parents=True)
+            (root / "evidence/claims/C-001.md").write_text(PIPELINE.format(id="C-001", verified="✓"), encoding="utf-8")
+            r = root / "cv/resumes/sent.md"
+            r.write_text("## Experience\n- Pipeline reached US$2.1M. <!-- C-001 -->\n", encoding="utf-8")
+            run = lambda script, *args: subprocess.run([sys.executable, "-I", str(SCRIPT.with_name(script)), *args, "--lang", "en"],
+                                                        cwd=root, capture_output=True, text=True)
+            self.assertEqual(run("freeze.py", "cv/resumes/sent.md").returncode, 0)
+            self.assertEqual(run("freeze.py", "--check").returncode, 0)
+            self.assertEqual(run("check_claims.py", "cv/resumes/sent.md").returncode, 0)
+            r.write_text("## Experience\n- Pipeline reached US$2.1M across 64 deals. <!-- C-001 -->\n", encoding="utf-8")
+            out = run("check_claims.py", "cv/resumes/sent.md")
+            self.assertEqual(out.returncode, 1, out.stdout)
+            self.assertIn("was frozen when it was sent", out.stdout)
+            out = run("freeze.py", "--check")
+            self.assertEqual(out.returncode, 1, out.stdout)
+            self.assertIn("CHANGED since it was frozen: cv/resumes/sent.md", out.stdout)
+            out = run("freeze.py", "cv/resumes/sent.md")
+            self.assertEqual(out.returncode, 1, out.stdout)  # can't re-freeze over a sent version
+
+
 class WorkedExample(unittest.TestCase):
     """examples/jordan-lee must behave the way its README says."""
     EXAMPLE = SCRIPT.parent.parent / "examples" / "jordan-lee"
@@ -599,6 +624,34 @@ class WorkedExample(unittest.TestCase):
         for snippet in ("no Claim ID", "C-005 has status", '"420"', "C-009 does not match",
                         "Protected claim C-001", '"revenue" is a banned word on C-003'):
             self.assertIn(snippet, out)
+
+
+    def test_protected_check_ignores_other_cards_numbers(self):
+        # acme-pdm's summary cites C-001 and C-003 on one line; dropping C-003's US$2.1M must not
+        # count as weakening the protected C-001 (found by evals/, v0.5.0)
+        import shutil
+        with tempfile.TemporaryDirectory() as d:
+            ex = Path(d) / "ex"
+            shutil.copytree(self.EXAMPLE, ex)
+            (ex / "cv/resumes/v2.md").write_text(textwrap.dedent("""
+                ---
+                id: v2
+                type: 01
+                base: acme-pdm
+                ---
+                ## Summary
+                Partner development manager: grew active partners from 12 to 40 in 18 months. <!-- C-001 -->
+                ## Experience
+                ### Partnerships Manager · Northwind Labs · 2022–2023
+                - Rebuilt the partner program into a three-tier model and grew active partners from 12 to 40 in 18 months; partners' share of new leads rose from 18% to 34%. <!-- C-001 -->
+                - Ran four co-branded webinars with three strategic partners, drawing 380 registrants. <!-- C-004 -->
+                ## Education
+                BA, Economics · State University · 2019
+                """).lstrip(), encoding="utf-8")
+            r = subprocess.run([sys.executable, "-I", str(SCRIPT), "cv/resumes/v2.md", "--lang", "en"],
+                               cwd=ex, capture_output=True, text=True)
+            self.assertEqual(r.returncode, 0, r.stdout)
+            self.assertNotIn("Protected claim C-001", r.stdout)
 
 
 class ReportScore(unittest.TestCase):

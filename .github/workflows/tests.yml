@@ -25,6 +25,15 @@ jobs:
       - name: Example evidence bank is valid
         working-directory: ${{ matrix.kit }}/examples/jordan-lee
         run: python3 -I ../../scripts/validate_evidence.py
+  evals:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Eval cases, scorer and blind tool
+        run: python3 evals/test_evals.py
   sync:
     runs-on: ubuntu-latest
     steps:

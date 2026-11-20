@@ -29,7 +29,7 @@
 |---|---|---|---|---|---|---|
 | | | | | | | |
 
-导出 PDF 的文件名建议：`<署名>_<公司或用途>_<岗位类型>_<YYYY-MM-DD>.pdf`，并在备注记 SHA-256 前 8 位：`shasum -a 256 file.pdf`。
+导出 PDF 的文件名建议：`<署名>_<公司或用途>_<岗位类型>_<YYYY-MM-DD>.pdf`，投递时把简历和 PDF 一起冻结：`python3 scripts/freeze.py cv/resumes/<id>.md <file.pdf>`（SHA-256 会记进 `cv/frozen.txt`）。
 
 ## 署名
 
