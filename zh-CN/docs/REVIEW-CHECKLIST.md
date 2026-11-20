@@ -11,11 +11,12 @@
 
 ## A. 事实（先过这一关，不通过不往下看）
 
-先跑 `python3 scripts/validate_evidence.py` 和 `python3 scripts/check_claims.py cv/resumes/<id>.md`。它们能机械地检查下面的前两项，并核对：被检查行里的每个数字都来自所引用的卡（数值、量级、币种一致）；没有用卡上的禁用词；职位标题和教育背景与 `evidence/profile.md` 一致；受保护的 claim 已确认的数字还在。找不到 Summary 或 Experience 栏目时会判为未通过；其他栏目（Skills、Projects 等）会标为未验证，需要人工检查。其余仍要靠判断。
+先跑 `python3 scripts/validate_evidence.py` 和 `python3 scripts/check_claims.py cv/resumes/<id>.md`。它们能机械地检查下面的前两项，并核对：被检查行里的每个数字都来自所引用的卡（数值、量级、币种一致）；没有用卡上的禁用词（「禁止改写」里加了引号的说法会给提醒）；职位标题和教育背景与 `evidence/profile.md` 一致；受保护的 claim 已确认的数字还在。找不到 Summary 或 Experience 栏目时会判为未通过；其他栏目（Skills、Projects 等）会标为未验证，需要人工检查。其余仍要靠判断。
 
 - [ ] 每条都能追到 Claim Card。已批准 / 已投递的简历不是证据，只是已批准的措辞
 - [ ] 每条 bullet 末尾都有 Claim ID 注释，且指向的卡状态是 `Safe to draft`；用到的数字在卡上没有标 `待核实`
 - [ ] 数字带单位和口径（币种、时间窗口、「潜在」「累计」等限定词没丢）
+- [ ] 每一行都守住卡上的「禁止改写」，包括同一意思的弱化说法：卡上写的是工程团队做的，那「和工程团队一起搭建」「协助搭建」仍然等于说是自己搭的。`check_claims.py` 会对「禁止改写」里加了引号的说法给出提醒；每条这样的提醒都要读，改写或说明理由
 - [ ] 个人贡献和团队成果分开；职称按雇佣记录，不抬高
 - [ ] 起止日期、公司性质、角色正确
 - [ ] 同期结果没有被写成全由本人带来（因果）；能说明的连接已经写出来，没有被一律拆开（D-014）

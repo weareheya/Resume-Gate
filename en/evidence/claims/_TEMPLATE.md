@@ -37,7 +37,7 @@ One experience can prove several different skills (D-012). List the ones worth p
 
 ## Don't rephrase as
 - Banned words: (optional; words a resume line citing this card must never use, e.g. revenue, closed)
-- Don't write … (because …)
+- Don't write "…" (because …). Put the wording in quotes: `check_claims.py` warns when a line citing this card uses it
 - Don't mix A and B together
 
 ## Source

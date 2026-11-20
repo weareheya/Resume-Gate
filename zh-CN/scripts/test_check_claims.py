@@ -611,6 +611,7 @@ class WorkedExample(unittest.TestCase):
     def test_baseline_passes(self):
         code, out = self.run_check("channel-baseline")
         self.assertEqual(code, 0, out)
+        self.assertNotIn("Don't rephrase", out)  # C-001 quotes "40"; a quoted number is not a warning
 
     def test_new_version_passes_with_note(self):
         code, out = self.run_check("acme-pdm")
@@ -624,6 +625,8 @@ class WorkedExample(unittest.TestCase):
         for snippet in ("no Claim ID", "C-005 has status", '"420"', "C-009 does not match",
                         "Protected claim C-001", '"revenue" is a banned word on C-003'):
             self.assertIn(snippet, out)
+        # trap 6 stays a judgment call: a warning, not an error
+        self.assertIn('WARN  acme-pdm-with-traps.md:24: "built" is wording C-002', out)
 
 
     def test_protected_check_ignores_other_cards_numbers(self):
