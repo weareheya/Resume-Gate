@@ -38,7 +38,7 @@ Each step has an output you must be able to show before moving on. Details in [d
 
 | Path | What it is | Read it when |
 |---|---|---|
-| [AGENTS.md](AGENTS.md) | Instructions for any AI that picks this up | Your AI reads it first; skim it once yourself |
+| [AGENTS.md](AGENTS.md) · [CLAUDE.md](CLAUDE.md) · [.claude/commands/](.claude/commands/) | Instructions for any AI that picks this up | Your AI reads it first; skim it once yourself |
 | [docs/WORKFLOW.md](docs/WORKFLOW.md) | Step 0, the seven steps, probing questions, Coverage Report format | Before your first resume |
 | [docs/PROMPTS.md](docs/PROMPTS.md) | Copy-paste prompts for each moment | Every session |
 | [docs/DECISIONS.md](docs/DECISIONS.md) | 16 starter rules. Don't edit: it's replaced when you update | Once, to know the defaults |
@@ -70,15 +70,11 @@ cd my-job-search && git init
 
 Push it only to a **private** repository (see [Keep your working copy private](#keep-your-working-copy-private)).
 
-**2. Open the folder in an AI that can read files**: Claude Code, Codex, Cursor, or any agent with file access. Then paste prompt 0 from [PROMPTS](docs/PROMPTS.md):
-
-```text
-Read AGENTS.md, then docs/WORKFLOW.md. I'm new to this kit. Walk me through Step 0 one step at a time. Start with the checkup report on my current resume, then show me the interview plan before you ask anything. Before each step, tell me what it produces and what you need from me. Don't start the next step until I say so.
-```
+**2. Open the folder in an AI that can read files** (Claude Code, Codex, Cursor, or any agent with file access) **and say "start".** Any message works: the AI checks where you are and walks you through. In Claude Code you can also type `/start`, and `/checkup`, `/job`, `/poster` or `/update` later. If your tool doesn't read `AGENTS.md` by itself, paste prompt 0 from [PROMPTS](docs/PROMPTS.md) instead.
 
 **3. Do Step 0.** Put your old resume in `evidence/sources/`. You get a scored [checkup report](report/template.html) first. Then the AI interviews you about your 3 strongest accomplishments (more can come later), with a progress line on every question, turns them into Claim Cards, and you approve a first baseline. For your first baseline you can use the `General` type in [CV-INDEX](cv/CV-INDEX.md); add specific job types once you know which roles you're targeting.
 
-**4. For each new job**, use prompt 3 and paste the JD. Review the version the AI hands you, approve it, send it, and mark it `Sent`.
+**4. For each new job**, paste the JD (or use `/job` in Claude Code, or prompt 3). Review the version the AI hands you, approve it, send it, and mark it `Sent`.
 
 **5. After each version**: the Change Log is written, `CV-INDEX.md` is updated, and any new rule you settled on is in `MY-DECISIONS.md`.
 

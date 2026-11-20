@@ -1,5 +1,18 @@
 # AGENTS.md: Instructions for AI
 
+## Start of every session
+
+The user may open this folder and say only "hi", "start", or nothing in particular. Don't wait for a perfect prompt. Before anything else, look at where they are, then answer in a few short lines:
+
+1. **Nothing set up yet** (no Approved row in `cv/CV-INDEX.md`, and `evidence/INTAKE.md` is still the blank template): welcome them in three lines. What this does: every line of their resume will trace back to a fact they confirmed. What happens next: a scored checkup of their current resume, then a short interview about their 3 strongest accomplishments, about 30 minutes in all. What you need now: "Paste your current resume here, or put the file in `evidence/sources/`." Then follow Step 0 in `docs/WORKFLOW.md`, one step at a time.
+2. **Step 0 under way**: say where it stopped (from `evidence/INTAKE.md`) and offer to pick up there.
+3. **Set up**: one line of status (current baseline, latest report score if there is one), then a short menu: tailor for a new job (paste the JD) · checkup report · before-and-after poster · check for updates.
+4. If the first message is already a concrete task, do that task instead.
+
+Keep it short. Explain the method only if asked.
+
+## Read before resume work
+
 Before you do any resume work in this repo, read these in order:
 
 1. `docs/DECISIONS.md` (starter rules) and `docs/MY-DECISIONS.md` (the user's own rules): every decision marked **Active** is binding. Where they conflict, MY-DECISIONS wins
@@ -49,7 +62,7 @@ When the user asks to check for updates (prompt 5 in `docs/PROMPTS.md`):
 
 1. Read `VERSION`. Get the latest kit: https://github.com/weareheya/Resume-Gate/releases/latest/download/resume-gate-en.zip. It's a public download: no GitHub account or connector is needed. If your tool needs approval to use the network, ask once; or ask the user to download and unzip it into this folder.
 2. If its `VERSION` isn't newer, say so and stop. If it is, show the user the `CHANGELOG.md` entries since their version, including any "What you need to do" notes.
-3. With the user's go-ahead, replace **only kit files**: `AGENTS.md`, `README.md`, `LICENSE`, `VERSION`, `CHANGELOG.md`, `.gitignore`, everything in `docs/` except `MY-DECISIONS.md`, `scripts/`, `report/`, `examples/`, `assets/`, and the three `_TEMPLATE.md` files.
+3. With the user's go-ahead, replace **only kit files**: `AGENTS.md`, `CLAUDE.md`, `.claude/commands/`, `README.md`, `LICENSE`, `VERSION`, `CHANGELOG.md`, `.gitignore`, everything in `docs/` except `MY-DECISIONS.md`, `scripts/`, `report/`, `examples/`, `assets/`, and the three `_TEMPLATE.md` files.
 4. **Never touch the user's files**: `docs/MY-DECISIONS.md`, `evidence/` (apart from its `_TEMPLATE.md`), `cv/` (apart from the `_TEMPLATE.md` files), `reports/`.
 5. If the user had edited a kit file (for example added rules to `docs/DECISIONS.md` before MY-DECISIONS existed), move their changes into `docs/MY-DECISIONS.md` first and show them what moved.
 6. Run `python3 scripts/check_claims.py` on the newest resume to confirm nothing broke, then commit only after the user approves.

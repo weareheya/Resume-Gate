@@ -73,7 +73,7 @@ cd my-job-search && git init
 
 ### 3. Start the first session
 
-Open the folder in your AI tool and paste prompt 0 from the kit's [PROMPTS](en/docs/PROMPTS.md#0-first-session). It walks you through Step 0 one step at a time. The full walkthrough is in the kit's quick start: [en/README.md](en/README.md#quick-start) · [zh-CN/README.md](zh-CN/README.md#快速开始).
+Open the folder in your AI tool and say **"start"**. Any first message works: the AI checks where you are and walks you through Step 0, starting with a scored checkup of your current resume. In Claude Code you can also type `/start`. If your tool doesn't read `AGENTS.md` by itself, paste prompt 0 from [PROMPTS](en/docs/PROMPTS.md#0-first-session). The full walkthrough is in the kit's quick start: [en/README.md](en/README.md#quick-start) · [zh-CN/README.md](zh-CN/README.md#快速开始).
 
 ### What else you might need
 
@@ -166,7 +166,7 @@ cd my-job-search && git init
 
 ### 3. 开第一次会话
 
-在 AI 工具里打开这个文件夹，贴上 [PROMPTS](zh-CN/docs/PROMPTS.md#0-第一次使用) 里的提示词 0。它会带着一步一步做 Step 0。完整步骤见那一套的快速开始：[zh-CN/README.md](zh-CN/README.md#快速开始) · [en/README.md](en/README.md#quick-start)。
+在 AI 工具里打开这个文件夹，说一句 **「开始」**。说什么都行：AI 会先看你进行到哪，再带着你一步一步做 Step 0，第一步就是给现在的简历做一份带分数的体检。Claude Code 里也可以输入 `/start`。如果你的工具不会自己读 `AGENTS.md`，就贴 [PROMPTS](zh-CN/docs/PROMPTS.md#0-第一次使用) 里的提示词 0。完整步骤见那一套的快速开始：[zh-CN/README.md](zh-CN/README.md#快速开始) · [en/README.md](en/README.md#quick-start)。
 
 ### 可能还需要
 

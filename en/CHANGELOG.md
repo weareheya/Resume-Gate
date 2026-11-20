@@ -2,6 +2,13 @@
 
 What changed in each version, and whether you need to do anything. Your version is in `VERSION`. To update, paste prompt 5 from `docs/PROMPTS.md`.
 
+## 0.2.2 · 2026-11-20
+
+- **No more blank first screen.** Open the folder and say anything ("start", "hi"): the AI checks where you are and either welcomes you and asks for your resume, picks up an unfinished Step 0, or shows a short menu.
+- Claude Code reads the kit's rules on its own (new `CLAUDE.md`), and has slash commands: `/start`, `/checkup`, `/job`, `/poster`, `/update`.
+
+**What you need to do**: nothing. If you updated with prompt 5, the new files arrive with it.
+
 ## 0.2.1 · 2026-11-19
 
 - Share card and poster: more breathing room, band ticks moved outside the score ring, a lighter watermark that no longer sits on the score, and a call to action that wraps cleanly on phones.
