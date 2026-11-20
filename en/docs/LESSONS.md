@@ -3,10 +3,10 @@
 > Each entry: what happened → why → the guardrail now. When a new mistake happens, add it at the top.
 > Rules about facts and numbers belong in DECISIONS or a Claim Card. This file is for **process** mistakes.
 
-## L-14 · A banned verb came back softened
-- **What happened**: In the first eval run (2026-11-20), a product-manager version said the candidate wrote the requirements for "a self-serve partner portal, built with engineering". The card says engineering built it and "Don't write 'built'". Every check passed: the Claim ID, the number and the banned words were all fine.
-- **Why**: Self-review looked for the exact phrase the card ruled out, not for the claim behind it. "Built with engineering" puts the candidate back among the builders without using the forbidden sentence.
-- **Guardrail**: `check_claims.py` now warns when a line uses wording that a card's "Don't rephrase as" puts in quotes. Self-review reads every such warning, and checks softer versions of the same claim (REVIEW-CHECKLIST A). Write the forbidden wording in quotes on the card so the script can see it.
+## L-14 · Sole credit vs shared credit
+- **What happened**: In the first eval run (2026-11-20), a product-manager version said the candidate wrote the requirements for "a self-serve partner portal, built with engineering", where the card says engineering built it. The next kit version (0.5.1) treated that as oversell. In the following run, all three product-manager versions dropped engineering altogether, and a blind reviewer preferred the older versions, which named the collaboration.
+- **Why**: The line between packaging and fabrication was drawn in the wrong place. Shared wording ("built with engineering", "launched with the product team", "partnered with engineering on") is ordinary, defensible framing: it's true, and the candidate can explain their part in an interview. What a card rules out is **sole credit**: "built the portal", "launched the portal" as if no one else did.
+- **Guardrail**: `check_claims.py` warns when a line uses wording that a card's "Don't rephrase as" puts in quotes, so quote the sole-credit phrase ("built the portal"), not the bare verb. Self-review asks one question: does the line claim someone else's work as yours alone? Some vagueness is fine; going silent about a true collaboration is underselling (D-015).
 
 ## L-13 · New checks were stricter than real life
 - **What happened**: Twice, a hardening pass added rules that real job searching can't meet: a card needing a document to count, new cards defaulting to `Needs review`, and in 0.3.0's first draft a blank Verified cell failing, a missing profile failing every resume, and any stray "two" or single digit failing. Even an approved protected-claim drop kept failing, with no way to record the approval.

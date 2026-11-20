@@ -2,6 +2,33 @@
 
 One section per run, newest first. Record the kit versions compared, how many runs per side, and what changed because of the run.
 
+## 2026-11-20 · v0.2.3 vs v0.5.1 · three runs per side, plus a blind read
+
+**Setup**: as in the first run below. v0.2.3 reuses that run plus two new ones; v0.5.1 had three fresh runs. 18 resumes in all. Scored with `score.py`. `check_claims.py` from 0.5.1 was also run on every output. A blind read compared the three product-manager pairs: one AI reviewer acting as a recruiter, given only the job posting and the A/B files from `blind.py`.
+
+| Case | Kit | Pass (of 3) | check_claims errors | Critical recall | Oversell found | Gap kinds (avg) | Evidence table |
+|---|---|---|---|---|---|---|---|
+| channel-bd | v0.2.3 | 0* | 0 | 100% | none | not produced | not produced |
+| channel-bd | v0.5.1 | 3 | 0 | 100% | none | 83% | complete |
+| product-manager | v0.2.3 | 0* | 0 | 100% | none | not produced | not produced |
+| product-manager | v0.5.1 | 3 | 0 | 100% | none | 92% | complete |
+| customer-success | v0.2.3 | 0* | 0 | 100% | none | not produced | not produced |
+| customer-success | v0.5.1 | 3 | 0 | 100% | none | 100% | complete |
+
+\* v0.2.3 fails only because it doesn't produce the evidence table or gap kinds. On the resume text alone, all 9 of its runs were clean too.
+
+**Blind read (product-manager)**: the reviewer preferred v0.2.3 in all three pairs (one nearly a tie). Every version was rated believable with nothing oversold, and every version got an interview. The reason was the same each time: the v0.5.1 versions never mentioned engineering, and the job's one required skill is "write requirements *with engineering*". All three v0.2.3 versions said so ("built by engineering", "with engineering"). That is underselling, and it was caused by our own 0.5.1 nudge: told not to imply they built the portal, the runs dropped engineering altogether.
+
+**What it says**
+- Both versions are now clean on integrity, recall and oversell for these cases. v0.5.1's extra outputs (positioning, evidence table, gap kinds) were consistent across runs.
+- v0.5.1's "Don't rephrase as" guidance overcorrected into underselling on the one case where the true story includes another team.
+- The scorer flagged "Engineering designed and built it" as oversell. That was a false positive: the sentence is accurate attribution. The `built` patterns now target the candidate as builder ("built the…", "built with…", "helped build").
+- `check_claims.py` also warns on "built by engineering". That is noise, but it is only a warning, and the self-review note now says how to resolve it.
+
+**Changed because of this run**: kit 0.5.2 redraws the line as sole credit vs shared credit. "Built with engineering" is reasonable packaging (the maintainer's call, and what the blind reader rewarded). Only "built the portal"-style sole credit is ruled out (REVIEW-CHECKLIST A, LESSONS L-14). The gold's `built` patterns now target sole credit only. By this rule, the first run's "a portal, built with engineering" wasn't an oversell either.
+
+**Limits**: one AI reviewer, one case blind-read, three runs per side. Treat this as direction. Have a real recruiter do the blind read before drawing firmer conclusions.
+
 ## 2026-11-20 · v0.2.3 vs v0.5.0 · one run per side
 
 **Setup**: one fresh session per case and kit version (an AI assistant with no user answering questions). Each workspace had the same evidence bank (the current `en/examples/jordan-lee` cards and profile) and the same two baselines; only the kit's instructions differed. Each used that version's prompt 3 with the job pasted in. Scored with `score.py` from this repo.

@@ -5,6 +5,11 @@
   "must_use": ["C-002", "C-001"],
   "should_use": ["C-004"],
   "must_not_use": ["C-005"],
-  "forbidden": ["\\bsaved\\b", "reduc", "\\bcut", "faster", "cost", "onboarding time", "attendees", "\\bbuilt\\b", "retention rate", "keynote"],
-  "gaps": {"R1": "Direct", "R2": "Transferable or combined", "R3": ["Transferable or combined", "Not found yet"], "R4": "Not found yet"}
+  "forbidden": ["\\bbuilt (a|an|the|and)\\b", "co-buil", "\\bsaved\\b", "reduc", "\\bcut", "faster", "cost", "onboarding time", "attendees", "retention rate", "keynote"],
+  "gaps": {
+    "R1": "Direct",
+    "R2": "Transferable or combined",
+    "R3": ["Transferable or combined", "Not found yet"],
+    "R4": "Not found yet"
+  }
 }

@@ -626,7 +626,7 @@ class WorkedExample(unittest.TestCase):
                         "Protected claim C-001", '"revenue" is a banned word on C-003'):
             self.assertIn(snippet, out)
         # trap 6 stays a judgment call: a warning, not an error
-        self.assertIn('WARN  acme-pdm-with-traps.md:24: "built" is wording C-002', out)
+        self.assertIn('WARN  acme-pdm-with-traps.md:24: "built and launched" is wording C-002', out)
 
 
     def test_protected_check_ignores_other_cards_numbers(self):

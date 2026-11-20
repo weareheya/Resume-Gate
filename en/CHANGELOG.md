@@ -2,6 +2,13 @@
 
 What changed in each version, and whether you need to do anything. Your version is in `VERSION`. To update, paste prompt 5 from `docs/PROMPTS.md`.
 
+## 0.5.2 · 2026-11-20
+
+- **Shared credit is fine; sole credit isn't.** 0.5.1 treated "built with engineering" as oversell when a card says engineering built it. That was too strict: it pushed resumes into going quiet about real collaboration, and a blind reviewer preferred versions that named it. Self-review now asks one question: does a line claim someone else's work as yours alone? Reasonable packaging and some vagueness are fine (LESSONS L-14, D-015).
+- The example card C-002 quotes the sole-credit phrases ("built the portal", "built and launched"), so the warning no longer fires on "built with engineering".
+
+**What you need to do**: nothing.
+
 ## 0.5.1 · 2026-11-20
 
 A nudge for wording a card warns against, found by the first eval run.
