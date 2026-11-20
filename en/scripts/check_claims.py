@@ -74,6 +74,7 @@ T = {
         "keep_for": "Protected claim {c} is kept for type(s) {k}; this resume is type {ty}, so leaving it out is allowed. Say why in the Change Log",
         "base_missing": "Baseline file not found: {p}. The protected-claims check can't run. Fix `base:` or pass --base",
         "base_required": "{f}: no `base:`, but CV-INDEX already has a starting point for type {ty} ({s}). Set `base:` to the version this was copied from",
+        "frozen": "{f} was frozen when it was sent (cv/frozen.txt) and has been edited since. Restore it, and make any change in a new version (D-010)",
         "ok": "OK: {n} lines checked, {c} Claim IDs used, no errors{w}",
         "fail": "FAILED: {e} error(s) in {f}",
         "scope": "Scope: this checks sourcing, numbers, banned words, roles/education and protected claims. It does not verify that each sentence is supported by its card, or check layout.",
@@ -106,6 +107,7 @@ T = {
         "keep_for": "受保护的 claim {c} 只要求在类型 {k} 里保留；这份简历是类型 {ty}，可以不放。请在 Change Log 里写明原因",
         "base_missing": "找不到基线文件：{p}，受保护 claim 检查无法进行。请修正 `base:` 或用 --base 指定",
         "base_required": "{f}：没有写 `base:`，但 CV-INDEX 里类型 {ty} 已经有起点（{s}）。请把 `base:` 设为这份简历复制自的版本",
+        "frozen": "{f} 投递时已冻结（cv/frozen.txt），之后又被改过。请恢复原样，要改就复制成一个新版本（D-010）",
         "ok": "通过：检查了 {n} 行，用到 {c} 个 Claim ID，没有错误{w}",
         "fail": "未通过：{f} 里有 {e} 个错误",
         "scope": "范围：这里检查出处、数字、禁用词、职位/教育和受保护的 claim，不验证每句话是否真的由对应的卡支持，也不检查排版。",
@@ -464,6 +466,20 @@ def cv_index_rule(resume, fm):
     return None
 
 
+def frozen_changed(resume):
+    """True if cv/frozen.txt (written by scripts/freeze.py) lists this file with a different hash."""
+    import hashlib
+    record = resume.parent.parent / "frozen.txt"
+    if not record.is_file():
+        return False
+    root, me = resume.resolve().parent.parent.parent, resume.resolve()
+    for line in record.read_text(encoding="utf-8").splitlines():
+        parts = line.strip().split(None, 1)
+        if len(parts) == 2 and (root / parts[1].lstrip("*").strip()).resolve() == me:
+            return hashlib.sha256(resume.read_bytes()).hexdigest() != parts[0]
+    return False
+
+
 def numbers_for(needs, cid):
     vals = []
     for _, text, ids in needs:
@@ -490,6 +506,8 @@ def main():
         print(t["no_claims"].format(p=a.claims)); return 2
 
     errors, warns = 0, 0
+    if frozen_changed(resume):
+        print("ERROR " + t["frozen"].format(f=resume.name)); errors += 1
     for c, files in sorted(dups.items()):
         print("ERROR " + t["dup_id"].format(c=c, f=", ".join(files))); errors += 1
 
@@ -601,6 +619,9 @@ def main():
             now = numbers_for(needs, c)
             gone = []
             for v in numbers_for(b["needs"], c):
+                # only this card's own numbers: a line citing two cards also holds the other card's
+                if not any(same(v, x) for x in claims[c]["vals"]):
+                    continue
                 if not any(same(v, x) for x in now) and not any(same(v, g) for g in gone):
                     gone.append(v)
             if gone:

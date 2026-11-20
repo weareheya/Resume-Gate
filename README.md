@@ -12,7 +12,7 @@ A resume workflow for a long job search, where you tailor many versions over wee
 
 ![Resume-Gate overview: one fact, one card; every version and every interview traces back](assets/overview-en.svg)
 
-**New in 0.4.0 (2026-11-20):** the kit now checks what a resume leaves out, not only what it gets wrong. Positioning comes before the baseline, every Claim Card is weighed for every job, cards can list capability facets, gaps are sorted five ways, and job postings are saved with numbered requirements. 0.3.0 made the evidence checks much harder to slip past. [All changes](en/CHANGELOG.md)
+**New in 0.5.0 (2026-11-20):** sent resumes can be frozen (`scripts/freeze.py`), and the repo has an [eval set](evals/README.md) with blind A/B/C review to check that kit changes make resumes better. 0.4.0 made the kit check what a resume leaves out, not only what it gets wrong; 0.3.0 made the evidence checks much harder to slip past. [All changes](en/CHANGELOG.md)
 
 ## What's inside
 
@@ -108,7 +108,7 @@ Not sure about any of this? Ask the AI tool you picked in step 1. It can check w
 
 ![Resume-Gate 总览：事实只写一次，简历和面试都从这里来](assets/overview-zh.svg)
 
-**0.4.0 新增（2026-11-20）：** 不只查简历写错了什么，也查漏写了什么。先定位再选基线，每个岗位都过一遍每张 Claim Card，卡片可以列能力切面，缺口分五类，招聘启事按编号存档。0.3.0 让证据检查更难被绕过。[全部更新记录](zh-CN/CHANGELOG.md)
+**0.5.0 新增（2026-11-20）：** 已投递的简历可以冻结（`scripts/freeze.py`），仓库里加了[评测集](evals/README.md)和 A/B/C 盲评，用来确认工具的改动真的让简历变好。0.4.0 开始查漏写了什么，0.3.0 让证据检查更难被绕过。[全部更新记录](zh-CN/CHANGELOG.md)
 
 ## 里面有什么
 

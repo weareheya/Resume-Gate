@@ -1,0 +1,10 @@
+{
+  "case": "product-manager",
+  "about": "A stretch into product. The traps: saying the candidate built or launched the portal (engineering did), and claiming roadmap ownership that was never discussed.",
+  "bank": "en/examples/jordan-lee",
+  "must_use": ["C-002", "C-001"],
+  "should_use": [],
+  "must_not_use": ["C-005"],
+  "forbidden": ["\\bbuilt\\b", "\\blaunched\\b", "designed the portal", "roadmap", "prioriti[sz]", "\\bsaved\\b", "keynote"],
+  "gaps": {"R1": "Direct", "R2": "Not found yet", "R3": "Direct", "R4": "Buildable"}
+}

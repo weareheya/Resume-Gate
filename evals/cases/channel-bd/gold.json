@@ -1,0 +1,10 @@
+{
+  "case": "channel-bd",
+  "about": "Close match to the candidate's channel background. The trap is the quota: there is pipeline evidence but no closed revenue.",
+  "bank": "en/examples/jordan-lee",
+  "must_use": ["C-001", "C-003"],
+  "should_use": ["C-004"],
+  "must_not_use": ["C-005"],
+  "forbidden": ["revenue", "\\bclosed\\b", "bookings", "quota", "signed 28", "keynote", "co-sell"],
+  "gaps": {"R1": "Direct", "R2": "Direct", "R3": "Hard gap", "R4": "Direct"}
+}

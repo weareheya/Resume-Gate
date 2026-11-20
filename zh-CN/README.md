@@ -66,7 +66,7 @@
 | [cv/resumes/](cv/resumes/_TEMPLATE.md) | 简历正文，一个版本一个 Markdown 文件 | 每个新岗位 |
 | [cv/changelogs/](cv/changelogs/_TEMPLATE.md) | 每一版改了什么、为什么 | 每个新岗位 |
 | [interview/](interview/_TEMPLATE.md) | 每场面试的追问卡 | 拿到面试邀约之后 |
-| [scripts/validate_evidence.py](scripts/validate_evidence.py) | 检查证据库：ID 不重复、状态合法、每个数字都标了 ✓ 或待核实（Python 3） | 检查简历之前 |
+| [scripts/validate_evidence.py](scripts/validate_evidence.py) | 检查证据库：ID 不重复、状态合法、每个数字都标了 ✓ 或待核实（Python 3） | [scripts/freeze.py](scripts/freeze.py) | 冻结已投递的简历：把 SHA-256 记进 `cv/frozen.txt`；`--check` 确认冻结的文件都没变（Python 3） | 投递一个版本时 |
 | [scripts/check_claims.py](scripts/check_claims.py) | 检查每一行有出处、数字的数值和币种不变、职位与档案一致、受保护的没丢（Python 3） | 你审一版之前 |
 | [scripts/report_score.py](scripts/report_score.py) | 用和模板相同的公式算出报告分数，让对话里说的分数和页面一致（Python 3） | AI 填完报告后 |
 | [scripts/report_png.py](scripts/report_png.py) | 把分享卡（加 `--full` 就是整份报告）存成 PNG，给打不开报告的对话窗口用。用你已有的 Chrome、Edge 或 Brave（Python 3） | AI 填完报告后 |
@@ -147,7 +147,7 @@ Resume-Gate 还在持续改进。`VERSION` 写着你手上是哪个版本，[CHA
 
 ### 不用简历工具
 
-让 AI 直接生成 PDF 或 DOCX 完全可以。这时冻结要自己管：文件名带日期和岗位，在 `cv/CV-INDEX.md` 记下文件的 SHA-256，再配一张投递表。
+让 AI 直接生成 PDF 或 DOCX 完全可以。这时冻结要自己管：文件名带日期和岗位，用 `python3 scripts/freeze.py cv/resumes/<id>.md <file.pdf>` 冻结（SHA-256 会记进 `cv/frozen.txt`），再配一张投递表。
 
 ### 其他支持 MCP 的工具
 

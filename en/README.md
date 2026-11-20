@@ -59,6 +59,7 @@ Each step has an output you must be able to show before moving on. Details in [d
 | [cv/changelogs/](cv/changelogs/_TEMPLATE.md) | What changed in each version and why | Every new job |
 | [interview/](interview/_TEMPLATE.md) | Follow-up cards for each interview | Once you're invited to interview |
 | [scripts/validate_evidence.py](scripts/validate_evidence.py) | Checks the evidence bank: unique IDs, valid statuses, every number marked ✓ or to verify (Python 3) | Before checking a resume |
+| [scripts/freeze.py](scripts/freeze.py) | Freezes a sent resume: records its SHA-256 in `cv/frozen.txt`; `--check` confirms nothing frozen changed (Python 3) | When you send a version |
 | [scripts/check_claims.py](scripts/check_claims.py) | Checks every line has a source, numbers keep their value and currency, roles match your profile, protected claims stay (Python 3) | Before you review a version |
 | [scripts/report_score.py](scripts/report_score.py) | Prints a report's score with the same formula as the template, so the chat and the page agree (Python 3) | After the AI fills a report |
 | [scripts/report_png.py](scripts/report_png.py) | Saves the share card (or, with `--full`, the whole report) as a PNG, for chat windows that can't run the report. Uses the Chrome, Edge or Brave you already have (Python 3) | After the AI fills a report |
@@ -139,7 +140,7 @@ If your evidence lives in a database rather than `evidence/claims/`, `check_clai
 
 ### Without a resume builder
 
-Having your AI generate the PDF or DOCX directly works fine. You then handle freezing yourself: put the date and job in the file name, record the file's SHA-256 in `cv/CV-INDEX.md`, and keep a tracking table.
+Having your AI generate the PDF or DOCX directly works fine. You then handle freezing yourself: put the date and job in the file name, freeze it with `python3 scripts/freeze.py cv/resumes/<id>.md <file.pdf>` (it records the SHA-256 in `cv/frozen.txt`), and keep a tracking table.
 
 ### Other tools with MCP
 

@@ -9,3 +9,5 @@ p[0-9]*.png
 # Raw source material (old resumes, reviews) can hold private details
 evidence/sources/
 __pycache__/
+# Blind-review rounds (rating sheets, keys)
+evals/runs/

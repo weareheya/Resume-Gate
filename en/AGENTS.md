@@ -44,7 +44,7 @@ Before you do any resume work in this repo, read these in order:
 - Reports follow `docs/REPORT.md`. Never send or upload a full report: it holds all the user's details. For sharing, make a copy with `scripts/report_share.py`.
 - Before showing a resume to the user, run `python3 scripts/validate_evidence.py` and `python3 scripts/check_claims.py cv/resumes/<id>.md`, fix every error, and report the result.
 - Once `evidence/profile.md` is filled in, roles, employers, dates and education on a resume must match it. Add or change a row only after the user confirms it, the same as any card.
-- **Human review gate**: until the user says "approved", a version stays `Draft`. Don't edit a version marked `Sent`.
+- **Human review gate**: until the user says "approved", a version stays `Draft`. Don't edit a version marked `Sent`: when the user sends one, freeze it with `python3 scripts/freeze.py cv/resumes/<id>.md <exported file>`.
 
 **Permissions**
 | Level | Examples | Can the AI do it directly? |

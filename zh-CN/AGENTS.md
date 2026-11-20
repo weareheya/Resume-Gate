@@ -44,7 +44,7 @@
 - 报告按 `docs/REPORT.md` 做。不要发送或上传完整报告：里面有本人的全部信息。要分享时，用 `scripts/report_share.py` 生成分享版。
 - 给本人看简历之前，先跑 `python3 scripts/validate_evidence.py` 和 `python3 scripts/check_claims.py cv/resumes/<id>.md`，修掉所有错误，并报告结果。
 - `evidence/profile.md` 填好之后，简历上的职位、雇主、任职时间和教育背景必须和它一致。新增或修改其中一行，要先经本人确认，和卡片一样。
-- **人工审核关卡**：本人说「通过」之前，版本状态保持 `Draft`；已投递（`Sent`）的版本不再修改。
+- **人工审核关卡**：本人说「通过」之前，版本状态保持 `Draft`；已投递（`Sent`）的版本不再修改：本人投递时，用 `python3 scripts/freeze.py cv/resumes/<id>.md <导出的文件>` 冻结。
 
 **权限**
 | 等级 | 例子 | AI 能否直接做 |

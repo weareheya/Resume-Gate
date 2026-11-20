@@ -29,7 +29,7 @@ Prefer the **latest** one that's Approved or sent.
 |---|---|---|---|---|---|---|
 | | | | | | | |
 
-Suggested PDF filename: `<byline>_<company-or-purpose>_<job-type>_<YYYY-MM-DD>.pdf`. Record the first 8 characters of its SHA-256 in the notes: `shasum -a 256 file.pdf`.
+Suggested PDF filename: `<byline>_<company-or-purpose>_<job-type>_<YYYY-MM-DD>.pdf`. When you send it, freeze the resume and the PDF: `python3 scripts/freeze.py cv/resumes/<id>.md <file.pdf>` (it records their SHA-256 in `cv/frozen.txt`).
 
 ## Bylines
 
