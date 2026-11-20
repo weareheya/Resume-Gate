@@ -1,5 +1,6 @@
 ---
 job_id: ACME-01
+resume: acme-pdm
 role: Acme Cloud · Partner Development Manager（虚构）
 status: Approved
 base: channel-baseline

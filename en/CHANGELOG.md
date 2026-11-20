@@ -2,6 +2,22 @@
 
 What changed in each version, and whether you need to do anything. Your version is in `VERSION`. To update, paste prompt 5 from `docs/PROMPTS.md`.
 
+## 0.6.0 · 2026-11-20
+
+Safer defaults for a public tool, lighter everyday use, and fixes from a design audit. No hard rule was removed.
+
+- **Your personal files stay out of Git by default.** `.gitignore` now keeps Claim Cards, `evidence/profile.md`, `INTAKE.md`, `cv/CV-INDEX.md`, resumes, Change Logs, jobs, interview notes and reports out of any repository, templates excepted. Using a private repo and want Git to back them up? Delete the marked block. Updating the kit no longer replaces your `.gitignore` without asking (`docs/UPDATING.md`).
+- **Three task modes.** Quick edit (a few lines, no new JD), Tailor (S0 to S7) and Finalize (export, layout check, freeze). A small fix no longer runs the whole pipeline, and the PDF export and layout check happen once, at Finalize (WORKFLOW).
+- **Windows and Linux.** `pdf_fill.swift` needs macOS. On other computers, Finalize now asks you to open the PDF and confirm the page count and last page, instead of getting stuck (LESSONS L-07).
+- **A lighter evidence table, checked by the script.** Unused cards can share one line by reason; a protected or clearly relevant card keeps its own row. `check_claims.py` now warns (never fails) when the Change Log's evidence table skips a card (D-019). With more than 15 cards, start from the new `scripts/list_claims.py`: one line per card, written fresh each time.
+- **Progress in each job file.** `jobs/_TEMPLATE.md` has a "Progress" section, so a later session, or another AI tool, can see which steps are done and what's waiting on you.
+- **Report.** The job-fit report shows a line under the score with any must-have requirement not directly met, and marks them in the coverage table. Text colours now meet WCAG AA contrast, and ✓ / ½ / – marks have text labels for screen readers. The script score now rounds exactly like the page (62.5 is 63 in both). The share card is built from the clean template, so nothing outside the report's data block comes along, and data embedded in a page can't break out of it.
+- **Shorter AGENTS.md.** The hard rules are unchanged, word for word. The fixed reading order became a "what to read for which task" table, and the update steps moved to `docs/UPDATING.md`.
+- **LESSONS** now say which test guards each guardrail, and five guardrails were revised because they cost more than the mistake they fixed (L-01, L-04, L-07, L-10, L-12).
+- For maintainers: releases run every test before building the zips and refuse personal files; `tools/check_sync.py` now fails if the en and zh-CN scripts' logic differs; the eval scorer fails closed if `check_claims.py` crashes and counts a card only when it's tagged on a visible line.
+
+**What you need to do**: nothing required. If you keep this folder in a **private** repo and want Git to back up your cards and resumes, delete the marked block at the end of `.gitignore` when you take this update. If you ever committed personal files to a **public** repo, see "Keep your working copy private" in the README.
+
 ## 0.5.2 · 2026-11-20
 
 - **Shared credit is fine; sole credit isn't.** 0.5.1 treated "built with engineering" as oversell when a card says engineering built it. That was too strict: it pushed resumes into going quiet about real collaboration, and a blind reviewer preferred versions that named it. Self-review now asks one question: does a line claim someone else's work as yours alone? Reasonable packaging and some vagueness are fine (LESSONS L-14, D-015).

@@ -1,6 +1,6 @@
 # REVIEW-CHECKLIST: AI self-review
 
-After a resume is written and before the user sees it, the AI must go through this checklist and fix what it finds. When handing off, include what you changed, what's still open, and the highlights.
+After a resume is written and before the user sees it, the AI must go through this checklist and fix what it finds. When handing off, include what you changed, what's still open, and the highlights. For a [quick edit](WORKFLOW.md#task-modes), go through section A for the changed lines only. Sections C and D's page images belong to Finalize.
 
 Two sources, each for one job:
 
@@ -11,7 +11,7 @@ Plus common ATS advice (single column, standard section names). Specific statist
 
 ## A. Facts (pass this first; if it fails, stop here)
 
-Run `python3 scripts/validate_evidence.py` and `python3 scripts/check_claims.py cv/resumes/<id>.md` first. They check the first two items below mechanically, and also that every number on a checked line comes from the card it cites (same value, scale and currency), that no banned word from the card is used (and warns on wording its "Don't rephrase as" quotes), that role headings and Education match `evidence/profile.md`, and that protected claims keep their numbers. It fails if it can't find a Summary or Experience section, and it lists any other section (Skills, Projects…) as not verified: check those by hand. The rest still need judgment.
+Run `python3 scripts/validate_evidence.py` and `python3 scripts/check_claims.py cv/resumes/<id>.md` first. They check the first two items below mechanically, plus numbers, banned words, roles and protected claims ([what the scripts check](../README.md#what-the-scripts-check-and-what-they-dont)). Any section they list as not verified (Skills, Projects…) you check by hand. The rest still need judgment.
 
 - [ ] Every line traces to a Claim Card. An approved or sent resume is not evidence, only approved wording
 - [ ] Every bullet carries its Claim ID in an HTML comment, and each one points to a card marked `Safe to draft`; no number used is marked `to verify` on its card
@@ -22,7 +22,7 @@ Run `python3 scripts/validate_evidence.py` and `python3 scripts/check_claims.py 
 - [ ] A result that happened at the same time isn't credited entirely to the candidate (causality); a link that *can* be shown is written, not split apart by reflex (D-014)
 - [ ] Claims marked `protected` aren't just present; **their meaning hasn't been weakened**. Compare them sentence by sentence with the approved wording. `check_claims.py` checks that the ID and its confirmed numbers are still there, but can't judge wording (LESSONS L-12)
 - [ ] Anything the JD asks for without evidence is **not written** and is listed in the Coverage Report
-- [ ] Nothing strong was left out by accident: every Claim Card is in the evidence table, and any unused card that beats something in the resume was swapped in or has a reason (D-019)
+- [ ] Nothing strong was left out by accident: every Claim Card is in the evidence table (unused ones may share a line; `check_claims.py` warns on a missing one), and any unused card that beats something in the resume was swapped in or has a reason (D-019)
 - [ ] No sensitive information (a former employer's confidential details, other people's private information)
 
 ## B. Writing
@@ -40,7 +40,7 @@ These are defaults. A structure the user has already approved takes priority ove
 - [ ] Contact details are clean: no `https://`, readable link text
 - [ ] Section names are standard (Summary / Experience / Education / Skills)
 
-## C. Layout
+## C. Layout (at Finalize)
 
 - [ ] Exported PDF fills its pages: by default **1 or 2 full pages**, with the content on the last page reaching at least 85% of the page height (both defaults can be changed in D-009), not just a few stray lines
 - [ ] Page breaks fall between roles, not between a role's heading and its bullets
@@ -55,12 +55,12 @@ Check tool:
 swift scripts/pdf_fill.swift <cv.pdf> <output-dir>
 ```
 
-It checks the page count (default 1 or 2) and how far down the last page the content reaches (default 85%). "Reach" is where the last content ends, not how much of the page is used, so a page number in the footer can make a nearly empty page look full. If your resume has a footer, pass `--ignore-bottom=4` (just the footer's height; it also ignores real content in that zone). Always look at the PNGs as well.
+It needs macOS. On any other computer, look at the PDF yourself if your tool can, and ask the user to open it and confirm the page count and that the last page isn't just a few stray lines; the check is done only when they say so. It checks the page count (default 1 or 2) and how far down the last page the content reaches (default 85%). "Reach" is where the last content ends, not how much of the page is used, so a page number in the footer can make a nearly empty page look full. If your resume has a footer, pass `--ignore-bottom=4` (just the footer's height; it also ignores real content in that zone). Always look at the PNGs as well.
 
 ## D. Handoff format
 
-1. **Page images**: paste the PNGs that `pdf_fill` generated. Don't make the user go find the file.
-2. **Layout result**: page count and how far down the content reaches on each page
+1. **Page images** (at Finalize): paste the PNGs that `pdf_fill` generated, or on other computers say that the user confirmed the layout. Don't make the user go find the file.
+2. **Layout result** (at Finalize): page count and how far down the content reaches on each page
 3. **Self-review findings and fixes** (as a table)
 4. **Highlights**: the 3–5 strongest selling points in this version, and which JD requirement each answers
 5. **Risks and gaps**: what the JD wants but you have no evidence for, and what the candidate must be ready to explain in an interview

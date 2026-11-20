@@ -6,7 +6,8 @@ This script copies the case's evidence bank to a temporary folder, drops the res
 cv/resumes/_eval.md, runs the kit's check_claims.py there, and then measures:
 
   integrity        errors from check_claims.py (must be 0)
-  critical recall  share of must_use cards the resume cites (must be 100%)
+  critical recall  share of must_use cards the resume cites (must be 100%). A card counts only when its
+                   ID is tagged on a line a reader sees, not when it's named in a note or a comment block
   should recall    share of should_use cards cited (reported, not required)
   must-not-use     cards the resume must not cite (e.g. Needs review)
   forbidden        phrases that would oversell (regex, case-insensitive, comments stripped)
@@ -20,7 +21,8 @@ are scores to compare runs, not gates: a reasonable reviewer can sort a gap diff
 Usage (from the repo root):
   python3 evals/score.py evals/cases/<case> path/to/resume.md [--changelog path/to/changelog.md] [--json]
 
-Exit code: 0 = PASS, 1 = FAIL, 2 = could not run.
+Exit code: 0 = PASS, 1 = FAIL, 2 = could not run (including check_claims.py crashing or not finishing:
+a check that didn't run is never counted as a pass).
 """
 import argparse
 import json
@@ -63,7 +65,23 @@ def strip(text):
 
 
 def cited(text):
-    return set(ID.findall(" ".join(re.findall(r"<!--(.*?)-->", text, flags=re.S))))
+    """Card IDs tagged on a visible resume line: `- Grew partners … <!-- C-001 -->`, or a tag alone on the
+    line right under its text (a wrapped bullet). An ID in a note (`<!-- not used: C-003 -->` on its own,
+    or a comment spanning lines) doesn't count."""
+    text = re.sub(r"\A---\n.*?\n---\n", "", text, flags=re.S)
+    text = re.sub(r"<!--(?:(?!-->)[^\n])*\n.*?-->", "", text, flags=re.S)  # multi-line comments are notes
+    ids, waiting = set(), False  # waiting: the line above is a bullet with no tag yet (it wraps)
+    for line in text.splitlines():
+        visible = re.sub(r"<!--.*?-->", "", line).strip(" \t-*")
+        tags = re.findall(r"<!--(.*?)-->", line)
+        if tags and (visible or waiting):
+            ids |= set(ID.findall(" ".join(tags)))
+        waiting = bool(visible) and not tags and bool(re.match(r"\s*[-*] |\s{2,}\S", line))
+    return ids
+
+
+class CheckFailed(RuntimeError):
+    """check_claims.py crashed or didn't finish."""
 
 
 def tables(text):
@@ -109,7 +127,13 @@ def run_check(bank, resume_text):
         p = subprocess.run([sys.executable, "-I", str(script), "cv/resumes/_eval.md"],
                            cwd=work, capture_output=True, text=True)
         lines = p.stdout.splitlines()
-        return [l for l in lines if l.startswith("ERROR")], [l for l in lines if l.startswith("WARN")]
+        errors = [l for l in lines if l.startswith("ERROR")]
+        # Fail closed: only a run that ended with its verdict line counts, and its exit code must agree.
+        verdict = any(re.match(r"(OK|FAILED|通过|未通过)[:：]", l) for l in lines)
+        if not verdict or p.returncode not in (0, 1) or (p.returncode == 1) != bool(errors):
+            tail = (p.stderr.strip().splitlines() or lines or ["no output"])[-1]
+            raise CheckFailed(f"check_claims.py exited {p.returncode} without a verdict: {tail}")
+        return errors, [l for l in lines if l.startswith("WARN")]
 
 
 def score(case, resume_text, changelog_text=None):
@@ -174,7 +198,7 @@ def main():
     try:
         r = score(case, Path(a.resume).read_text(encoding="utf-8"),
                   Path(a.changelog).read_text(encoding="utf-8") if a.changelog else None)
-    except (OSError, ValueError, KeyError) as e:
+    except (OSError, ValueError, KeyError, CheckFailed) as e:
         print(f"Could not score: {e}", file=sys.stderr)
         return 2
     print(json.dumps(r, ensure_ascii=False, indent=2) if a.json else report(r))

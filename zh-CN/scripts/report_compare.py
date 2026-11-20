@@ -14,13 +14,12 @@ by default the poster shows only the scores.
 Exit code: 0 = written, 2 = could not read a report.
 """
 import argparse
-import json
 import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from report_score import load, score  # noqa: E402
-from report_share import BLOCK, add_module_args, apply_modules  # noqa: E402
+from report_share import TEMPLATE, add_module_args, apply_modules, embed  # noqa: E402
 
 ORDER = ["R1", "R2", "R3", "R4", "R5", "J1", "J2", "J3"]
 
@@ -59,10 +58,7 @@ def main():
         "after": {"date": after.get("meta", {}).get("date", ""), "score": sa, "dims": {i: pa[i][2] for i in shared}},
         "dims": shared, "partial": partial}}
 
-    template = Path(__file__).resolve().parent.parent / "report" / "template.html"
-    html = template.read_text(encoding="utf-8")
-    blob = json.dumps(data, ensure_ascii=False, indent=1)
-    html = BLOCK.sub(lambda m: m.group(1) + "\n" + blob + "\n" + m.group(3), html, count=1)
+    html = embed(TEMPLATE.read_text(encoding="utf-8"), data)
     after_path = Path(a.after)
     dest = Path(a.out) if a.out else after_path.with_name(after_path.stem + "-compare" + after_path.suffix)
     dest.write_text(html, encoding="utf-8")

@@ -76,6 +76,7 @@ T = {
         "base_missing": "Baseline file not found: {p}. The protected-claims check can't run. Fix `base:` or pass --base",
         "base_required": "{f}: no `base:`, but CV-INDEX already has a starting point for type {ty} ({s}). Set `base:` to the version this was copied from",
         "frozen": "{f} was frozen when it was sent (cv/frozen.txt) and has been edited since. Restore it, and make any change in a new version (D-010)",
+        "table_gap": "{f}: the evidence table in {cl} doesn't mention {cs}. Look at them, or add them as unused with a reason; unused cards can share one line (D-019)",
         "ok": "OK: {n} lines checked, {c} Claim IDs used, no errors{w}",
         "fail": "FAILED: {e} error(s) in {f}",
         "scope": "Scope: this checks sourcing, numbers, banned words, roles/education and protected claims. It does not verify that each sentence is supported by its card, or check layout.",
@@ -110,6 +111,7 @@ T = {
         "base_missing": "找不到基线文件：{p}，受保护 claim 检查无法进行。请修正 `base:` 或用 --base 指定",
         "base_required": "{f}：没有写 `base:`，但 CV-INDEX 里类型 {ty} 已经有起点（{s}）。请把 `base:` 设为这份简历复制自的版本",
         "frozen": "{f} 投递时已冻结（cv/frozen.txt），之后又被改过。请恢复原样，要改就复制成一个新版本（D-010）",
+        "table_gap": "{f}：{cl} 的证据表没有提到 {cs}。请看一下这些卡；用不上的写进表里并说明原因，没用的卡可以合成一行（D-019）",
         "ok": "通过：检查了 {n} 行，用到 {c} 个 Claim ID，没有错误{w}",
         "fail": "未通过：{f} 里有 {e} 个错误",
         "scope": "范围：这里检查出处、数字、禁用词、职位/教育和受保护的 claim，不验证每句话是否真的由对应的卡支持，也不检查排版。",
@@ -476,18 +478,56 @@ def cv_index_rule(resume, fm):
     return None
 
 
-def frozen_changed(resume):
-    """True if cv/frozen.txt (written by scripts/freeze.py) lists this file with a different hash."""
-    import hashlib
+def frozen_entry(resume):
+    """The hash cv/frozen.txt (written by scripts/freeze.py) records for this file, or None."""
     record = resume.parent.parent / "frozen.txt"
     if not record.is_file():
-        return False
+        return None
     root, me = resume.resolve().parent.parent.parent, resume.resolve()
     for line in record.read_text(encoding="utf-8").splitlines():
         parts = line.strip().split(None, 1)
         if len(parts) == 2 and (root / parts[1].lstrip("*").strip()).resolve() == me:
-            return hashlib.sha256(resume.read_bytes()).hexdigest() != parts[0]
-    return False
+            return parts[0]
+    return None
+
+
+EVIDENCE_HEADINGS = ("evidence table", "证据表")
+
+
+def find_changelog(resume, fm):
+    """The Change Log for this resume: one whose front matter says `resume: <id>`, or that names
+    cv/resumes/<id>.md. None if there isn't exactly one."""
+    folder = resume.parent.parent / "changelogs"
+    if not folder.is_dir():
+        return None
+    rid = fm.get("id") or resume.stem
+    hits = []
+    for p in sorted(folder.glob("*.md")):
+        if p.name.startswith("_"):
+            continue
+        text = p.read_text(encoding="utf-8")
+        if front_matter(text)[0].get("resume", "").strip() == rid or f"cv/resumes/{resume.name}" in text:
+            hits.append(p)
+    return hits[0] if len(hits) == 1 else None
+
+
+def evidence_table_ids(path):
+    """IDs mentioned in a Change Log's evidence-table section, or None if it has no such section."""
+    ids, inside, found = set(), False, False
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if line.startswith("## "):
+            inside = line[3:].strip().lower().startswith(EVIDENCE_HEADINGS)
+            found = found or inside
+        elif inside:
+            ids |= set(ID_RE.findall(line))
+    return ids if found else None
+
+
+def frozen_changed(resume):
+    """True if cv/frozen.txt (written by scripts/freeze.py) lists this file with a different hash."""
+    import hashlib
+    want = frozen_entry(resume)
+    return want is not None and hashlib.sha256(resume.read_bytes()).hexdigest() != want
 
 
 def numbers_for(needs, cid):
@@ -504,6 +544,7 @@ def main():
     ap.add_argument("--base", help="baseline resume file (default: `base:` in the front matter)")
     ap.add_argument("--claims", default="evidence/claims")
     ap.add_argument("--profile", help="profile file (default: profile.md next to the claims folder)")
+    ap.add_argument("--changelog", help="this version's Change Log (default: the one in cv/changelogs/ that names this resume)")
     ap.add_argument("--lang", choices=["en", "zh"], default=DEFAULT_LANG)
     a = ap.parse_args()
     t = T[a.lang]
@@ -643,6 +684,16 @@ def main():
             if gone:
                 shown = ", ".join(("%g" % v) for v in gone)
                 print("ERROR " + t["weakened"].format(c=c, b=base.name, x=shown)); errors += 1
+
+    # D-019: every card is looked at for every job. Only a reminder: a sent (frozen) version and a
+    # Change Log without an evidence table (older versions) are skipped.
+    cl = Path(a.changelog) if a.changelog else find_changelog(resume, fm)
+    if cl and cl.is_file() and frozen_entry(resume) is None:
+        listed = evidence_table_ids(cl)
+        if listed is not None:
+            missing = sorted(c for c in claims if c not in listed)
+            if missing:
+                print("WARN  " + t["table_gap"].format(f=resume.name, cl=cl.name, cs=", ".join(missing))); warns += 1
 
     if errors:
         print(t["fail"].format(e=errors, f=resume.name))

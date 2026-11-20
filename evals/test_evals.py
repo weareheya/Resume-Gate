@@ -71,6 +71,24 @@ class Catches(unittest.TestCase):
         self.assertEqual(len(r["errors"]), 6)
         self.assertEqual(r["must_not_used"], ["C-005"])
 
+    def test_card_named_only_in_a_note_does_not_count(self):
+        lines = [l for l in ref(self.CASE, "resume.md").splitlines() if "C-002" not in l]
+        ghost = "\n".join(lines) + "\n<!-- considered: C-002 -->\n<!--\n  notes: C-002 left out\n-->\n"
+        r = score.score(self.CASE, ghost)
+        self.assertEqual(r["missing_critical"], ["C-002"])
+        self.assertEqual(score.cited("- Grew partners from 12 to 40,\n  in 18 months.\n  <!-- C-001 -->\n"), {"C-001"})
+
+    def test_crashed_check_is_not_a_pass(self):
+        real = score.subprocess.run
+        def crash(*a, **k):
+            return score.subprocess.CompletedProcess(a[0], 1, "", "Traceback: boom")
+        score.subprocess.run = crash
+        try:
+            with self.assertRaises(score.CheckFailed):
+                score.score(self.CASE, ref(self.CASE, "resume.md"))
+        finally:
+            score.subprocess.run = real
+
     def test_kind_with_a_note_is_read(self):
         self.assertEqual(score.kind_of("Direct (marketing only)"), "Direct")
         self.assertEqual(score.kind_of("**Not found yet**, likely a hard gap"), "Not found yet")

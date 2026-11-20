@@ -2,6 +2,29 @@
 
 One section per run, newest first. Record the kit versions compared, how many runs per side, and what changed because of the run.
 
+**Scorer change in 0.6.0**: critical recall now counts a card only when its ID is tagged on a visible resume line, and a crashed `check_claims.py` is "could not run" instead of zero errors. Runs before 0.6.0 used the looser count, so their recall figures may read slightly high; compare new rounds with new rounds. The saved outputs of the rounds below weren't kept (`evals/runs/` is local), so they weren't re-scored. The reference answers pass under the new rules.
+
+## 2026-11-20 · v0.5.2 vs v0.6.0 · product-manager, three runs per side, plus a blind read
+
+**Setup**: a spot check of 0.6.0's lighter reading on the case where wording matters most. Six fresh sessions (an AI assistant, no user answering questions), each in its own copy of that version's `en/` kit, with the `jordan-lee` cards, profile and two baselines. Each used prompt 3 with the job pasted in. Scored with `score.py` (0.6.0 rules). The blind read used one AI reviewer acting as a recruiter, with only the job posting and the A/B files from `blind.py`.
+
+| Kit | Pass (of 3) | check_claims errors | Critical recall | Oversell found | Gap kinds | Evidence table | Tokens per run (avg) |
+|---|---|---|---|---|---|---|---|
+| v0.5.2 | 3 | 0 | 100% | none | 100% | complete | ~101k (95k–109k) |
+| v0.6.0 | 3 | 0 | 100% | none | 100% | complete | ~100k (98k–102k) |
+
+**Blind read**: one pair tied with a slight edge to v0.6.0, one tied with a slight edge to v0.5.2, and one went to v0.5.2 (fit 4 vs 3) because that run added an extra bullet on partner segmentation from C-001. Every version was rated 4/5 believable, nothing oversold, and got an interview. All six said "built with engineering", so the 0.5.2 fix for underselling held.
+
+**What it says**
+- No regression: on integrity, recall, oversell, gap kinds and the evidence table, both versions were clean in every run, and the blind read found no consistent difference. The one loss came from run-to-run variation in which C-001 details were used, not from a kit rule.
+- Tailor didn't get cheaper, as expected: the read-by-task table still sends Tailor to DECISIONS, WORKFLOW, LESSONS and the checklist, so all six runs read nearly the same files. 0.6.0's savings are elsewhere: quick edits and finalize read less, and big evidence banks use `list_claims.py`. Those weren't measured here (the example bank has 5 cards).
+- One v0.5.2 run spent the most (109k tokens, 26 tool calls, twice as long) exporting and rendering a PDF during S6. In 0.6.0 that check moves to Finalize, so tailoring no longer does it.
+- Both versions still warn that the Skills line isn't verified by script. Each run checked it by hand.
+
+**Changed because of this run**: nothing. 0.6.0 ships as is.
+
+**Limits**: one case, one AI reviewer, three runs per side. Token counts come from the assistant's own usage figures and vary between runs.
+
 ## 2026-11-20 · v0.2.3 vs v0.5.1 · three runs per side, plus a blind read
 
 **Setup**: as in the first run below. v0.2.3 reuses that run plus two new ones; v0.5.1 had three fresh runs. 18 resumes in all. Scored with `score.py`. `check_claims.py` from 0.5.1 was also run on every output. A blind read compared the three product-manager pairs: one AI reviewer acting as a recruiter, given only the job posting and the A/B files from `blind.py`.

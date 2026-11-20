@@ -9,3 +9,24 @@ p[0-9]*.png
 # Raw source material (old resumes, reviews) can hold private details
 evidence/sources/
 __pycache__/
+
+# ── Your personal data stays out of Git by default ──────────────────────────
+# Cards, resumes, jobs, interview notes and reports hold your real work history.
+# These lines keep them out of any repository, so pushing to a public GitHub repo can't leak them.
+# Using a PRIVATE repo and want Git to back them up? Delete this block (down to the next ── line).
+/evidence/claims/*
+!/evidence/claims/_TEMPLATE.md
+/evidence/profile.md
+/evidence/INTAKE.md
+/cv/CV-INDEX.md
+/cv/frozen.txt
+/cv/resumes/*
+!/cv/resumes/_TEMPLATE.md
+/cv/changelogs/*
+!/cv/changelogs/_TEMPLATE.md
+/jobs/*
+!/jobs/_TEMPLATE.md
+/interview/*
+!/interview/_TEMPLATE.md
+/reports/
+# ─────────────────────────────────────────────────────────────────────────────
