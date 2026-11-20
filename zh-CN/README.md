@@ -46,7 +46,7 @@
 
 | 路径 | 是什么 | 什么时候看 |
 |---|---|---|
-| [AGENTS.md](AGENTS.md) | 给 AI 的接手规范 | AI 先读；你自己扫一遍 |
+| [AGENTS.md](AGENTS.md) · [CLAUDE.md](CLAUDE.md) · [.claude/commands/](.claude/commands/) | 给 AI 的接手规范 | AI 先读；你自己扫一遍 |
 | [docs/WORKFLOW.md](docs/WORKFLOW.md) | Step 0、七步流程、追问清单、Coverage Report 格式 | 做第一份简历之前 |
 | [docs/PROMPTS.md](docs/PROMPTS.md) | 每个时刻可直接复制的提示词 | 每次开工 |
 | [docs/DECISIONS.md](docs/DECISIONS.md) | 16 条起步规则。不要改：更新时会被整份替换 | 看一次，知道默认规则 |
@@ -78,15 +78,11 @@ cd my-job-search && git init
 
 只推到**私有**仓库（见[工作副本务必保持私有](#工作副本务必保持私有)）。
 
-**2. 用能读文件的 AI 打开这个文件夹**：Claude Code、Codex、Cursor，或任何能读写文件的 agent。然后贴上 [PROMPTS](docs/PROMPTS.md) 里的提示词 0：
-
-```text
-先读 AGENTS.md，再读 docs/WORKFLOW.md。我第一次用这套工具，带我一步一步做 Step 0。先给我现在这份简历做体检报告，开始提问之前先给我看采访计划。每一步开始前，先告诉我这一步要产出什么、需要我提供什么。我说继续之前，不要进下一步。
-```
+**2. 用能读文件的 AI 打开这个文件夹**（Claude Code、Codex、Cursor，或任何能读写文件的 agent），**然后说一句「开始」。** 说什么都行：AI 会先看你进行到哪，再带着你往下走。在 Claude Code 里也可以输入 `/start`，之后还有 `/checkup`、`/job`、`/poster`、`/update`。如果你的工具不会自己读 `AGENTS.md`，就改贴 [PROMPTS](docs/PROMPTS.md) 里的提示词 0。
 
 **3. 做 Step 0。** 把旧简历放进 `evidence/sources/`。先拿到一份带分数的[体检报告](report/template.html)；然后 AI 就最强的 3 项成果采访你（其余以后再补），每个问题都带进度，写成 Claim Card，你批准第一份基线。第一份基线可以先用 [CV-INDEX](cv/CV-INDEX.md) 里的 `General` 类型；等你清楚要投哪类岗位，再加具体类型。
 
-**4. 每来一个新岗位**，用提示词 3 并贴上 JD。审 AI 交给你的版本，通过后投递，再把它标为 `Sent`。
+**4. 每来一个新岗位**，直接贴上 JD（Claude Code 里也可以用 `/job`，或用提示词 3）。审 AI 交给你的版本，通过后投递，再把它标为 `Sent`。
 
 **5. 每版结束后**：Change Log 写好了、`CV-INDEX.md` 更新了、新定的规则写进了 `MY-DECISIONS.md`。
 
