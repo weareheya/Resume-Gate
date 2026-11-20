@@ -4,13 +4,15 @@
 
 > Use AI to build your resume, but make sure every line has a source, every version can be traced, and every change goes through you.
 
-A resume workflow for a long job search, where you tailor many versions over weeks or months: **evidence bank → baseline resume → per-job delta → AI self-review → your sign-off → freeze**. It's docs, templates, and two small check scripts, and it isn't tied to any AI or resume tool.
+A resume workflow for a long job search, where you tailor many versions over weeks or months: **evidence bank → baseline resume → per-job delta → AI self-review → your sign-off → freeze → interview prep**. It's docs, templates, and a few small scripts, and it isn't tied to any AI or resume tool.
 
 **It's for you if** you use AI to tailor resumes and have seen it drop results you already confirmed, inflate a number, or quietly water down your strongest experience. **It's probably overkill if** you need one resume, once.
 
-![Resume-Gate overview: one fact, one card, every version traces back](assets/overview-en.svg)
+**Why not just ask an AI?** Any AI can make a resume read better. What it can't know is how each number was counted, which part was yours, and which line will get you stuck when an interviewer digs in. Only you know that. Resume-Gate writes it down once, as Claim Cards, and everything after grows from the same facts: every resume version, every checkup, and the follow-up cards you read before each interview. A fresh chat starts from zero every time; this folder keeps what you've confirmed.
 
-**New in 0.2.0 (2026-11-19):** a scored checkup report with a share card, a shorter Step 0 interview with a progress line, and updates that never overwrite your own rules. [All changes](en/CHANGELOG.md)
+![Resume-Gate overview: one fact, one card; every version and every interview traces back](assets/overview-en.svg)
+
+**New in 0.2.3 (2026-11-20):** follow-up cards for each interview, built from your own Claim Cards; an interview-readiness view that unlocks once you have cards; a checkup score that measures only the resume; and reports you can see right in the chat as an image. [All changes](en/CHANGELOG.md)
 
 ## What's inside
 
@@ -22,9 +24,10 @@ A resume workflow for a long job search, where you tailor many versions over wee
 | Decision register | 16 starter rules, from "don't cut strong results" to "pick the strongest defensible wording" | [DECISIONS](en/docs/DECISIONS.md) | [DECISIONS](zh-CN/docs/DECISIONS.md) |
 | AI self-review | Facts, writing, layout, and handoff checks the AI runs before you see anything | [REVIEW-CHECKLIST](en/docs/REVIEW-CHECKLIST.md) | [自审清单](zh-CN/docs/REVIEW-CHECKLIST.md) |
 | Lessons | Real process mistakes and the guardrail each one led to | [LESSONS](en/docs/LESSONS.md) | [LESSONS](zh-CN/docs/LESSONS.md) |
-| Prompts | Copy-paste prompts for the first session, Step 0, a new job, and self-review | [PROMPTS](en/docs/PROMPTS.md) | [PROMPTS](zh-CN/docs/PROMPTS.md) |
+| Follow-up cards | Before an interview: the questions each bullet is likely to draw, answers that hold up, and what not to say, all from your Claim Cards | [WORKFLOW](en/docs/WORKFLOW.md#after-you-get-an-interview-follow-up-cards) · [example](en/examples/jordan-lee/interview/ACME-01.md) | [WORKFLOW](zh-CN/docs/WORKFLOW.md#拿到面试之后追问卡) · [示例](zh-CN/examples/jordan-lee/interview/ACME-01.md) |
+| Prompts | Copy-paste prompts for the first session, Step 0, a new job, self-review, and interview prep | [PROMPTS](en/docs/PROMPTS.md) | [PROMPTS](zh-CN/docs/PROMPTS.md) |
 | Checkup report | A scored, visual report on a resume, on its own or against a JD, plus a share card | [REPORT](en/docs/REPORT.md) · [sample](en/report/template.html) | [REPORT](zh-CN/docs/REPORT.md) · [示例](zh-CN/report/template.html) |
-| Scripts | `check_claims.py` (every bullet has a source), `report_score.py` (report score) and `pdf_fill.swift` (pages are full) | [scripts](en/scripts/) | [scripts](zh-CN/scripts/) |
+| Scripts | `check_claims.py` (every bullet has a source), `report_score.py` (report score), `report_png.py` (report as an image) and `pdf_fill.swift` (pages are full) | [scripts](en/scripts/) | [scripts](zh-CN/scripts/) |
 | Updates | Your rules live in their own file, so updating never overwrites them; one prompt checks for a new version | [CHANGELOG](en/CHANGELOG.md) | [更新记录](zh-CN/CHANGELOG.md) |
 | Cases | Ten made-up before-and-after cases, one or two rules each | [cases](en/examples/cases.md) | [案例](zh-CN/examples/cases.md) |
 
@@ -97,13 +100,15 @@ Not sure about any of this? Ask the AI tool you picked in step 1. It can check w
 
 > 用 AI 改简历可以，前提是每句话都有出处。
 
-一套给长期求职用的简历工作流。几周、几个月、几十版改下来不乱：**证据库 → 基线 → 按岗位改 Delta → AI 自审 → 本人审核 → 冻结**。文档 + 模板 + 两个检查脚本，不绑定任何 AI 或简历工具。
+一套给长期求职用的简历工作流。几周、几个月、几十版改下来不乱：**证据库 → 基线 → 按岗位改 Delta → AI 自审 → 本人审核 → 冻结 → 面试准备**。文档 + 模板 + 几个小脚本，不绑定任何 AI 或简历工具。
 
 **适合**：用 AI 改过简历，遇到过它把确认过的成果弄丢、把数字写大，或者把最强的经历悄悄写弱。**用不上**：只要一份简历，投一次。
 
-![Resume-Gate 总览：事实只写一次，每一版都能追回出处](assets/overview-zh.svg)
+**为什么不直接让 AI 改？** 随便一个 AI 都能把简历改得更好看。它不知道的是：这个数字当时怎么算的，哪部分是你做的，哪句话一被追问就会卡壳。这些只有你知道。Resume-Gate 把它们写进证据库，只写一次，之后的一切都从同一套事实里长出来：每一版简历、每一次体检，还有每场面试前的追问卡。新开一个对话，AI 每次都从零开始；这个文件夹会留下你确认过的每一件事。
 
-**0.2.0 新增（2026-11-19）：** 带分数的体检报告和分享卡、更短且带进度条的 Step 0 采访，以及永远不会冲掉你自己规则的更新机制。[全部更新记录](zh-CN/CHANGELOG.md)
+![Resume-Gate 总览：事实只写一次，简历和面试都从这里来](assets/overview-zh.svg)
+
+**0.2.3 新增（2026-11-20）：** 每场面试前的追问卡，全部从你自己的 Claim Card 里来；有了卡就解锁的「面试底气」；只看简历本身的体检分数；以及能直接在对话里看的报告图片。[全部更新记录](zh-CN/CHANGELOG.md)
 
 ## 里面有什么
 
@@ -115,9 +120,10 @@ Not sure about any of this? Ask the AI tool you picked in step 1. It can check w
 | 决策登记簿 | 16 条起步规则，从「不随意删强成果」到「选最强又站得住的写法」 | [DECISIONS](zh-CN/docs/DECISIONS.md) | [DECISIONS](en/docs/DECISIONS.md) |
 | AI 自审 | 给你看之前，AI 先过一遍事实、写法、排版和交付格式 | [自审清单](zh-CN/docs/REVIEW-CHECKLIST.md) | [REVIEW-CHECKLIST](en/docs/REVIEW-CHECKLIST.md) |
 | 失误记录 | 真实踩过的过程性错误，以及每条带来的防线 | [LESSONS](zh-CN/docs/LESSONS.md) | [LESSONS](en/docs/LESSONS.md) |
-| 提示词 | 第一次使用、Step 0、新岗位、自审时可直接复制的提示词 | [PROMPTS](zh-CN/docs/PROMPTS.md) | [PROMPTS](en/docs/PROMPTS.md) |
+| 面试追问卡 | 面试前：每条经历最可能被问什么、怎么答站得住、哪些话别说，全部来自你的 Claim Card | [WORKFLOW](zh-CN/docs/WORKFLOW.md#拿到面试之后追问卡) · [示例](zh-CN/examples/jordan-lee/interview/ACME-01.md) | [WORKFLOW](en/docs/WORKFLOW.md#after-you-get-an-interview-follow-up-cards) · [example](en/examples/jordan-lee/interview/ACME-01.md) |
+| 提示词 | 第一次使用、Step 0、新岗位、自审、面试准备时可直接复制的提示词 | [PROMPTS](zh-CN/docs/PROMPTS.md) | [PROMPTS](en/docs/PROMPTS.md) |
 | 体检报告 | 带分数的可视化简历报告，可以只看简历，也可以对照 JD，附分享卡 | [REPORT](zh-CN/docs/REPORT.md) · [示例](zh-CN/report/template.html) | [REPORT](en/docs/REPORT.md) · [sample](en/report/template.html) |
-| 脚本 | `check_claims.py`（每条 bullet 有出处）、`report_score.py`（报告分数）和 `pdf_fill.swift`（页面填满） | [scripts](zh-CN/scripts/) | [scripts](en/scripts/) |
+| 脚本 | `check_claims.py`（每条 bullet 有出处）、`report_score.py`（报告分数）、`report_png.py`（报告存成图片）和 `pdf_fill.swift`（页面填满） | [scripts](zh-CN/scripts/) | [scripts](en/scripts/) |
 | 更新 | 你的规则单独放一个文件，更新永远不会冲掉；一句提示词就能检查新版本 | [更新记录](zh-CN/CHANGELOG.md) | [CHANGELOG](en/CHANGELOG.md) |
 | 案例 | 10 个虚构的改前改后案例，每个演示一两条规则 | [案例](zh-CN/examples/cases.md) | [cases](en/examples/cases.md) |
 

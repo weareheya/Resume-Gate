@@ -2,7 +2,9 @@
 
 > Use AI to build your resume, but make sure every line has a source, every version can be traced, and every change goes through you.
 
-A resume workflow for a long job search: **evidence bank → baseline resume → per-job delta → AI self-review → your sign-off → freeze**. It's docs, templates, and two small check scripts. It isn't tied to any AI or resume tool. Any AI that can read your files can follow it: Claude Code and Codex read `AGENTS.md` automatically, and with other tools you just point the AI at it.
+A resume workflow for a long job search: **evidence bank → baseline resume → per-job delta → AI self-review → your sign-off → freeze**. It's docs, templates, and a few small scripts. It isn't tied to any AI or resume tool. Any AI that can read your files can follow it: Claude Code and Codex read `AGENTS.md` automatically, and with other tools you just point the AI at it.
+
+**Why not just ask an AI?** Any AI can make a resume read better. What it can't know is how each number was counted, which part was yours, and which line will get you stuck when an interviewer digs in. Only you know that. Resume-Gate writes it down once, as Claim Cards, and everything after grows from the same facts: every resume version, every checkup, and the follow-up cards you read before each interview. A fresh chat starts from zero every time; this folder keeps what you've confirmed.
 
 ## What it fixes
 
@@ -18,6 +20,8 @@ Mistakes that keep showing up when AI edits a resume, and where each fix lives:
 | A corrected strength quietly comes back weaker | **Semantic check in self-review**: protected claims are compared with their approved wording, not just checked for presence | [REVIEW-CHECKLIST A](docs/REVIEW-CHECKLIST.md) · [LESSONS L-12](docs/LESSONS.md) |
 | A few stray lines spill onto a last page | **Full-page rule + `pdf_fill`**: the PDF must fill its pages, and a script measures it | [D-009](docs/DECISIONS.md) · [pdf_fill.swift](scripts/pdf_fill.swift) |
 | The AI signs off on its own work | **Human review gate**: nothing is Approved until you say so, and sent versions are frozen | [WORKFLOW S7](docs/WORKFLOW.md) · [D-008, D-010](docs/DECISIONS.md) |
+| An interviewer asks "how was that counted?" and you freeze, or you round a number up on the spot | **Follow-up cards**: before each interview, the likely questions per bullet with answers taken from your Claim Cards, and what not to say | [WORKFLOW](docs/WORKFLOW.md#after-you-get-an-interview-follow-up-cards) · [example](examples/jordan-lee/interview/ACME-01.md) |
+| The AI writes a bigger claim than you can back up | **What counts as risky**: big claims, group results claimed as yours, and anything likely to be asked for proof get one question before they go on a resume | [WORKFLOW](docs/WORKFLOW.md#what-counts-as-risky) |
 | A long interview with no end in sight | **Checkup report first, then a short interview**: a scored visual report on day one, at most 3 accomplishments and 5 questions each, and a progress line on every question | [REPORT](docs/REPORT.md) · [WORKFLOW Step 0](docs/WORKFLOW.md) · [sample report](report/template.html) |
 
 ## Five ideas to know first
@@ -30,7 +34,7 @@ Mistakes that keep showing up when AI edits a resume, and where each fix lives:
 
 ## The flow
 
-![Resume-Gate flow: Step 0 once, then seven steps per job](assets/flow.svg)
+![Resume-Gate flow: Step 0 once, seven steps per job, follow-up cards per interview](assets/flow.svg)
 
 Each step has an output you must be able to show before moving on. Details in [docs/WORKFLOW.md](docs/WORKFLOW.md).
 
@@ -51,8 +55,10 @@ Each step has an output you must be able to show before moving on. Details in [d
 | [cv/CV-INDEX.md](cv/CV-INDEX.md) | Job types, current starting point per type, every version and where it went | Start of every new job |
 | [cv/resumes/](cv/resumes/_TEMPLATE.md) | The resumes themselves, one Markdown file per version | Every new job |
 | [cv/changelogs/](cv/changelogs/_TEMPLATE.md) | What changed in each version and why | Every new job |
+| [interview/](interview/_TEMPLATE.md) | Follow-up cards for each interview | Once you're invited to interview |
 | [scripts/check_claims.py](scripts/check_claims.py) | Checks every bullet has a source, claims are usable, protected ones stay (Python 3) | Before you review a version |
 | [scripts/report_score.py](scripts/report_score.py) | Prints a report's score with the same formula as the template, so the chat and the page agree (Python 3) | After the AI fills a report |
+| [scripts/report_png.py](scripts/report_png.py) | Saves the share card (or, with `--full`, the whole report) as a PNG, for chat windows that can't run the report. Uses the Chrome, Edge or Brave you already have (Python 3) | After the AI fills a report |
 | [scripts/report_share.py](scripts/report_share.py) · [report_compare.py](scripts/report_compare.py) | A shareable card, or a before-and-after poster from two reports. Score only by default; you pick any extra modules. No private details (Python 3) | When you want to share |
 | [scripts/pdf_fill.swift](scripts/pdf_fill.swift) | Renders the PDF to images, checks page count and how far down each page the content reaches (macOS) | After every export |
 | [examples/](examples/README.md) | A full made-up mini project (claims, baseline, a new version, its Change Log, and a version with planted mistakes), plus ten before-and-after cases | Before Step 0, to see the level of detail |
@@ -70,7 +76,7 @@ cd my-job-search && git init
 
 Push it only to a **private** repository (see [Keep your working copy private](#keep-your-working-copy-private)).
 
-**2. Open the folder in an AI that can read files** (Claude Code, Codex, Cursor, or any agent with file access) **and say "start".** Any message works: the AI checks where you are and walks you through. In Claude Code you can also type `/start`, and `/checkup`, `/job`, `/poster` or `/update` later. If your tool doesn't read `AGENTS.md` by itself, paste prompt 0 from [PROMPTS](docs/PROMPTS.md) instead.
+**2. Open the folder in an AI that can read files** (Claude Code, Codex, Cursor, or any agent with file access) **and say "start".** Any message works: the AI checks where you are and walks you through. In Claude Code you can also type `/start`, and `/checkup`, `/job`, `/prep`, `/poster` or `/update` later. If your tool doesn't read `AGENTS.md` by itself, paste prompt 0 from [PROMPTS](docs/PROMPTS.md) instead.
 
 **3. Do Step 0.** Put your old resume in `evidence/sources/`. You get a scored [checkup report](report/template.html) first. Then the AI interviews you about your 3 strongest accomplishments (more can come later), with a progress line on every question, turns them into Claim Cards, and you approve a first baseline. For your first baseline you can use the `General` type in [CV-INDEX](cv/CV-INDEX.md); add specific job types once you know which roles you're targeting.
 

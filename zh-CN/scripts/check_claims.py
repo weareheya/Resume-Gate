@@ -8,6 +8,7 @@
   2. "Experience" 下的每条 bullet、"Summary" 下的每一行，末尾都有 HTML 注释形式的 Claim ID，
      例如：  - 重建了伙伴计划 ... <!-- C-001 -->
   3. 每个 Claim ID 都能对上 evidence/claims/ 里的一张卡，且卡的状态是 "Safe to draft"。
+     卡的数字表里标着「待核实」的数字不能用。
   4. 被检查的行里出现的每个数字（数量、百分比、金额、倍数）都能在它引用的卡里找到。
      卡里没有的数字就是没有出处。
   5. 如果简历有基线（front matter 里的 `base:`，或 --base），基线文件必须存在；基线的
@@ -39,6 +40,8 @@ T = {
         "untagged": "{f}:{n}: no Claim ID on this line: {t}",
         "unknown": "{f}:{n}: {c} does not match any Claim Card",
         "status": "{f}:{n}: {c} has status \"{s}\"; only \"Safe to draft\" can be used",
+        "interview_only": "{f}:{n}: {c} is \"Interview only\": fine to talk about in an interview, but it doesn't go on a resume",
+        "pending": "{f}:{n}: the number \"{x}\" is marked \"to verify\" on {c}. Confirm it and mark it ✓ on the card, or remove it",
         "number": "{f}:{n}: the number \"{x}\" doesn't appear in {c}. Add it to the card's Numbers table (with its unit and basis), or remove it",
         "no_sections": "{f}: no Summary or Experience section recognized (level-2 headings found: {h}). Nothing could be checked",
         "nothing": "{f}: Summary/Experience sections found but they contain no lines to check",
@@ -56,6 +59,8 @@ T = {
         "untagged": "{f}:{n}：这一行没有 Claim ID：{t}",
         "unknown": "{f}:{n}：{c} 找不到对应的 Claim Card",
         "status": "{f}:{n}：{c} 的状态是「{s}」，只有「Safe to draft」才能使用",
+        "interview_only": "{f}:{n}：{c} 是「仅面试」：面试时可以讲，但不写进简历",
+        "pending": "{f}:{n}：数字「{x}」在 {c} 上标着「待核实」。请本人确认后在卡上改成 ✓，或者删掉",
         "number": "{f}:{n}：数字「{x}」在 {c} 里找不到。请把它补进卡片的数字表（写明单位和口径），或者删掉",
         "no_sections": "{f}：没有识别到 Summary 或 Experience 栏目（找到的二级标题：{h}），什么都没检查",
         "nothing": "{f}：找到了 Summary/Experience 栏目，但里面没有可检查的行",
@@ -121,6 +126,31 @@ def front_matter(text):
     return data, end
 
 
+PENDING = {"待核实", "待补", "未核实", "to verify", "unverified", "?", "？"}
+VERIFY_HEADERS = {"核实", "verified"}
+
+
+def number_status(text):
+    """Numbers in the card's Numbers table, split by the Verified (核实) column: (confirmed, pending)."""
+    confirmed, pending, col = set(), set(), None
+    for line in text.split("\n"):
+        s = line.strip()
+        if not s.startswith("|"):
+            col = None
+            continue
+        cells = [c.strip() for c in s.strip("|").split("|")]
+        low = [c.lower() for c in cells]
+        hit = [i for i, c in enumerate(low) if c in VERIFY_HEADERS]
+        if hit:
+            col = hit[0]
+            continue
+        if col is None or col >= len(cells) or set(s) <= set("|-: "):
+            continue
+        nums = {normalize_number(n) for n in re.findall(r"\d[\d,]*(?:\.\d+)?", cells[0])}
+        (pending if low[col] in PENDING else confirmed).update(nums)
+    return confirmed, pending - confirmed
+
+
 def load_claims(folder):
     claims = {}
     for f in sorted(Path(folder).glob("*.md")):
@@ -130,7 +160,10 @@ def load_claims(folder):
         fm, _ = front_matter(text)
         cid = fm.get("id")
         if cid:
+            confirmed, pending = number_status(text)
             claims[cid] = {
+                "confirmed": confirmed,
+                "pending": pending,
                 "status": fm.get("status", ""),
                 "protected": fm.get("protected", "").lower() == "true",
                 # every number written anywhere on the card, plus its integer parts ("2022.03" → 2022, 03)
@@ -234,15 +267,21 @@ def main():
         for c in ids:
             if c not in claims:
                 print("ERROR " + t["unknown"].format(f=resume.name, n=n, c=c)); errors += 1
+            elif claims[c]["status"].strip().lower() in ("仅面试", "interview only"):
+                print("ERROR " + t["interview_only"].format(f=resume.name, n=n, c=c)); errors += 1
             elif claims[c]["status"].strip().lower() != "safe to draft":
                 print("ERROR " + t["status"].format(f=resume.name, n=n, c=c, s=claims[c]["status"])); errors += 1
             else:
                 known.append(c)
         if known:
             pool = set().union(*(claims[c]["numbers"] for c in known))
+            sure = set().union(*(claims[c]["confirmed"] for c in known))
             for x in numbers_in(text):
                 if x not in pool:
                     print("ERROR " + t["number"].format(f=resume.name, n=n, x=x, c=", ".join(known))); errors += 1
+                elif x not in sure and any(x in claims[c]["pending"] for c in known):
+                    hold = ", ".join(c for c in known if x in claims[c]["pending"])
+                    print("ERROR " + t["pending"].format(f=resume.name, n=n, x=x, c=hold)); errors += 1
     if recognized and not checked:
         print("ERROR " + t["nothing"].format(f=resume.name)); errors += 1
     for s, k in unchecked.items():

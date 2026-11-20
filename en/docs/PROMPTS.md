@@ -15,7 +15,7 @@ Read AGENTS.md and docs/REPORT.md. Here is my resume [or: it's in evidence/sourc
 
 [paste it here]
 
-Make a checkup report [or: a job-fit report for this JD: paste it]. Copy report/template.html to reports/, fill in only the data block, then run scripts/report_score.py and give me the three-line summary. Don't write any Claim Cards yet. Ask me whether I want a shareable version. Then list the 3 accomplishments you'd interview me about first, and what's still missing for each.
+Make a checkup report [or: a job-fit report for this JD: paste it]. Copy report/template.html to reports/, fill in only the data block, then run scripts/report_score.py and give me the three-line summary, and show me the card with scripts/report_png.py. Don't write any Claim Cards yet. Ask me whether I want a shareable version. Then list the 3 accomplishments you'd interview me about first, and what's still missing for each.
 ```
 
 ## 2. Interview me and write a Claim Card (Step 0)
@@ -28,7 +28,7 @@ Read evidence/claims/_TEMPLATE.md and the "Keeping the interview short" section 
 - what I can't claim
 - how I could prove it
 
-Don't flatter me, and don't fill gaps with guesses: anything I skip goes on the card as "To fill". When I say "done" or "stop," write the Claim Card with status "Needs review", update evidence/INTAKE.md, and show me both.
+Don't flatter me, and don't fill gaps with guesses: anything I skip goes on the card as "To fill". When I say "done" or "stop," write the Claim Card and show me its essentials; when I say it's right, mark it "Safe to draft". Anything I haven't confirmed, or that hits "What counts as risky" in docs/WORKFLOW.md, gets one question from you and stays "Needs review" until it's answered. Set `evidence:` from how clearly I can explain it; mark numbers I gave `✓` and ones I called rough `to verify`. Then update evidence/INTAKE.md, and show me both.
 ```
 
 ## 3. Make a version for a job
@@ -57,4 +57,10 @@ Check whether there's a newer Resume-Gate. Follow "Updating the kit" in AGENTS.m
 
 ```text
 Rerun the checkup on [cv/resumes/file.md] the same way as the first one, then make a before-and-after poster from reports/[first report] and the new one with scripts/report_compare.py. Before you make it, show me the module menu in docs/REPORT.md with the exact text you'd use for each; add only what I tick.
+```
+
+## 7. Follow-up cards (after you get an interview)
+
+```text
+I've got an interview for [job ID]. Following "After you get an interview: follow-up cards" in docs/WORKFLOW.md and the format of interview/_TEMPLATE.md, make follow-up cards for [cv/resumes/file.md] and save them to interview/[job ID].md. First read every Claim Card this version uses and the Coverage Report in cv/changelogs/, and list the Claim IDs you read. Answers use only facts on the cards; anything they don't cover goes under "Fill before the interview" as a question for me. Don't make anything up.
 ```

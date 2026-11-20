@@ -23,9 +23,9 @@ Do this once, before your first job. It takes you from "I have an old resume" to
 | Step | What to do | Output |
 |---|---|---|
 | 0a | **Gather raw material**: your current resume, your LinkedIn text, old performance reviews, anything with facts in it. Put it in `evidence/sources/`. That folder is git-ignored, so it never gets committed | Files in `evidence/sources/` |
-| 0b | **Checkup report.** Use prompt 1 in [PROMPTS](PROMPTS.md). The AI reads the resume, counts what [REPORT](REPORT.md) asks for, and fills `report/template.html`. You get a scored, visual report before any interview: what's strong, what's vague, the five fixes that matter most. Then it asks whether you want a shareable version | `reports/<date>-checkup.html`, a three-line summary in the chat, and `-share.html` if you asked for one |
+| 0b | **Checkup report.** Use prompt 1 in [PROMPTS](PROMPTS.md). The AI reads the resume, counts what [REPORT](REPORT.md) asks for, and fills `report/template.html`. You get a scored, visual report before any interview: what's strong, what's vague, the five fixes that matter most. Then it asks whether you want a shareable version | `reports/<date>-checkup.html` and its card as a PNG, a three-line summary in the chat, and `-share.html` if you asked for one |
 | 0c | **Interview plan.** The AI picks your **3 strongest** accomplishments (enough for a first baseline; the rest can wait), lists only what's still missing for each after reading your material, and writes the plan into `evidence/INTAKE.md`: how many questions, about how long. You pick a mode (see below) | `evidence/INTAKE.md` |
-| 0d | **Interview and write cards.** Use prompt 2. Every question starts with a progress line. Skip any question or stop any time: what's unanswered goes on the card as "To fill", not into more questions. Each card starts as `Needs review`; once you've read it and confirmed it's right, change it to `Safe to draft` | Claim Cards in `evidence/claims/`, `INTAKE.md` updated |
+| 0d | **Interview and write cards.** Use prompt 2. Every question starts with a progress line. Skip any question or stop any time: what's unanswered goes on the card as "To fill", not into more questions. After each accomplishment, the AI shows you the card's essentials (the wording it would use, the numbers, what not to say). Say "right" or fix a few things, and the card is `Safe to draft`: no separate review round, unless it's risky (see "What counts as risky") | Claim Cards in `evidence/claims/`, `INTAKE.md` updated |
 | 0e | **Draft the first baseline** from `Safe to draft` cards only. Copy `cv/resumes/_TEMPLATE.md` and tag every bullet with its Claim ID | `cv/resumes/<id>.md` |
 | 0f | **Review and approve** it as in S6 and S7. Add it to `cv/CV-INDEX.md` as the starting point for its type. Then the AI offers to rerun the checkup and make a before-and-after poster (prompt 6) | An Approved baseline; a poster if you want one |
 
@@ -47,13 +47,68 @@ The interview is the slowest part of Step 0, so the AI keeps it small and always
 
 - **"Skip" and "stop" always work.** On "stop", save `evidence/INTAKE.md` and say where the next session picks up.
 
+## After you get an interview: follow-up cards
+
+Every bullet on a resume can draw a follow-up: "How was that counted?", "Which part was yours?", "Was all of that down to you?" The answers are already on the Claim Cards: the basis, the attribution, the claims you can't make, the source. A follow-up card puts them in the order an interview will ask for them.
+
+- **When**: once you're invited to interview, for the resume version you sent. Use prompt 7, or `/prep`.
+- **Output**: `interview/<job ID>.md`, in the format of [`interview/_TEMPLATE.md`](../interview/_TEMPLATE.md). Example: [`examples/jordan-lee/interview/ACME-01.md`](../examples/jordan-lee/interview/ACME-01.md).
+
+**The questions come from the cards, not from guessing:**
+
+| On the card | Becomes |
+|---|---|
+| Numbers and what they mean | "How was that counted? Over what period? Out of how many?" |
+| Attribution | "Which part was yours? How big was the team?" |
+| Causal claims you can't make | "Was all that growth down to you?": draw the line honestly |
+| Don't rephrase as | The interviewer rounds it up: "So you brought in $2M in revenue?": correct it on the spot; far better than a reference check finding it |
+| Source | "Do you have data on that?": naming the source is enough, no need to produce it |
+| Notes | Interview points already written on the card |
+| Partial or None in the Coverage Report | Skills the JD wants that the evidence only partly covers: how to answer honestly with adjacent experience |
+
+**Rules:**
+- Answers use only facts on the cards. Anything likely to come up that the cards don't cover goes under "Fill before the interview", as a question for the user; never make it up.
+- At most 3 follow-ups per bullet, the most likely ones. Same order as the resume, strongest first.
+- Risks go at the top: `vague`, `Needs review`, `to verify`, and anything that hits "What counts as risky".
+- `Interview only` cards go under "Worth bringing up": not on the resume, but a plus to mention in the room.
+
 ## Claim statuses
 
 | Status | Meaning | Can the AI use it in a resume? |
 |---|---|---|
 | `Safe to draft` | You've read the card and confirmed the facts and the limits on wording | Yes |
-| `Needs review` | Extracted from your material or an interview, but you haven't confirmed it | No. The AI may only ask you about it |
+| `Needs review` | Not confirmed yet, or risky (see "What counts as risky" below) | No. The AI may only ask you about it |
+| `Interview only` | True, but not for a resume: client names, confidential figures, details you'd only say in person | No. Fine for interview prep |
 | `Retired` | Out of date, wrong, or something you no longer want to claim | No |
+
+The status answers one question: can this go on a resume? Two other things are recorded separately:
+
+- **Whether each number is confirmed**: the Verified column in the card's Numbers table. A number you gave in the interview is `✓` straight away. Only a number you called rough, or one the AI took from old material without asking you, is `to verify`, and those can't go on a resume.
+- **How well it holds up in an interview**: the card's `evidence:` field. Most work leaves no contract or report you can hand over; in an interview what counts is how solidly you can talk about it. So the default, `can explain`, is enough. Only `vague` needs attention: fill in the details before an interview, or word the bullet more carefully.
+
+| `evidence:` | Means |
+|---|---|
+| `can explain` | You can walk through how it happened, how each number was counted, and which part was yours. Most work sits here, and it's enough for an interview |
+| `on record` | There are also documents, reports or emails. You don't need to hand them over; naming the source is enough |
+| `can be vouched for` | A former manager, client or partner, or public coverage, could confirm it |
+| `vague` | You remember the outline but not the details or numbers. Easy to get stuck on in an interview |
+
+`Needs review` is for what isn't really confirmed yet, or is risky; see the next section.
+
+### What counts as risky
+
+When the user says a card is right in the interview, it's ready, unless it hits any of the cases below. Then it stays `Needs review` for now:
+
+| Risk | Example |
+|---|---|
+| **Not in the user's own words** | The AI took it from an old resume, LinkedIn or a document, and the user hasn't said it in the interview |
+| **The user isn't sure** | "roughly", "I think", "something like" |
+| **A big claim** | Large sums; "first", "only", "#1"; growth by multiples; scope well beyond what the role would normally own |
+| **A group result claimed as your own** | Company funding, team revenue or market growth written as if the user caused it |
+| **Likely to be asked for proof** | Specific amounts and client names; numbers anyone can look up (funding, user counts, rankings); awards; promotions; anything a reference check could confirm |
+| **Doesn't match elsewhere** | An old resume, LinkedIn or another card gives a different number or title |
+
+**What happens next:** this isn't saying the user is exaggerating, only that these are the lines an interviewer is most likely to probe. The AI names the case and asks one question: how was this counted? What's it based on? Which part was yours? If the user can explain it, the basis goes on the card and it becomes `Safe to draft`. If not, pick a more careful wording that holds up (D-015), or leave it `Needs review` for now.
 
 ## Principles
 

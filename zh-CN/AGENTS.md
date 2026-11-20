@@ -6,7 +6,7 @@
 
 1. **还没开始**（`cv/CV-INDEX.md` 里没有 Approved 的行，`evidence/INTAKE.md` 还是空模板）：用三句话打招呼。这是做什么的：简历的每一行都能追回本人确认过的事实。接下来会发生什么：先给现在这份简历做一份带分数的体检，再就最强的 3 项成果做个简短采访，前后大约 30 分钟。现在需要什么：「把现在的简历贴在这里，或者把文件放进 `evidence/sources/`。」然后按 `docs/WORKFLOW.md` 的 Step 0 一步一步做。
 2. **Step 0 做到一半**：说清楚上次停在哪（看 `evidence/INTAKE.md`），问要不要接着做。
-3. **已经在用**：一行现状（当前基线、最近一份报告的分数），再给一个短菜单：针对新岗位改一版（贴上 JD）· 体检报告 · 改前改后海报 · 检查更新。
+3. **已经在用**：一行现状（当前基线、最近一份报告的分数），再给一个短菜单：针对新岗位改一版（贴上 JD）· 拿到面试了，做追问卡 · 体检报告 · 改前改后海报 · 检查更新。
 4. 如果第一句话就是具体任务，直接做那件事。
 
 说短一点。本人不问，就不讲方法论。
@@ -24,7 +24,7 @@
 ## 硬规则
 
 **事实**
-- 只能用状态为 `Safe to draft` 的 claim。`需复核` 的 claim 只能拿来问本人，不能写进简历。
+- 只能用状态为 `Safe to draft` 的 claim。`需复核` 的 claim 只能拿来问本人，`仅面试` 的 claim 只能用于面试准备，都不能写进简历。卡上标着 `待核实` 的数字也不能写进简历。
 - 每条简历 bullet 末尾用 HTML 注释标上 Claim ID（`<!-- C-001 -->`）。没有标签的 bullet 就是没有出处，按错误处理。
 - 简历里的每条经历、每个数字都必须能追到 `evidence/claims/` 里的一张 Claim Card，并通过这张卡追到原始出处。没有出处的，不写。
 - 已批准 / 已投递的简历**不是证据**，它只记录本人批准过哪些措辞和结构。旧简历里的某条 bullet 如果没有 Claim Card 支撑，就当作未核实：不往新版本里照抄，先补写这张卡并经本人确认。
@@ -62,8 +62,8 @@
 
 1. 读 `VERSION`。下载最新版：https://github.com/weareheya/Resume-Gate/releases/latest/download/resume-gate-zh-CN.zip。这是公开下载，不需要 GitHub 账号或连接器。如果联网要批准，就问一次；或者请本人自己下载并解压到这个文件夹。
 2. 新版的 `VERSION` 不比本地新，就说明并停下。比本地新，就把本地版本之后的 `CHANGELOG.md` 条目给本人看，包括「你需要做什么」。
-3. 本人同意后，**只替换工具文件**：`AGENTS.md`、`CLAUDE.md`、`.claude/commands/`、`README.md`、`LICENSE`、`VERSION`、`CHANGELOG.md`、`.gitignore`、`docs/` 里除 `MY-DECISIONS.md` 以外的全部文件、`scripts/`、`report/`、`examples/`、`assets/`，以及三个 `_TEMPLATE.md`。
-4. **永远不动本人的文件**：`docs/MY-DECISIONS.md`、`evidence/`（`_TEMPLATE.md` 除外）、`cv/`（各 `_TEMPLATE.md` 除外）、`reports/`。
+3. 本人同意后，**只替换工具文件**：`AGENTS.md`、`CLAUDE.md`、`.claude/commands/`、`README.md`、`LICENSE`、`VERSION`、`CHANGELOG.md`、`.gitignore`、`docs/` 里除 `MY-DECISIONS.md` 以外的全部文件、`scripts/`、`report/`、`examples/`、`assets/`，以及各个 `_TEMPLATE.md`（包括 `interview/_TEMPLATE.md`）。
+4. **永远不动本人的文件**：`docs/MY-DECISIONS.md`、`evidence/`（`_TEMPLATE.md` 除外）、`cv/`（各 `_TEMPLATE.md` 除外）、`interview/`（`_TEMPLATE.md` 除外）、`reports/`。
 5. 如果本人改过工具文件（例如在有 MY-DECISIONS 之前往 `docs/DECISIONS.md` 里加过规则），先把这些改动挪进 `docs/MY-DECISIONS.md`，并告诉本人挪了什么。
 6. 用最新一份简历跑一遍 `python3 scripts/check_claims.py`，确认没坏；本人同意后再提交。
 

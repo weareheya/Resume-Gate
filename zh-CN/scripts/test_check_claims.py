@@ -157,6 +157,32 @@ class CheckClaims(unittest.TestCase):
         self.assertNotIn('"3"', out)
         self.assertNotIn('"12"', out)
 
+    def test_number_marked_to_verify_fails(self):
+        (self.root / "evidence/claims/C-004.md").write_text(CARD.format(id="C-004", status="Safe to draft", protected="false")
+            .replace("| Number | Unit | Time window | Basis |\n|---|---|---|---|", "| Number | Unit | Time window | Basis | Verified |\n|---|---|---|---|---|")
+            .replace("| active in past 90 days |", "| active in past 90 days | ✓ |")
+            .replace("| share of leads, not revenue |", "| share of leads, not revenue | to verify |"), encoding="utf-8")
+        self.resume("pend", """
+            ## Experience
+            - Grew active partners from 12 to 40. <!-- C-004 -->
+            - Partner leads rose from 18% to 34%. <!-- C-004 -->
+            """)
+        code, out = self.run_check("pend")
+        self.assertEqual(code, 1, out)
+        self.assertIn('"34" is marked "to verify" on C-004', out)
+        self.assertIn('"18" is marked "to verify"', out)
+        self.assertNotIn('"40"', out)    # confirmed numbers on the same card still pass
+
+    def test_interview_only_fails(self):
+        self.card("C-005", status="Interview only")
+        self.resume("io", """
+            ## Experience
+            - Something. <!-- C-005 -->
+            """)
+        code, out = self.run_check("io")
+        self.assertEqual(code, 1, out)
+        self.assertIn('C-005 is "Interview only"', out)
+
     def test_needs_review_and_unknown_ids_fail(self):
         self.resume("status", """
             ## Experience
@@ -243,14 +269,14 @@ class WorkedExample(unittest.TestCase):
 
 
 class ReportScore(unittest.TestCase):
-    """report_score.py must agree with the sample in report/template.html (34, as the page shows)."""
+    """report_score.py must agree with the sample in report/template.html (38, as the page shows)."""
 
     def test_sample_report_score(self):
         root = SCRIPT.parent.parent
         r = subprocess.run([sys.executable, "-I", str(SCRIPT.with_name("report_score.py")), str(root / "report" / "template.html")],
                            capture_output=True, text=True)
         self.assertEqual(r.returncode, 0, r.stdout)
-        self.assertIn("34 / 100", r.stdout)
+        self.assertIn("38 / 100", r.stdout)
 
 
 class ReportShare(unittest.TestCase):
@@ -268,11 +294,11 @@ class ReportShare(unittest.TestCase):
             for private in ("Jordan", "Northwind", "Acme", "old-resume", "webinar", "tiering"):
                 self.assertNotIn(private, body)
             s = subprocess.run([sys.executable, "-I", str(SCRIPT.with_name("report_score.py")), str(out)], capture_output=True, text=True)
-            self.assertIn("34 / 100", s.stdout)
+            self.assertIn("38 / 100", s.stdout)
 
 
 class ReportCompare(unittest.TestCase):
-    """report_compare.py: the example poster goes 34 -> 90, with no private text unless a module adds it."""
+    """report_compare.py: the example poster goes 38 -> 89, with no private text unless a module adds it."""
 
     def test_poster(self):
         root = SCRIPT.parent.parent
@@ -283,7 +309,7 @@ class ReportCompare(unittest.TestCase):
                                 str(ex / "2026-05-02-checkup.html"), str(ex / "2026-05-10-checkup.html"), "--out", str(out),
                                 "--tag", "Partner programs"], capture_output=True, text=True)
             self.assertEqual(r.returncode, 0, r.stdout)
-            self.assertIn("34 -> 90", r.stdout)
+            self.assertIn("38 -> 89", r.stdout)
             body = out.read_text(encoding="utf-8")
             self.assertIn("Partner programs", body)
             for private in ("Jordan", "Northwind", "Acme", "old-resume", "webinar"):

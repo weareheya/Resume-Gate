@@ -6,7 +6,7 @@ The user may open this folder and say only "hi", "start", or nothing in particul
 
 1. **Nothing set up yet** (no Approved row in `cv/CV-INDEX.md`, and `evidence/INTAKE.md` is still the blank template): welcome them in three lines. What this does: every line of their resume will trace back to a fact they confirmed. What happens next: a scored checkup of their current resume, then a short interview about their 3 strongest accomplishments, about 30 minutes in all. What you need now: "Paste your current resume here, or put the file in `evidence/sources/`." Then follow Step 0 in `docs/WORKFLOW.md`, one step at a time.
 2. **Step 0 under way**: say where it stopped (from `evidence/INTAKE.md`) and offer to pick up there.
-3. **Set up**: one line of status (current baseline, latest report score if there is one), then a short menu: tailor for a new job (paste the JD) · checkup report · before-and-after poster · check for updates.
+3. **Set up**: one line of status (current baseline, latest report score if there is one), then a short menu: tailor for a new job (paste the JD) · got an interview, make follow-up cards · checkup report · before-and-after poster · check for updates.
 4. If the first message is already a concrete task, do that task instead.
 
 Keep it short. Explain the method only if asked.
@@ -24,7 +24,7 @@ Before you do any resume work in this repo, read these in order:
 ## Hard rules
 
 **Facts**
-- Use only claims marked `Safe to draft`. A `Needs review` claim is something to ask the user about, never something to write.
+- Use only claims marked `Safe to draft`. A `Needs review` claim is something to ask the user about, and an `Interview only` claim is for interview prep; neither goes in a resume. Nor does any number a card marks `to verify`.
 - Tag every resume bullet with its Claim ID in an HTML comment (`<!-- C-001 -->`). A bullet with no tag has no source, so treat it as a bug.
 - Every experience and every number in a resume must trace to a Claim Card in `evidence/claims/`, and through the card to its source. If it has no source, leave it out.
 - An approved or sent resume is **not evidence**. It only records which wording and structure the user approved. If a bullet in an old resume has no Claim Card behind it, treat it as unverified: don't copy it forward. Write the missing card and get it confirmed first.
@@ -62,8 +62,8 @@ When the user asks to check for updates (prompt 5 in `docs/PROMPTS.md`):
 
 1. Read `VERSION`. Get the latest kit: https://github.com/weareheya/Resume-Gate/releases/latest/download/resume-gate-en.zip. It's a public download: no GitHub account or connector is needed. If your tool needs approval to use the network, ask once; or ask the user to download and unzip it into this folder.
 2. If its `VERSION` isn't newer, say so and stop. If it is, show the user the `CHANGELOG.md` entries since their version, including any "What you need to do" notes.
-3. With the user's go-ahead, replace **only kit files**: `AGENTS.md`, `CLAUDE.md`, `.claude/commands/`, `README.md`, `LICENSE`, `VERSION`, `CHANGELOG.md`, `.gitignore`, everything in `docs/` except `MY-DECISIONS.md`, `scripts/`, `report/`, `examples/`, `assets/`, and the three `_TEMPLATE.md` files.
-4. **Never touch the user's files**: `docs/MY-DECISIONS.md`, `evidence/` (apart from its `_TEMPLATE.md`), `cv/` (apart from the `_TEMPLATE.md` files), `reports/`.
+3. With the user's go-ahead, replace **only kit files**: `AGENTS.md`, `CLAUDE.md`, `.claude/commands/`, `README.md`, `LICENSE`, `VERSION`, `CHANGELOG.md`, `.gitignore`, everything in `docs/` except `MY-DECISIONS.md`, `scripts/`, `report/`, `examples/`, `assets/`, and every `_TEMPLATE.md` (including `interview/_TEMPLATE.md`).
+4. **Never touch the user's files**: `docs/MY-DECISIONS.md`, `evidence/` (apart from its `_TEMPLATE.md`), `cv/` (apart from the `_TEMPLATE.md` files), `interview/` (apart from its `_TEMPLATE.md`), `reports/`.
 5. If the user had edited a kit file (for example added rules to `docs/DECISIONS.md` before MY-DECISIONS existed), move their changes into `docs/MY-DECISIONS.md` first and show them what moved.
 6. Run `python3 scripts/check_claims.py` on the newest resume to confirm nothing broke, then commit only after the user approves.
 

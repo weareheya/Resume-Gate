@@ -1,6 +1,7 @@
 ---
 id: C-000
-status: Safe to draft   # Safe to draft | Needs review | Retired
+status: Needs review    # Needs review | Safe to draft | Interview only | Retired. Once the user has looked at the card in the interview and said it's right, it's Safe to draft; ask for the basis of a risky claim first (WORKFLOW, "What counts as risky")
+evidence: can explain   # can explain | on record | can be vouched for | vague: how solidly you could talk about this when an interviewer digs in
 protected: false        # true = can't be dropped or weakened in a new version without the user's approval
 role: 
 period: 
@@ -12,9 +13,11 @@ period:
 What you actually did, in plain words. Include the context, what you specifically did, and what came of it.
 
 ## Numbers and what they mean
-| Number | Unit / currency | Time window | Basis (cumulative / per item / potential / actual…) |
-|---|---|---|---|
-| | | | |
+| Number | Unit / currency | Time window | Basis (cumulative / per item / potential / actual…) | Verified |
+|---|---|---|---|---|
+| | | | | ✓ |
+
+The Verified column: a number the user gave in the interview is `✓` straight away. Mark it `to verify` when the user said "roughly" or "I'm not sure", or when the AI took it from old material the user hasn't confirmed. A number marked `to verify` can't go on a resume, and `check_claims.py` flags it; the card's other numbers can still be used.
 
 ## Attribution
 - **What you did**:
@@ -29,7 +32,7 @@ What you actually did, in plain words. Include the context, what you specificall
 - Don't mix A and B together
 
 ## Source
-Where the proof is: emails, contracts, dashboard screenshots, a colleague who can vouch, a public link. If there's none, write "own account only."
+Where the proof is: emails, contracts, dashboard screenshots, a colleague who can vouch, a public link. You don't need to be able to hand it over; naming the source is enough ("the number from the quarterly review"). If there's nothing, write "own account only." That's common and doesn't stop the card going on a resume.
 
 ## To fill
 Questions skipped in the interview, to answer later. Delete this section once it's empty.

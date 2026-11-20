@@ -2,6 +2,25 @@
 
 What changed in each version, and whether you need to do anything. Your version is in `VERSION`. To update, paste prompt 5 from `docs/PROMPTS.md`.
 
+## 0.2.3 · 2026-11-20
+
+- **Follow-up cards.** Once you're invited to interview, prompt 7 or `/prep` takes the resume version you sent and lists, for each bullet, the questions it's likely to draw, answers that hold up, and what not to say. Every answer comes from your Claim Cards; anything they don't cover goes under "Fill before the interview", never made up. Example: `examples/jordan-lee/interview/ACME-01.md`.
+- **A definition of risky.** Big claims, group results claimed as your own, anything likely to be asked for proof, and anything that doesn't match elsewhere get one question before they go on a resume, even after you've said the card is right.
+- **Evidence is no longer part of the score.** The score now measures only how the resume reads (R1 to R5, plus J1 to J3 for a job). Before, every first checkup lost 15 points because no Claim Cards existed yet, and a share card showing "Sourced 0%" read like a weak resume. The checkup standard is now v2.
+- **New "Interview readiness" panel**, not scored. Before Step 0 it says it unlocks in stage 2 and why it matters: whether you can back each bullet when an interviewer digs in. Once you have cards, it counts the bullets that are confirmed, under review or partial (`"sourced": "partial"`), or still without a card.
+- **The share card shows interview readiness too**, dimmed and below the scored rows. Before Step 0 it's locked, with a small "Stage 2 · unlocks after the interview". After a first checkup, the AI also says in two lines what stage 2 unlocks.
+- **Reports as images.** New `scripts/report_png.py` saves the share card (or the whole report, with `--full`) as a PNG using the Chrome, Edge or Brave you already have, so you can see the report right in the chat. Before, chat windows and preview panes that don't run JavaScript showed only the watermark; the report file now says so and how to open it.
+- Each bullet can list its Claim IDs in a new `claims` field, shown under the bullet in the full report, never on the share card.
+- Fixed: `report_share.py` turned every evidence mark into yes or no.
+- The example reports now score 38 and 89 (were 34 and 90).
+- **Claim Cards record three things separately.** `status` still decides whether a card can go on a resume, and has a new value, `Interview only`: true, but not for a resume (client names, confidential figures). A new `evidence:` field records how well it holds up in an interview. A new Verified column in the Numbers table marks each number `✓` or `to verify`, so one unconfirmed number no longer holds back the whole card.
+- **Fitted to how job searches really go.** `evidence:` records how solidly you can talk about something in an interview, not whether you can hand over a contract: `can explain` (the default; most work sits here), `on record` (naming the source is enough), `can be vouched for`, and `vague` (the only one that needs attention). In the interview the AI shows you each card's essentials; say it's right and the card is ready, with no separate review round, and numbers you gave yourself count as confirmed. `Needs review` is only for facts the AI took from old material that you haven't said yourself.
+- `check_claims.py` now flags a number marked `to verify` and a card marked `Interview only`.
+- **More consistent marking.** Action-led no longer accepts weak verbs such as Helped, Assisted or Supported, which hide which part was yours. The structure check is looser: 2 to 5 bullets for each of the two most recent roles, 1 to 3 for earlier ones. REPORT now has yes/no marking examples for Results, Numbers, Action-led and Specific, so a different AI should mark the same bullet the same way.
+- Fixed: the card template defaulted to `Safe to draft`. New cards now start as `Needs review`, as the workflow always said.
+
+**What you need to do**: nothing. Cards without `evidence:` or a Verified column still work exactly as before; add them when you next review a card. Reports you already made keep their old score on the page. `report_score.py` and the before-and-after poster use the new formula for both reports, so a poster still compares like with like. To refresh an old report's page, ask the AI to run the checkup again.
+
 ## 0.2.2 · 2026-11-20
 
 - **No more blank first screen.** Open the folder and say anything ("start", "hi"): the AI checks where you are and either welcomes you and asks for your resume, picks up an unfinished Step 0, or shows a short menu.

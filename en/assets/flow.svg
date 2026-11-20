@@ -1,13 +1,13 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800" role="img" aria-label="Step 0 once, then seven steps per job">
-<title>Step 0 once, then seven steps per job</title>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1000" viewBox="0 0 1200 1000" role="img" aria-label="Step 0 once, seven steps per job, follow-up cards per interview">
+<title>Step 0 once, seven steps per job, follow-up cards per interview</title>
 <defs>
 <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#1A1A1A"/></marker>
 <marker id="ahg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#858E96"/></marker>
 </defs>
-<rect width="1200" height="800" fill="#FAFAF8"/>
+<rect width="1200" height="1000" fill="#FAFAF8"/>
 <text x="600.0" y="462.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="170" font-weight="800" fill="#F1F0EC" text-anchor="middle" textLength="1080" lengthAdjust="spacingAndGlyphs">RESUME-GATE</text>
 <text x="60" y="54" font-family="'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace" font-size="12" fill="#5C5A55" letter-spacing="1.5">RESUME-GATE / FLOW</text>
-<text x="60" y="88" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="26" font-weight="700" fill="#1A1A1A">Step 0 once, then seven steps per job</text>
+<text x="60" y="88" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="26" font-weight="700" fill="#1A1A1A">Step 0 once, seven steps per job, follow-up cards per interview</text>
 <path d="M 60 106 L 1140 106" stroke="#1A1A1A" stroke-width="1"/>
 <rect x="60" y="134" width="1080" height="160" fill="none" stroke="#D9D7D0" stroke-width="1"/>
 <text x="76" y="154" font-family="'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#5C5A55" text-anchor="start" letter-spacing="1.2">STEP 0 · ONCE</text>
@@ -107,7 +107,26 @@
 <text x="705.5" y="620.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="12" font-weight="400" fill="#5C5A55" text-anchor="middle">yes</text>
 <path d="M 1110 628.0 L 1125 628.0 L 1125 372 L 389.0 372 L 389.0 390" fill="none" stroke="#858E96" stroke-width="1" stroke-dasharray="5 4" marker-end="url(#ahg)"/>
 <text x="757.0" y="366" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="12" font-weight="400" fill="#5C5A55" text-anchor="middle">can become the next baseline</text>
-<path d="M 60 744 L 1140 744" stroke="#1A1A1A" stroke-width="1"/>
-<text x="60" y="766" font-family="'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace" font-size="11" fill="#5C5A55" letter-spacing="1">RESUME-GATE · GITHUB.COM/WEAREHEYA/RESUME-GATE · MIT LICENSE</text>
-<text x="1140" y="767" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="17" font-weight="700" fill="#1A1A1A" text-anchor="end">HeyEstella</text>
+<rect x="60" y="736" width="1080" height="160" fill="none" stroke="#D9D7D0" stroke-width="1"/>
+<text x="76.0" y="756.0" font-family="'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#5C5A55" text-anchor="start" letter-spacing="1.2">AFTER YOU GET AN INTERVIEW</text>
+<text x="90.0" y="816.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="13" font-weight="400" fill="#5C5A55" text-anchor="start">Questions come from each card's numbers, attribution and limits;</text>
+<text x="90.0" y="838.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="13" font-weight="400" fill="#5C5A55" text-anchor="start">answers use only facts on the cards. Gaps go under "Fill before the interview".</text>
+<rect x="723" y="776" width="176" height="88" fill="#FFFFFF" stroke="#1A1A1A" stroke-width="1"/>
+<rect x="723" y="776" width="176" height="3" fill="#858E96"/>
+<text x="733.0" y="794.0" font-family="'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#858E96" text-anchor="start" letter-spacing="0.5">RG // SRC</text>
+<g transform="translate(871 785) scale(0.7083333333333334)" fill="none" stroke="#1A1A1A" stroke-width="1.60" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"><rect x="4" y="7" width="13" height="13" rx="1"/><path d="M8 4h11a1 1 0 0 1 1 1v11"/></g>
+<text x="811.0" y="822.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="15" font-weight="600" fill="#1A1A1A" text-anchor="middle">Claim Cards</text>
+<text x="811.0" y="842.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="15" font-weight="400" fill="#1A1A1A" text-anchor="middle">+ Coverage Report</text>
+<rect x="934" y="776" width="176" height="88" fill="#FFFFFF" stroke="#1A1A1A" stroke-width="1"/>
+<rect x="934" y="776" width="176" height="3" fill="#151515"/>
+<text x="944.0" y="794.0" font-family="'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#858E96" text-anchor="start" letter-spacing="0.5">RG // PREP</text>
+<g transform="translate(1082 785) scale(0.7083333333333334)" fill="none" stroke="#1A1A1A" stroke-width="1.60" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"><path d="M4 5h16v11H9l-5 4z"/><path d="M8 9h8M8 12h5"/></g>
+<text x="1022.0" y="822.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="15" font-weight="600" fill="#1A1A1A" text-anchor="middle">Follow-up cards</text>
+<text x="1022.0" y="842.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="15" font-weight="400" fill="#1A1A1A" text-anchor="middle">interview/</text>
+<path d="M 899 820.0 L 932 820.0" fill="none" stroke="#1A1A1A" stroke-width="1" marker-end="url(#ah)"/>
+<path d="M 1022.0 672 L 1022.0 774" fill="none" stroke="#1A1A1A" stroke-width="1" marker-end="url(#ah)"/>
+<text x="1030.0" y="726.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="12" font-weight="400" fill="#5C5A55" text-anchor="start">invited to interview</text>
+<path d="M 60 944 L 1140 944" stroke="#1A1A1A" stroke-width="1"/>
+<text x="60" y="966" font-family="'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace" font-size="11" fill="#5C5A55" letter-spacing="1">RESUME-GATE · GITHUB.COM/WEAREHEYA/RESUME-GATE · MIT LICENSE</text>
+<text x="1140" y="967" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="17" font-weight="700" fill="#1A1A1A" text-anchor="end">HeyEstella</text>
 </svg>
