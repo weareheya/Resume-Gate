@@ -17,6 +17,7 @@ Mistakes that keep showing up when AI edits a resume, and where each fix lives:
 | Numbers get inflated or their meaning drifts | **Claim Card**: every number has a unit, scope, attribution, and a "don't rephrase as" list | [Claim Card template](evidence/claims/_TEMPLATE.md) · [filled example](examples/jordan-lee/evidence/claims/C-001.md) |
 | The AI says "all checked" but skipped things | **Coverage Report**: spell out what was checked and what wasn't | [format](docs/WORKFLOW.md#coverage-report-format) · [example](examples/jordan-lee/cv/changelogs/ACME-01.md) |
 | A strong experience gets dropped or written weakly because you described it in few words | **Probing questions + D-011 to D-016**: the AI asks before it filters, and picks the strongest wording the facts support | [probing questions](docs/WORKFLOW.md#probing-questions) · [DECISIONS](docs/DECISIONS.md) · [10 cases](examples/cases.md) |
+| The resume is accurate but undersells you: a stronger card sat unused, or an old resume's framing boxed in a new direction | **Evidence table + positioning first (D-018, D-019)**: every card is looked at for every job, and the story is chosen before the baseline | [WORKFLOW S1, S2](docs/WORKFLOW.md) · [example](examples/jordan-lee/cv/changelogs/ACME-01.md) |
 | A corrected strength quietly comes back weaker | **Semantic check in self-review**: protected claims are compared with their approved wording, not just checked for presence | [REVIEW-CHECKLIST A](docs/REVIEW-CHECKLIST.md) · [LESSONS L-12](docs/LESSONS.md) |
 | A few stray lines spill onto a last page | **Full-page rule + `pdf_fill`**: the PDF must fill its pages, and a script measures it | [D-009](docs/DECISIONS.md) · [pdf_fill.swift](scripts/pdf_fill.swift) |
 | The AI signs off on its own work | **Human review gate**: nothing is Approved until you say so, and sent versions are frozen | [WORKFLOW S7](docs/WORKFLOW.md) · [D-008, D-010](docs/DECISIONS.md) |
@@ -52,6 +53,7 @@ Each step has an output you must be able to show before moving on. Details in [d
 | [docs/REVIEW-CHECKLIST.md](docs/REVIEW-CHECKLIST.md) | AI self-review: facts, writing, layout, handoff format | When the AI hands you a version |
 | [docs/LESSONS.md](docs/LESSONS.md) | Real process mistakes and the guardrails against them | Once, and whenever something goes wrong |
 | [evidence/claims/](evidence/claims/_TEMPLATE.md) | Evidence bank: one Claim Card per accomplishment | Step 0, and whenever you remember something new |
+| [jobs/](jobs/_TEMPLATE.md) | Each job posting you write for, saved with its requirements numbered, so none drops out | Every new job |
 | [cv/CV-INDEX.md](cv/CV-INDEX.md) | Job types, current starting point per type, every version and where it went | Start of every new job |
 | [cv/resumes/](cv/resumes/_TEMPLATE.md) | The resumes themselves, one Markdown file per version | Every new job |
 | [cv/changelogs/](cv/changelogs/_TEMPLATE.md) | What changed in each version and why | Every new job |

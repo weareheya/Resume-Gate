@@ -2,7 +2,8 @@
 id: C-000
 status: Needs review    # Needs review | Safe to draft | Interview only | Retired. Once the user has looked at the card in the interview and said it's right, it's Safe to draft; ask for the basis of a risky claim first (WORKFLOW, "What counts as risky")
 evidence: can explain   # can explain | on record | can be vouched for | vague: how solidly you could talk about this when an interviewer digs in
-protected: false        # true = can't be dropped or weakened in a new version without the user's approval
+protected: false        # true = can't be weakened in a new version without the user's approval
+keep-for:               # optional, with protected: true. Job types (e.g. 01, 03) whose resumes must keep it; empty = all
 role: 
 period: 
 ---
@@ -23,6 +24,13 @@ The Verified column: a number the user gave in the interview is `✓` straight a
 - **What you did**:
 - **What the team or others did**:
 - **Causal claims you can't make**: (things that happened at the same time but weren't your doing)
+
+## Capability facets (optional)
+One experience can prove several different skills (D-012). List the ones worth pulling out, so a job that names the skill differently still finds this card (S2).
+
+| Facet | What it shows | The part of this card that proves it | Can't be stretched to |
+|---|---|---|---|
+| | | | |
 
 ## Approved wording
 > One or two sentences that can go straight into a resume.

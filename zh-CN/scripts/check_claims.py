@@ -19,7 +19,7 @@
   6. evidence/profile.md 填好之后，Experience 里的职位标题（### 职位 · 公司 · 年份）和
      Education 的每一行都要和它对得上。
   7. 基线：如果 cv/CV-INDEX.md 里这份简历的类型已经有起点，新版本必须写 `base:`。有基线时，
-     基线 Summary/Experience 里用到的 `protected: true` claim，这里也必须还在，而且已确认的
+     基线 Summary/Experience 里用到的 `protected: true` claim，这里也必须还在（卡上的 `keep-for` 只列了其他岗位类型时除外），而且已确认的
      数字不能少，除非本人同意（front matter 里写 `protected-ok: C-001`）。
   其他非空栏目（Skills 等）会提示"未验证"，其中没有卡片支撑的数字会单独指出。
   Languages、联系方式、References 直接跳过。ERROR 判为未通过；WARN 值得看一眼，但不影响通过。
@@ -68,6 +68,7 @@ T = {
         "dropped_protected": "Protected claim {c} is used in the baseline ({b}) but missing from Summary/Experience here. Restore it, or with the user's approval add `protected-ok: {c}` to the front matter and explain why in the Change Log",
         "weakened": "Protected claim {c}: the baseline ({b}) states {x} but this version no longer does. Restore it, or with the user's approval add `protected-ok: {c}` to the front matter and explain why in the Change Log",
         "dropped": "{c} is used in the baseline ({b}) but not here",
+        "keep_for": "Protected claim {c} is kept for type(s) {k}; this resume is type {ty}, so leaving it out is allowed. Say why in the Change Log",
         "base_missing": "Baseline file not found: {p}. The protected-claims check can't run. Fix `base:` or pass --base",
         "base_required": "{f}: no `base:`, but CV-INDEX already has a starting point for type {ty} ({s}). Set `base:` to the version this was copied from",
         "ok": "OK: {n} lines checked, {c} Claim IDs used, no errors{w}",
@@ -99,6 +100,7 @@ T = {
         "dropped_protected": "受保护的 claim {c} 在基线（{b}）里用到了，这里的 Summary/Experience 却没有。请补回；或经本人同意后在 front matter 里加 `protected-ok: {c}`，并在 Change Log 里说明原因",
         "weakened": "受保护的 claim {c}：基线（{b}）里写了 {x}，这一版没有了。请补回；或经本人同意后在 front matter 里加 `protected-ok: {c}`，并在 Change Log 里说明原因",
         "dropped": "{c} 在基线（{b}）里用到了，这里没有",
+        "keep_for": "受保护的 claim {c} 只要求在类型 {k} 里保留；这份简历是类型 {ty}，可以不放。请在 Change Log 里写明原因",
         "base_missing": "找不到基线文件：{p}，受保护 claim 检查无法进行。请修正 `base:` 或用 --base 指定",
         "base_required": "{f}：没有写 `base:`，但 CV-INDEX 里类型 {ty} 已经有起点（{s}）。请把 `base:` 设为这份简历复制自的版本",
         "ok": "通过：检查了 {n} 行，用到 {c} 个 Claim ID，没有错误{w}",
@@ -256,12 +258,13 @@ def load_card(text):
             if b:
                 banned += [w.strip().strip("\"'“”「」`").lower() for w in re.split(r"[,，、;；]", b.group(1)) if w.strip()]
             continue
-        if line.strip().startswith("|"):
+        if line.strip().startswith("|") and section in ("numbers and what they mean", "数字与口径"):
             numbers_lines.append(line)
         else:
             source_text.append(line)
 
     card = {"status": fm.get("status", ""), "protected": fm.get("protected", "").lower() == "true",
+            "keep_for": {x.strip() for x in re.split(r"[,，、\s]+", fm.get("keep-for", "")) if x.strip()},
             "vals": [], "years": set(), "currency": [], "pending": [], "banned": banned}
 
     def add(toks, pending=False, currency=""):
@@ -583,7 +586,9 @@ def main():
         for c in sorted(b["used"] - used):
             if c in waived:
                 continue
-            if c in claims and claims[c]["protected"]:
+            if c in claims and claims[c]["protected"] and claims[c]["keep_for"] and fm.get("type", "") not in claims[c]["keep_for"]:
+                print("NOTE  " + t["keep_for"].format(c=c, k=", ".join(sorted(claims[c]["keep_for"])), ty=fm.get("type", "") or "-"))
+            elif c in claims and claims[c]["protected"]:
                 print("ERROR " + t["dropped_protected"].format(c=c, b=base.name)); errors += 1
             else:
                 print("NOTE  " + t["dropped"].format(c=c, b=base.name))

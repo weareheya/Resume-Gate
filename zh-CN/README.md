@@ -25,6 +25,7 @@
 | 数字被夸大、口径混淆 | **Claim Card**：每个数字有单位、范围、归因和禁止改写 | [Claim Card 模板](evidence/claims/_TEMPLATE.md) · [填好的示例](examples/jordan-lee/evidence/claims/C-001.md) |
 | AI 说「检查完了」其实有遗漏 | **Coverage Report**：写明查了什么、没查什么 | [格式](docs/WORKFLOW.md#coverage-report-格式) · [示例](examples/jordan-lee/cv/changelogs/ACME-01.md) |
 | 你说得太简略，强经历被丢掉或写弱 | **追问清单 + D-011～D-016**：AI 先问再过滤，并在事实允许的范围内选最有竞争力的写法 | [追问清单](docs/WORKFLOW.md#追问清单) · [DECISIONS](docs/DECISIONS.md) · [10 个案例](examples/cases.md) |
+| 简历句句属实却低估了你：更强的卡没用上，或者旧简历的定位框住了新方向 | **证据表 + 先定位（D-018、D-019）**：每个岗位都过一遍每张卡，先选叙事再选基线 | [WORKFLOW S1、S2](docs/WORKFLOW.md) · [示例](examples/jordan-lee/cv/changelogs/ACME-01.md) |
 | 纠正过的强项悄悄又被写弱 | **自审里的语义对比**：protected claim 要和已批准措辞对比，不只检查还在不在 | [自审清单 A](docs/REVIEW-CHECKLIST.md) · [LESSONS L-12](docs/LESSONS.md) |
 | 排版多出几行孤页 | **整页规则 + `pdf_fill`**：PDF 必须整页满，脚本量化检查 | [D-009](docs/DECISIONS.md) · [pdf_fill.swift](scripts/pdf_fill.swift) |
 | AI 自作主张定稿 | **人工审核关卡**：你说通过才算 Approved，投出的版本冻结 | [WORKFLOW S7](docs/WORKFLOW.md) · [D-008、D-010](docs/DECISIONS.md) |
@@ -60,6 +61,7 @@
 | [docs/REVIEW-CHECKLIST.md](docs/REVIEW-CHECKLIST.md) | AI 自审清单：事实 / 写法 / 排版 / 交付格式 | AI 交给你一版时 |
 | [docs/LESSONS.md](docs/LESSONS.md) | 真实踩过的过程性错误和防线 | 看一遍；出问题时再看 |
 | [evidence/claims/](evidence/claims/_TEMPLATE.md) | 证据库：一个成果一张 Claim Card | Step 0，以及想起新经历时 |
+| [jobs/](jobs/_TEMPLATE.md) | 你写过的每份招聘启事，要求都编了号，一条也不会漏 | 每个新岗位 |
 | [cv/CV-INDEX.md](cv/CV-INDEX.md) | 岗位类型、每类当前起点、每个版本投去了哪里 | 每个新岗位开始时 |
 | [cv/resumes/](cv/resumes/_TEMPLATE.md) | 简历正文，一个版本一个 Markdown 文件 | 每个新岗位 |
 | [cv/changelogs/](cv/changelogs/_TEMPLATE.md) | 每一版改了什么、为什么 | 每个新岗位 |

@@ -8,6 +8,7 @@
 | [evidence/profile.md](evidence/profile.md) | 任职和教育背景。脚本拿职位标题和教育那一行来对照它 |
 | [cv/resumes/channel-baseline.md](cv/resumes/channel-baseline.md) | 第一份批准的基线，Step 0 做的 |
 | [cv/resumes/acme-pdm.md](cv/resumes/acme-pdm.md) | 针对一个岗位、从基线改出来的新版本 |
+| [jobs/ACME-01.md](jobs/ACME-01.md) | 存下来的招聘启事，要求编号 R1 到 R3 |
 | [cv/changelogs/ACME-01.md](cv/changelogs/ACME-01.md) | 它的 Change Log：读了什么、Delta、Coverage Report、自审 |
 | [cv/CV-INDEX.md](cv/CV-INDEX.md) | 做完这一版之后的索引 |
 | [cv/resumes/acme-pdm-with-traps.md](cv/resumes/acme-pdm-with-traps.md) | 同一版本，故意埋了七个错误 |

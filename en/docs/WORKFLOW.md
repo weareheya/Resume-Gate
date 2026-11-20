@@ -6,9 +6,10 @@ No baseline resume yet? Do [Step 0](#step-0-cold-start) first.
 
 | Step | What to do | Output |
 |---|---|---|
-| S1 | **Pick the type and baseline.** Read the JD, find the job type in `cv/CV-INDEX.md`, compare "core skill sets," and choose the baseline by fit: how close its positioning is to this job, how much of the JD its claims already cover, whether it's Approved, and how recent it is. The type's current starting point is the default, not a rule. Choose the byline and contact variant by type. If useful, look at the public backgrounds of people in the same role at the company to see which requirements are hard gates (D-016) | "Type X, starting point = …" |
-| S2 | **Evidence Retrieval Gate.** Read the JD, then search `evidence/claims/` for every case that's relevant, with no cap on how many, and read their Claim Cards and approved wording. Also read every Claim ID the baseline already uses and every claim marked `protected`. **List what you read** | List of Claim IDs read |
-| S3 | **Map to the JD.** For each core requirement: direct evidence / transferable evidence only / no evidence. Before marking anything "no evidence," go through the [probing questions](#probing-questions) (D-014). If there's still no evidence, don't stretch to cover the gap | Three-column mapping table |
+| S0 | **Save the JD.** Paste the posting into `jobs/<job-id>.md` (copy `jobs/_TEMPLATE.md`): the original text, where and when you found it, and its core requirements numbered R1, R2… Mark the must-haves as gates. Everything after this refers to those numbers, so nothing the JD asks for can quietly drop out | `jobs/<job-id>.md` |
+| S1 | **Positioning, then baseline.** Ask what the job is really for: the business goal behind it, which requirements are hard gates (D-016), and what an ideal hire looks like. If the job is a stretch from your existing types, write 2 or 3 one-line positioning options (the angle, its strongest evidence, its main gap) and recommend one. For a close match, one line is enough. Then pick the baseline by fit: how close its positioning is to the chosen one, how much of the JD its claims already cover, whether it's Approved, and how recent it is. The baseline gives you facts and approved wording, not the story: the chosen positioning can reorder or reframe it (D-018). Choose the byline and contact variant by type | "Positioning: …; type X, starting point = …" |
+| S2 | **Evidence Retrieval Gate.** Go through **every** Claim Card, not only the ones that sound related: a title alone can hide a skill the JD wants (check its capability facets, if it has them). Fill the evidence table in the Change Log: each card, how relevant it is to this job, whether it's used, and why not if it isn't. Cards plainly unrelated to this job can share one line ("Low: C-012, C-015, unrelated field"), so the table stays short. Then ask once: is any unused card stronger for this job than something already in the resume? If yes, swap it in or say why not. Stop when no swap clearly adds value (D-019) | Evidence table in the Change Log |
+| S3 | **Map to the JD.** For each requirement R1, R2…, sort it into one of five kinds: **Direct** · **Transferable or combined** (a skill from another setting, or several experiences that each prove part of it) · **Not found yet** (ask the [probing questions](#probing-questions) first, D-014; a number marked "to verify" belongs here too) · **Buildable** (a real gap you could close with a small project or course) · **Hard gap** (including an eligibility gate you don't meet). Only "Hard gap" means don't write it. If there's still no evidence after asking, don't stretch to cover the gap | Five-way mapping in the Coverage Report |
 | S4 | **Delta.** Copy the baseline file in `cv/resumes/` and change only what needs changing: headline, summary, bullet order, keywords. Don't rewrite approved text | New draft |
 | S5 | **Change Log.** For each change, write Before / After / Why. Attach a JD Coverage Report and what you checked | `cv/changelogs/<id>.md` |
 | S6 | **AI self-review.** Go through the [REVIEW-CHECKLIST](REVIEW-CHECKLIST.md) item by item. Run `python3 scripts/validate_evidence.py` and `python3 scripts/check_claims.py cv/resumes/<id>.md` (both must pass), then export the PDF and run `scripts/pdf_fill.swift` | Screenshots, page count and reach per page, table of self-review fixes |
@@ -123,7 +124,9 @@ When the user says a card is right in the interview, it's ready, unless it hits 
 
 **No evidence, no claim.** If the JD wants something the evidence bank doesn't cover, put it under "None" in the Coverage Report. The user decides whether to build the evidence, cover it in the interview, or skip the job.
 
-**Don't cut strong results without a reason.** Removing an existing strong bullet has to pass three tests: relevance (it doesn't help for this job), accuracy (there's doubt about it), or space (it doesn't fit). Write the reason in the Change Log. A claim marked `protected: true` can't be dropped or weakened at all without the user's approval.
+**Don't cut strong results without a reason.** Removing an existing strong bullet has to pass three tests: relevance (it doesn't help for this job), accuracy (there's doubt about it), or space (it doesn't fit). Write the reason in the Change Log. A claim marked `protected: true` can't be weakened without the user's approval. If its card lists `keep-for` types, it must stay in resumes of those types and may be left out of others; with no `keep-for`, it stays everywhere.
+
+**Two kinds of error.** Writing something the evidence doesn't support is one (commission). Leaving out something the evidence does support, and the job would value, is the other (omission). The checks catch the first; the evidence table in S2 is there for the second (D-019).
 
 **Layout follows content, not the other way around.** If the page count is off, edit the content first (cut weak bullets, tighten long sentences). Only then touch font size, line spacing, or margins. Never add unsupported content to fill a page.
 
@@ -142,14 +145,18 @@ Before writing a Claim Card, mapping to a JD, or marking anything "no evidence,"
 ## Coverage Report format
 
 ```markdown
-| JD requirement | Covered | Notes | How to close the gap |
-|---|---|---|---|
-| Requirement A | Yes | Claim C-003 | n/a |
-| Requirement B | Partly | Transferable: C-007 (different setting) | Lead with the transferable skill; be ready to say how the setting differs |
-| Requirement C | None | No evidence, so left out | Build the evidence, answer it in the interview, or skip the job |
+| # | JD requirement | Gate | Kind | Evidence | Next step |
+|---|---|---|---|---|---|
+| R1 | Requirement A | yes | Direct | C-003 | n/a |
+| R2 | Requirement B | | Transferable or combined | C-007 (different setting) + C-002 | Lead with the transferable skill; be ready to say how the setting differs |
+| R3 | Requirement C | | Not found yet | n/a | Ask the probing questions; may turn up evidence |
+| R4 | Requirement D | | Buildable | n/a | A small project could close it; your call |
+| R5 | Requirement E | yes | Hard gap | n/a | Left out. Answer it in the interview, or skip the job |
 
 **Scope of check**: covered …; not covered … (reason)
 ```
+
+In a job-fit report, Direct counts as `direct`, Transferable or combined as `partial`, and the other three as `none`.
 
 ## When a new type is warranted
 
