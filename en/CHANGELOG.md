@@ -2,6 +2,16 @@
 
 What changed in each version, and whether you need to do anything. Your version is in `VERSION`. To update, paste prompt 5 from `docs/PROMPTS.md`.
 
+## 0.5.1 · 2026-11-20
+
+A nudge for wording a card warns against, found by the first eval run.
+
+- **"Don't rephrase as" wording now gets a warning.** When a card's "Don't rephrase as" puts wording in quotes (`Don't write "built" or "launched" the portal`), `check_claims.py` warns on any line citing that card that uses it. It's a warning, not an error: the word may be fine in context, and only you can tell. Banned words still fail as before.
+- The self-review checklist now asks you to check softer versions of a ruled-out claim, such as "built with engineering" when the card says engineering built it (LESSONS L-14).
+- The example's trap 6 (the portal "built and launched") now shows this warning.
+
+**What you need to do**: nothing. To get the warning on your own cards, put the wording you don't want in quotes in their "Don't rephrase as" section.
+
 ## 0.5.0 · 2026-11-20
 
 Sent versions can now be frozen, and a protected-claim false alarm is fixed.

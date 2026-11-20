@@ -55,6 +55,7 @@ T = {
         "number": "{f}:{n}: the number \"{x}\" doesn't appear in {c}. Add it to the card's Numbers table (with its unit and basis), or remove it",
         "currency": "{f}:{n}: \"{x}\" is in {cur}, but {c} gives it in {want}",
         "banned": "{f}:{n}: \"{w}\" is a banned word on {c} (see its \"Don't rephrase as\")",
+        "dont": "{f}:{n}: \"{w}\" is wording {c}'s \"Don't rephrase as\" warns about. Re-read that note and check this line still says what the card says",
         "no_sections": "{f}: no Summary or Experience section recognized (level-2 headings found: {h}). Nothing could be checked",
         "nothing": "{f}: Summary/Experience sections found but they contain no lines to check",
         "unchecked": "{f}: section \"{s}\" has {k} line(s) this script does not verify",
@@ -88,6 +89,7 @@ T = {
         "number": "{f}:{n}：数字「{x}」在 {c} 里找不到。请把它补进卡片的数字表（写明单位和口径），或者删掉",
         "currency": "{f}:{n}：「{x}」用的币种是 {cur}，但 {c} 上是 {want}",
         "banned": "{f}:{n}：「{w}」是 {c} 的禁用词（见卡上的「禁止改写」）",
+        "dont": "{f}:{n}：「{w}」是 {c} 的「禁止改写」里提醒过的说法。请重读那条提醒，确认这一行说的还是卡上的事实",
         "no_sections": "{f}：没有识别到 Summary 或 Experience 栏目（找到的二级标题：{h}），什么都没检查",
         "nothing": "{f}：找到了 Summary/Experience 栏目，但里面没有可检查的行",
         "unchecked": "{f}：栏目「{s}」有 {k} 行，这个脚本不验证",
@@ -157,6 +159,8 @@ SKIP_SECTIONS = {
 # Claim Card sections whose numbers are NOT a source for a resume line.
 CARD_NOT_SOURCE = {"don't rephrase as", "don’t rephrase as", "dont rephrase as", "source", "to fill",
                    "禁止改写", "出处", "待补"}
+DONT_SECTIONS = {"don't rephrase as", "don’t rephrase as", "dont rephrase as", "禁止改写"}
+QUOTED_RE = re.compile(r'"([^"\n]{2,60})"|“([^”\n]{2,60})”|「([^」\n]{1,60})」')
 BANNED_RE = re.compile(r"^\s*(?:[-*]\s*)?\**(?:banned words|禁用词)\**\s*[:：]\s*(.+)$", re.I)
 VERIFIED_OK = {"✓", "✔", "✔️", "✅", "confirmed", "yes", "已核实", "已确认", "是"}
 VERIFY_HEADERS = {"核实", "verified"}
@@ -245,7 +249,7 @@ def load_card(text):
     fm, start = front_matter(text)
     cid = fm.get("id", "")
     lines = text.split("\n")[start:]
-    source_text, banned, section = [], [], ""
+    source_text, banned, warned, section = [], [], [], ""
     numbers_lines = []
     for line in lines:
         h = HEADING_RE.match(line.strip())
@@ -259,6 +263,12 @@ def load_card(text):
             b = BANNED_RE.match(line)
             if b:
                 banned += [w.strip().strip("\"'“”「」`").lower() for w in re.split(r"[,，、;；]", b.group(1)) if w.strip()]
+            elif section in DONT_SECTIONS:
+                # quoted wording the card warns against, e.g. Don't write "built" -> a WARN, not an error
+                for m in QUOTED_RE.finditer(line):
+                    q = next(g for g in m.groups() if g).strip(" .,;:，。；：").lower()
+                    if re.search(r"[a-z\u4e00-\u9fff]", q) and q not in warned:
+                        warned.append(q)
             continue
         if line.strip().startswith("|") and section in ("numbers and what they mean", "数字与口径"):
             numbers_lines.append(line)
@@ -267,7 +277,7 @@ def load_card(text):
 
     card = {"status": fm.get("status", ""), "protected": fm.get("protected", "").lower() == "true",
             "keep_for": {x.strip() for x in re.split(r"[,，、\s]+", fm.get("keep-for", "")) if x.strip()},
-            "vals": [], "years": set(), "currency": [], "pending": [], "banned": banned}
+            "vals": [], "years": set(), "currency": [], "pending": [], "banned": banned, "warned": warned}
 
     def add(toks, pending=False, currency=""):
         for t in toks:
@@ -541,6 +551,12 @@ def main():
                 hit = (w in low) if re.search(r"[^\x00-\x7f]", w) else re.search(r"(?<![a-z])" + re.escape(w) + r"(?![a-z])", low)
                 if w and hit:
                     print("ERROR " + t["banned"].format(f=resume.name, n=n, w=w, c=c)); errors += 1
+            for w in claims[c].get("warned", []):
+                if w in claims[c]["banned"]:
+                    continue
+                hit = (w in low) if re.search(r"[^\x00-\x7f]", w) else re.search(r"(?<![a-z])" + re.escape(w) + r"(?![a-z])", low)
+                if hit:
+                    print("WARN  " + t["dont"].format(f=resume.name, n=n, w=w, c=c)); warns += 1
         for tok in tokens(text):
             shown, plain, v, scaled, currency, kind = tok
             if kind == "word" and v < 2:

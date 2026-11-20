@@ -20,6 +20,6 @@ One section per run, newest first. Record the kit versions compared, how many ru
 - v0.5.0 produced what v0.2.3 doesn't: the saved JD, positioning options for stretch jobs, an evidence table covering every card, and five-way gap kinds. Its gap calls mostly matched gold; the misses were defensible ("Not found yet" before the user has been asked), so gold now accepts more than one kind where a careful reviewer could differ.
 - v0.5.0 restored the portal card (C-002) for the channel job where v0.2.3 left it out, and left out pipeline (C-003) for customer success. Both choices were explained in the evidence table.
 
-**Changed because of this run**: `score.py` reads a kind followed by a note ("Direct (marketing only)"), and gold can list several acceptable kinds.
+**Changed because of this run**: kit 0.5.1 warns on wording a card's "Don't rephrase as" quotes, and the self-review checks softer versions of a ruled-out claim (LESSONS L-14); re-run on the same outputs, it flags the product-manager line and nothing in the other five. `score.py` reads a kind followed by a note ("Direct (marketing only)"), and gold can list several acceptable kinds.
 
 **Next**: three or more runs per side before drawing conclusions, and a blind A/B/C read of the product-manager pair, where the two versions differ most.
