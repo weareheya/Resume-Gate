@@ -34,11 +34,11 @@
 ## 3. 给某个岗位做一版
 
 ```text
-按 docs/WORKFLOW.md 的 S1 到 S6，给这个岗位做一版：
+按 docs/WORKFLOW.md 的 S0 到 S6，给这个岗位做一版：
 
 [把 JD 贴在这里]
 
-先告诉我：岗位类型、你选的基线、你读了哪些 Claim ID。只能用状态为 `Safe to draft` 的 claim。做到 S7 之前停下，给我看全文、和基线的改动对照、以及 Coverage Report。
+先把 JD 存进 jobs/，再告诉我：定位（岗位离得远就给几个方案）、你选的基线、证据表（每张 Claim Card 用没用、没用的原因）。只能用状态为 `Safe to draft` 的 claim。做到 S7 之前停下，给我看全文、和基线的改动对照、以及 Coverage Report。
 ```
 
 ## 4. 自审一版

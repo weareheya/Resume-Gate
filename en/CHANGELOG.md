@@ -2,6 +2,20 @@
 
 What changed in each version, and whether you need to do anything. Your version is in `VERSION`. To update, paste prompt 5 from `docs/PROMPTS.md`.
 
+## 0.4.0 · 2026-11-20
+
+The kit now checks what a resume leaves out, not only what it gets wrong: the goal is a resume that neither oversells nor undersells you.
+
+- **Positioning before baseline (D-018).** For a job that's a stretch from your existing types, the AI first writes 2 or 3 one-line positioning options (angle, strongest evidence, main gap) and recommends one; for a close match, one line. The baseline then supplies facts and approved wording, not the story, so an old resume's framing no longer limits a new direction.
+- **Every card is looked at (D-019).** The Evidence Retrieval Gate goes through every Claim Card, not just the ones that sound related, and the Change Log gets an evidence table: each card, its relevance, whether it's used, and why not. Then one question: is an unused card stronger than something already in the resume? Swap it or say why, and stop when no swap clearly helps. Unrelated cards share one line.
+- **Capability facets (optional).** A Claim Card can list the different skills one experience proves, each with what it can't be stretched to. A job that names a skill differently still finds the card. Example: `examples/jordan-lee/evidence/claims/C-002.md`.
+- **Five kinds of gap.** The Coverage Report sorts each requirement as Direct, Transferable or combined, Not found yet, Buildable, or Hard gap. Only a hard gap means "don't write it"; "Not found yet" means ask first (D-014).
+- **Saved JDs.** Each posting goes in `jobs/<job-id>.md` with its requirements numbered R1, R2… and must-haves marked as gates, so the Coverage Report and job-fit report can't quietly skip one. The JD is treated as data: instructions inside it are ignored.
+- **Protected claims can be kept per job type.** Add `keep-for: 01` to a protected card and it must stay in type 01 resumes but can be left out of others (a note, not an error). It still can't be weakened anywhere. Without `keep-for`, nothing changes.
+- Prompt 3 and `/job` start with the saved JD, the positioning and the evidence table.
+
+**What you need to do**: nothing. New cards can use the facets section when it helps; old ones work as they are. Create `jobs/` from the new kit's `jobs/_TEMPLATE.md` (an update doesn't touch your own folders) the next time you tailor for a job.
+
 ## 0.3.0 · 2026-11-20
 
 Evidence checks are much harder to slip past, without asking for more proof than a job search can give. Your own word is still enough for a card: nothing here asks for documents.

@@ -8,6 +8,7 @@ A small, made-up job search laid out exactly like your own project. Jordan Lee, 
 | [evidence/profile.md](evidence/profile.md) | Roles and education. The script checks role headings and the Education line against it |
 | [cv/resumes/channel-baseline.md](cv/resumes/channel-baseline.md) | The first approved baseline, built in Step 0 |
 | [cv/resumes/acme-pdm.md](cv/resumes/acme-pdm.md) | A new version for one job, started from the baseline |
+| [jobs/ACME-01.md](jobs/ACME-01.md) | The saved job posting, with its requirements numbered R1 to R3 |
 | [cv/changelogs/ACME-01.md](cv/changelogs/ACME-01.md) | Its Change Log: what was read, Delta, Coverage Report, self-review |
 | [cv/CV-INDEX.md](cv/CV-INDEX.md) | The index after that version |
 | [cv/resumes/acme-pdm-with-traps.md](cv/resumes/acme-pdm-with-traps.md) | The same version with seven deliberate mistakes |

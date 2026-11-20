@@ -21,6 +21,7 @@ Run `python3 scripts/validate_evidence.py` and `python3 scripts/check_claims.py 
 - [ ] A result that happened at the same time isn't credited entirely to the candidate (causality); a link that *can* be shown is written, not split apart by reflex (D-014)
 - [ ] Claims marked `protected` aren't just present; **their meaning hasn't been weakened**. Compare them sentence by sentence with the approved wording. `check_claims.py` checks that the ID and its confirmed numbers are still there, but can't judge wording (LESSONS L-12)
 - [ ] Anything the JD asks for without evidence is **not written** and is listed in the Coverage Report
+- [ ] Nothing strong was left out by accident: every Claim Card is in the evidence table, and any unused card that beats something in the resume was swapped in or has a reason (D-019)
 - [ ] No sensitive information (a former employer's confidential details, other people's private information)
 
 ## B. Writing

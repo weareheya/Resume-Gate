@@ -45,7 +45,7 @@ AI 给每条 Experience bullet 标「是 / 否」，并跑一遍结构检查。�
 | R3 | 动作开头 | 以说得出你做了什么的行动动词开头。不算：「Responsible for」「Duties included」「Worked on」，以及「Helped」「Assisted」「Supported」「Participated in」这类弱动词 | 标「是」的条数 / 全部 bullet | 15 |
 | R4 | 具体 | 没有空话：「results-oriented」「passionate」「various」「etc.」「team player」 | 标「是」的条数 / 全部 bullet | 10 |
 | R5 | 结构 | 下面的检查项 | 通过 / 检查 | 15 |
-| J1 | JD 覆盖 | JD 的每条核心要求：直接、部分，还是没有证据。硬性要求标 `"gate": true`，没有直接满足的会由 `report_score.py` 列出。岗位匹配报告里 J1 一定计分：没填要求就按 0 算，漏掉 JD 不会让分数变高 | （直接 + ½ × 部分）/ 要求数 | 30 |
+| J1 | JD 覆盖 | JD 的每条核心要求：直接、部分，还是没有证据。WORKFLOW S3 的五类这样对应：直接 → `direct`，可迁移或组合 → `partial`，其余 → `none`。硬性要求标 `"gate": true`，没有直接满足的会由 `report_score.py` 列出。岗位匹配报告里 J1 一定计分：没填要求就按 0 算，漏掉 JD 不会让分数变高 | （直接 + ½ × 部分）/ 要求数 | 30 |
 | J2 | 位置 | 已覆盖的要求，最强证据放在 Summary 或某段经历的第一条 | 标「是」的条数 / 已覆盖的要求 | 15 |
 | J3 | 用词 | 证据支持的 JD 关键词里，简历用上了几个 | 用上的 / 有证据支持的 | 10 |
 

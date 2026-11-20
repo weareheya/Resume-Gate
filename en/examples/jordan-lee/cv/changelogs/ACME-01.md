@@ -8,18 +8,23 @@ date: 2026-05-10
 
 # Acme Cloud · Partner Development Manager · CV Change Log
 
-New version: `cv/resumes/acme-pdm.md`. JD source: (fictional; not included)
+New version: `cv/resumes/acme-pdm.md`. JD: `jobs/ACME-01.md`
 
-## Evidence Retrieval Gate · What was read
+## Positioning
 
-| Source | Used for |
-|---|---|
-| C-001 · Channel partner growth and tiering (protected) | Summary and bullet 1; "don't rephrase as" limits |
-| C-002 · Self-serve partner portal | Read; dropped from this version (see Delta) |
-| C-003 · Partner-sourced pipeline US$2.1M | Moved into the Summary; kept as pipeline, not revenue |
-| C-004 · Joint webinars | Moved up; adjacent evidence for co-selling |
-| C-005 · Partner summit talk | Not used: status is Needs review |
-| DECISIONS D-001 to D-004 | Inherit the baseline, keep strong results, claim cards, no evidence no claim |
+Close match to type 01 (channel & partnerships), so one line: a partner developer who builds the program and then gets partners selling. Baseline `channel-baseline` for facts and wording.
+
+## Evidence table (every card)
+
+| Card | Relevance to this job | Used? | Where, or why not |
+|---|---|---|---|
+| C-001 · Channel partner growth and tiering (protected) | High | Yes | Summary and bullet 1; "don't rephrase as" limits |
+| C-002 · Self-serve partner portal | Medium | No | Partner enablement, but the JD doesn't ask for tooling and the page is full |
+| C-003 · Partner-sourced pipeline US$2.1M | High | Yes | Moved into the Summary; kept as pipeline, not revenue |
+| C-004 · Joint webinars | High | Yes | Moved up; closest evidence for joint go-to-market |
+| C-005 · Partner summit talk | Medium | No | Status is Needs review |
+
+**Unused but strong?** C-002 could show enablement, but C-004 is closer to R2 (co-selling) and space is tight. Asked the user (below).
 
 ## Delta (against the baseline)
 
@@ -33,11 +38,11 @@ New version: `cv/resumes/acme-pdm.md`. JD source: (fictional; not included)
 
 ## JD Coverage Report
 
-| JD requirement | Covered | Notes / How to close the gap |
-|---|---|---|
-| Partner recruitment and tiering | Direct | C-001 |
-| Co-selling with partners | Partial | C-004 is co-marketing, not co-selling. Written as co-marketing. Prepare an interview story about joint account planning |
-| Cloud marketplace experience | None | No evidence, so left out. Mention willingness to learn; don't imply experience |
+| # | JD requirement | Gate | Kind | Evidence | Next step |
+|---|---|---|---|---|---|
+| R1 | Partner recruitment and tiering | yes | Direct | C-001 | n/a |
+| R2 | Co-selling with partners | | Transferable or combined | C-004 (co-marketing) + C-003 (deal registration) | Written as co-marketing, not co-selling. Prepare an interview story about joint account planning |
+| R3 | Cloud marketplace experience | | Buildable | n/a | Left out. A short marketplace listing course would close part of it; mention willingness to learn, don't imply experience |
 
 **Main gap**: no direct co-selling or marketplace results.
 

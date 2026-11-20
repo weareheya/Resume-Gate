@@ -472,6 +472,18 @@ class AuditBypasses(unittest.TestCase):
         self.assertEqual(code, 0, out)
         self.assertIn("NOTE  C-001: dropped or shortened with the user's approval", out)
 
+    def test_protected_keep_for_other_type_may_be_left_out(self):
+        (self.root / "evidence/claims/C-001.md").write_text(
+            CARD.format(id="C-001", status="Safe to draft", protected="true").replace("protected: true", "protected: true\nkeep-for: 01"),
+            encoding="utf-8")
+        self.check("## Summary\nGrew active partners from 12 to 40. <!-- C-001 -->\n", "base")
+        code, out = self.check("---\nbase: base\ntype: 02\n---\n## Summary\nDeal person. <!-- C-007 -->\n", "pm")
+        self.assertEqual(code, 0, out)
+        self.assertIn("kept for type(s) 01; this resume is type 02", out)
+        code, out = self.check("---\nbase: base\ntype: 01\n---\n## Summary\nDeal person. <!-- C-007 -->\n", "ch")
+        self.assertEqual(code, 1, out)
+        self.assertIn("Protected claim C-001 is used in the baseline", out)
+
     def test_protected_claim_weakened_fails(self):
         self.check("## Summary\nGrew active partners from 12 to 40. <!-- C-001 -->\n", "base")
         code, out = self.check("---\nbase: base\n---\n## Summary\nManaged partner relationships. <!-- C-001 -->\n", "v2")

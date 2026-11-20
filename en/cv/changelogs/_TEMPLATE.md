@@ -8,13 +8,20 @@ date: YYYY-MM-DD
 
 # <Role> · CV Change Log
 
-JD source: (link or file path)
+JD: `jobs/<job-id>.md`
 
-## Evidence Retrieval Gate · What was read
+## Positioning
 
-| Source | Used for |
-|---|---|
-| Claim C-0xx | |
+(One line for a close match. For a stretch: 2 or 3 options with their angle, strongest evidence and main gap, and which one was chosen and why.)
+
+## Evidence table (every card)
+
+| Card | Relevance to this job | Used? | Where, or why not |
+|---|---|---|---|
+| C-0xx | High / Medium / Low | Yes / No | |
+| Low: C-0xx, C-0yy | Low | No | Unrelated to this job (one line for all of them) |
+
+**Unused but strong?** (Any card that would beat something already in the resume, and what was decided.)
 
 ## Delta (against the baseline)
 
@@ -26,9 +33,9 @@ JD source: (link or file path)
 
 ## JD Coverage Report
 
-| JD requirement | Covered | Notes |
-|---|---|---|
-| | Yes / Partly / None | |
+| # | JD requirement | Gate | Kind | Evidence | Next step |
+|---|---|---|---|---|---|
+| R1 | | | Direct / Transferable or combined / Not found yet / Buildable / Hard gap | | |
 
 **Main gaps**:
 

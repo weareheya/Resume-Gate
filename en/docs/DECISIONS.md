@@ -7,7 +7,7 @@
 
 **applies-to**: `all` (the default), `type: 01`, or `job: ACME-01`. A rule that only fits one kind of job or one application shouldn't become a global rule. Only `all` binds every resume.
 
-D-001 to D-017 are starter rules, each born from a real mistake. D-001 to D-010 keep facts from getting lost or inflated; D-011 to D-016 help you dig out what your experience is actually worth, so it doesn't get written too weakly; D-017 keeps the rules themselves from asking more than a real job search can give. To change or switch one off, add a rule in `MY-DECISIONS.md` that says which one it overrides.
+D-001 to D-019 are starter rules, each born from a real mistake. D-001 to D-010 keep facts from getting lost or inflated; D-011 to D-016, D-018 and D-019 help you dig out what your experience is actually worth, so it doesn't get written too weakly; D-017 keeps the rules themselves from asking more than a real job search can give. To change or switch one off, add a rule in `MY-DECISIONS.md` that says which one it overrides.
 
 ---
 
@@ -93,5 +93,16 @@ D-001 to D-017 are starter rules, each born from a real mistake. D-001 to D-010 
 - Every block has a way through once you agree (for a protected claim, `protected-ok: C-xxx`). You never get stuck on an error you've already approved.
 - An update never requires work before your resumes keep passing. New checks start as reminders, or only switch on once you've filled in what they need.
 - Before adding or tightening a rule, ask: what fabrication does this stop? If there's no answer, it's a reminder, not a block (LESSONS L-13).
+
+
+## D-018 · Inherit the facts, not the story
+- scope: cv · status: Active
+- A new version inherits confirmed facts, numbers and their attribution, approved wording, the user's decisions and known mistakes from its baseline. It does not have to inherit the baseline's positioning, which experiences lead, how they're combined, or their order.
+- When a job is a stretch from your existing types, the best story may never have appeared in an old resume. Choose the positioning first (S1), then use the baseline as the source of wording. Show the result as a delta, so the user can still see every change.
+
+## D-019 · Check what's missing, not only what's wrong
+- scope: cv · status: Active
+- A resume can be accurate and still undersell the candidate. In S2, look at every Claim Card and record which ones are used and why the others aren't.
+- If an unused card is stronger for this job than something already in the resume, swap it in or say why not. Stop when no swap clearly adds value; don't keep rewriting a version that's already good.
 
 ---
