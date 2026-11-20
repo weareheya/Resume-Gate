@@ -16,7 +16,7 @@ Run `python3 scripts/validate_evidence.py` and `python3 scripts/check_claims.py 
 - [ ] Every line traces to a Claim Card. An approved or sent resume is not evidence, only approved wording
 - [ ] Every bullet carries its Claim ID in an HTML comment, and each one points to a card marked `Safe to draft`; no number used is marked `to verify` on its card
 - [ ] Numbers keep their units and scope (currency, time window, qualifiers like "potential" or "cumulative")
-- [ ] Each line respects its card's "Don't rephrase as", including softer versions of the same claim: "built with engineering" or "helped build" still says you built it, when the card says engineering did. `check_claims.py` warns on quoted wording from that section; read every such WARN, and reword or explain it. Don't fix it by dropping the true part: "wrote the requirements with engineering, who built it" is accurate, and it's exactly what a job asking for work with engineering wants to see (D-015)
+- [ ] Each line respects its card's "Don't rephrase as". The question is whether a line claims someone else's work as yours alone ("built the portal"). Shared wording such as "built with engineering" is reasonable packaging, and some vagueness is fine. `check_claims.py` warns on quoted wording from that section: read each WARN, and reword only if the line takes sole credit. Don't fix it by going quiet about a real collaboration (D-015, LESSONS L-14)
 - [ ] Individual contribution is separate from team results; titles match the employment record and aren't inflated
 - [ ] Start and end dates, company type, and role are correct
 - [ ] A result that happened at the same time isn't credited entirely to the candidate (causality); a link that *can* be shown is written, not split apart by reflex (D-014)

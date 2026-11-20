@@ -4,7 +4,8 @@ What changed in each version, and whether you need to do anything. Your version 
 
 ## 0.5.2 · 2026-11-20
 
-- Self-review: when a "Don't rephrase as" warning fires, fix the wording without dropping the true part. "Wrote the requirements with engineering, who built it" is accurate and strong. The eval run after 0.5.1 found every product-manager version going quiet about engineering instead (LESSONS L-14).
+- **Shared credit is fine; sole credit isn't.** 0.5.1 treated "built with engineering" as oversell when a card says engineering built it. That was too strict: it pushed resumes into going quiet about real collaboration, and a blind reviewer preferred versions that named it. Self-review now asks one question: does a line claim someone else's work as yours alone? Reasonable packaging and some vagueness are fine (LESSONS L-14, D-015).
+- The example card C-002 quotes the sole-credit phrases ("built the portal", "built and launched"), so the warning no longer fires on "built with engineering".
 
 **What you need to do**: nothing.
 

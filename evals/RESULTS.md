@@ -25,7 +25,7 @@ One section per run, newest first. Record the kit versions compared, how many ru
 - The scorer flagged "Engineering designed and built it" as oversell. That was a false positive: the sentence is accurate attribution. The `built` patterns now target the candidate as builder ("built the…", "built with…", "helped build").
 - `check_claims.py` also warns on "built by engineering". That is noise, but it is only a warning, and the self-review note now says how to resolve it.
 
-**Changed because of this run**: kit 0.5.2 tells self-review to fix the wording, not drop the fact (REVIEW-CHECKLIST A, LESSONS L-14). Narrower `built` patterns in the product-manager and customer-success gold.
+**Changed because of this run**: kit 0.5.2 redraws the line as sole credit vs shared credit. "Built with engineering" is reasonable packaging (the maintainer's call, and what the blind reader rewarded). Only "built the portal"-style sole credit is ruled out (REVIEW-CHECKLIST A, LESSONS L-14). The gold's `built` patterns now target sole credit only. By this rule, the first run's "a portal, built with engineering" wasn't an oversell either.
 
 **Limits**: one AI reviewer, one case blind-read, three runs per side. Treat this as direction. Have a real recruiter do the blind read before drawing firmer conclusions.
 

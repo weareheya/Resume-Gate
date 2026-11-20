@@ -6,8 +6,7 @@
   "should_use": [],
   "must_not_use": ["C-005"],
   "forbidden": [
-    "\\bbuilt (a|an|the|and|with)\\b",
-    "helped (to )?build",
+    "\\bbuilt (a|an|the|and)\\b",
     "co-buil",
     "\\blaunched (a|an|the)\\b",
     "designed the portal",

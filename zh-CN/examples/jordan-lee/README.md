@@ -35,13 +35,12 @@ NOTE  C-002 在基线（channel-baseline.md）里用到了，这里没有
 
 NOTE 是预期内的：C-002 不受保护，Change Log 里写了为什么删。
 
-**`acme-pdm-with-traps.md` 未通过**（退出码 1），六个错误，另外门户那一行有两条提醒：
+**`acme-pdm-with-traps.md` 未通过**（退出码 1），六个错误，另外门户那一行有一条提醒：
 
 ```text
 ERROR acme-pdm-with-traps.md:17：这一行没有 Claim ID：Partner development leader with a track record of buildin...
 ERROR acme-pdm-with-traps.md:18：C-005 的状态是「需复核」，只有「Safe to draft」才能使用
-WARN  acme-pdm-with-traps.md:24：「built」是 C-002 的「禁止改写」里提醒过的说法。……
-WARN  acme-pdm-with-traps.md:24：「launched」是 C-002 的「禁止改写」里提醒过的说法。……
+WARN  acme-pdm-with-traps.md:24：「built and launched」是 C-002 的「禁止改写」里提醒过的说法。……
 ERROR acme-pdm-with-traps.md:25：「revenue」是 C-003 的禁用词（见卡上的「禁止改写」）
 ERROR acme-pdm-with-traps.md:26：数字「420」在 C-004 里找不到。……
 ERROR acme-pdm-with-traps.md:27：C-009 找不到对应的 Claim Card
@@ -58,7 +57,7 @@ ERROR 受保护的 claim C-001 在基线（channel-baseline.md）里用到了，
 | 3 | 研讨会那条 | 420 人报名，卡上写的是 380 | 脚本 |
 | 4 | 联合销售那条 | 引用了不存在的 C-009 | 脚本 |
 | 5 | 整份文件 | 受保护的 C-001（12 → 40 家伙伴）被删了 | 脚本 |
-| 6 | 门户那条 | 写成 "Built and launched" 门户。C-002 写明是工程团队做的，Jordan 写的是需求 | **你**，脚本会提醒。ID 和数字都对，所以不算错误；但 C-002 的「禁止改写」里引了 "built" 和 "launched"，脚本会给出提醒 |
+| 6 | 门户那条 | 写成 "Built and launched" 门户。C-002 写明是工程团队做的，Jordan 写的是需求 | **你**，脚本会提醒。ID 和数字都对，所以不算错误；但 C-002 的「禁止改写」里引了 "built and launched"，脚本会给出提醒 |
 | 7 | 营收那条 | "Generated US$2.1M in partner revenue"。C-003 写明这是 pipeline，不是营收 | 脚本：revenue 在 C-003 的禁用词里 |
 
-重点在第 6 个：脚本检查每一行有没有出处、数字的数值和币种对不对得上、有没有用禁用词。第 7 个能被抓到，只是因为 C-003 把 revenue 列成了禁用词。"Built and launched" 算不算对「写需求」的合理表述，是脚本判断不了的。脚本只会在某一行用了卡上「禁止改写」里加了引号的说法时提醒；换个说法（比如 "a portal, built with engineering"）把那个词绕开它就抓不到了，它也分辨不出这个词什么时候其实没问题。这些要靠自审清单和你自己读一遍。
+重点在第 6 个：脚本检查每一行有没有出处、数字的数值和币种对不对得上、有没有用禁用词。第 7 个能被抓到，只是因为 C-003 把 revenue 列成了禁用词。"Built and launched" 算不算对「写需求」的合理表述，是脚本判断不了的。脚本只会在某一行用了卡上「禁止改写」里加了引号的说法时提醒；换个说法它就分辨不出是独占功劳还是共享功劳：「a portal, built with engineering」没问题，「主导了门户开发」就可能有问题。这些要靠自审清单和你自己读一遍。

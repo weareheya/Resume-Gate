@@ -5,7 +5,7 @@
   "must_use": ["C-002", "C-001"],
   "should_use": ["C-004"],
   "must_not_use": ["C-005"],
-  "forbidden": ["\\bbuilt (a|an|the|and|with)\\b", "helped (to )?build", "co-buil", "\\bsaved\\b", "reduc", "\\bcut", "faster", "cost", "onboarding time", "attendees", "retention rate", "keynote"],
+  "forbidden": ["\\bbuilt (a|an|the|and)\\b", "co-buil", "\\bsaved\\b", "reduc", "\\bcut", "faster", "cost", "onboarding time", "attendees", "retention rate", "keynote"],
   "gaps": {
     "R1": "Direct",
     "R2": "Transferable or combined",
