@@ -3,6 +3,11 @@
 > Each entry: what happened → why → the guardrail now. When a new mistake happens, add it at the top.
 > Rules about facts and numbers belong in DECISIONS or a Claim Card. This file is for **process** mistakes.
 
+## L-13 · New checks were stricter than real life
+- **What happened**: Twice, a hardening pass added rules that real job searching can't meet: a card needing a document to count, new cards defaulting to `Needs review`, and in 0.3.0's first draft a blank Verified cell failing, a missing profile failing every resume, and any stray "two" or single digit failing. Even an approved protected-claim drop kept failing, with no way to record the approval.
+- **Why**: Each rule was judged by "could this hide a fake?" instead of "what fake does this stop, and what does it cost the user?" Strictness felt safe, so it went unquestioned.
+- **Guardrail**: D-017. Before shipping a check, sort each case into "stops a fabrication" (error) or "might be wording / incomplete" (warning), give every error an approval path, and make sure an upgrade needs no action. Test both directions: a fake must fail, and an honest resume with ordinary gaps must pass.
+
 ## L-12 · A strength that had been corrected came back weakened (semantic regression)
 - **What happened**: The user had already corrected it once: the core of an experience was a regional narrative strategy, not relationship management. In the next version the experience was still there, Claim ID and all, but the wording had slid back to "relationship management."
 - **Why**: The AI rewrote toward the JD's familiar vocabulary and swapped an unfamiliar strength for a familiar, weaker phrase. `check_claims.py` only checks that the Claim ID is present, so it passed.

@@ -525,6 +525,42 @@ class ScoreFormula(unittest.TestCase):
         self.assertEqual(self.score(self.report(one_of_three, dims={"J1": False})), 86)
 
 
+class HonestResume(unittest.TestCase):
+    """D-017: an honest resume with ordinary gaps must pass. If a new rule breaks this, it's too strict."""
+
+    def test_ordinary_gaps_pass(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            (root / "evidence/claims").mkdir(parents=True)
+            (root / "cv/resumes").mkdir(parents=True)
+            # self-stated card, blank Verified cells, no evidence/profile.md yet
+            (root / "evidence/claims/C-001.md").write_text(PIPELINE.format(id="C-001", verified="")
+                .replace("evidence: on record", "evidence: can explain"), encoding="utf-8")
+            (root / "cv/resumes/r.md").write_text(textwrap.dedent("""
+                ---
+                id: r
+                base:
+                ---
+                ## Summary
+                Partnerships manager who works across two teams. <!-- C-001 -->
+                ## Experience
+                ### Partnerships Manager · Northwind · 2022–2023
+                B2B SaaS company, partner channel team.
+                - Set up partner deal registration across three tiers;
+                  partner-sourced pipeline reached US$2.1M in FY2023. <!-- C-001 -->
+                ## Education
+                BA · Some University · 2015
+                ## Skills
+                Partner programs, CRM, 3-tier models
+                """).lstrip(), encoding="utf-8")
+            r = subprocess.run([sys.executable, "-I", str(SCRIPT), "cv/resumes/r.md", "--lang", "en"],
+                               cwd=root, capture_output=True, text=True)
+            self.assertEqual(r.returncode, 0, r.stdout)
+            v = subprocess.run([sys.executable, "-I", str(SCRIPT.with_name("validate_evidence.py")), "--lang", "en"],
+                               cwd=root, capture_output=True, text=True)
+            self.assertEqual(v.returncode, 0, v.stdout)
+
+
 class WorkedExample(unittest.TestCase):
     """examples/jordan-lee must behave the way its README says."""
     EXAMPLE = SCRIPT.parent.parent / "examples" / "jordan-lee"

@@ -27,6 +27,7 @@ Evidence checks are much harder to slip past, without asking for more proof than
 **Also**
 - New `scripts/validate_evidence.py` checks the evidence bank itself: unique IDs, valid statuses, `protected` true or false, and Verified values.
 - Fixed the example card C-001: its two accounts of who signed the 28 partners disagreed, and its approved wording called a share of leads a share of "pipeline".
+- New rule **D-017** (and LESSONS L-13): a check may block only what stops a real misstatement; everything else is a reminder, every block has an approval path, and an update never needs work before your resumes pass. A new test keeps an honest resume with ordinary gaps passing.
 - The repo runs the tests in both languages on every pull request.
 
 **What you need to do**: nothing is required. Your resumes keep passing unless they hit one of the "now fails" cases above, which is the point. When you have five minutes, copy `evidence/profile.md` from the new kit into your `evidence/` folder (an update doesn't touch your evidence) and fill in your roles and education to turn that check on, then run `python3 scripts/validate_evidence.py`.

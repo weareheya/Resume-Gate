@@ -7,7 +7,7 @@
 
 **applies-to**: `all` (the default), `type: 01`, or `job: ACME-01`. A rule that only fits one kind of job or one application shouldn't become a global rule. Only `all` binds every resume.
 
-D-001 to D-016 are starter rules, each born from a real mistake. D-001 to D-010 keep facts from getting lost or inflated; D-011 to D-016 help you dig out what your experience is actually worth, so it doesn't get written too weakly. To change or switch one off, add a rule in `MY-DECISIONS.md` that says which one it overrides.
+D-001 to D-017 are starter rules, each born from a real mistake. D-001 to D-010 keep facts from getting lost or inflated; D-011 to D-016 help you dig out what your experience is actually worth, so it doesn't get written too weakly; D-017 keeps the rules themselves from asking more than a real job search can give. To change or switch one off, add a rule in `MY-DECISIONS.md` that says which one it overrides.
 
 ---
 
@@ -85,5 +85,13 @@ D-001 to D-016 are starter rules, each born from a real mistake. D-001 to D-010 
 - scope: strategy · status: Active
 - Look at public career information for people in the same role at the company. Use it to tell which JD requirements are hard gates and which can be met with adjacent experience, then decide the order of your experience and whether to apply.
 - Public information only, used to understand the role. Don't build profiles of individuals.
+
+## D-017 · No rule may ask for more than a real job search can give
+- scope: process · status: Active
+- Most facts rest on your own account and how solidly you can explain them in an interview, not on contracts or documents. Your own word is enough for a card, a number you gave is confirmed, and a blank field you didn't fill is not held against you.
+- A rule may **block** (fail a check, refuse to write) only when it stops a real misstatement: a changed amount, scale or currency; a banned phrase; an invented role, employer or degree; a claim with no card; a duplicate ID; a protected claim dropped without approval. Anything that might just be wording, or that's merely incomplete, is a **reminder** at most.
+- Every block has a way through once you agree (for a protected claim, `protected-ok: C-xxx`). You never get stuck on an error you've already approved.
+- An update never requires work before your resumes keep passing. New checks start as reminders, or only switch on once you've filled in what they need.
+- Before adding or tightening a rule, ask: what fabrication does this stop? If there's no answer, it's a reminder, not a block (LESSONS L-13).
 
 ---
