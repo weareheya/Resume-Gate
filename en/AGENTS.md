@@ -37,12 +37,12 @@ Before you do any resume work in this repo, read these in order:
 - If `cv/CV-INDEX.md` has no Approved starting point yet, do Step 0 in `docs/WORKFLOW.md` before anything else.
 - Before generating any resume, pass the Evidence Retrieval Gate: read the relevant Claim Cards and **list which ones you read**.
 - Start from the best-fitting approved version and make a delta. Never start from a blank page. Record changes in `cv/changelogs/`.
-- Never drop or weaken a claim marked `protected: true` without the user's approval. If a new version leaves one out, say so and explain why.
+- Never drop or weaken a claim marked `protected: true` without the user's approval. If a new version leaves one out, say so and explain why. Once the user approves, record it as `protected-ok: C-xxx` in the resume's front matter so `check_claims.py` stops flagging it.
 - When you say a check is done, attach a Coverage Report: what you covered and what you didn't.
 - Self-review against `docs/REVIEW-CHECKLIST.md` before showing anything to the user.
 - Reports follow `docs/REPORT.md`. Never send or upload a full report: it holds all the user's details. For sharing, make a copy with `scripts/report_share.py`.
 - Before showing a resume to the user, run `python3 scripts/validate_evidence.py` and `python3 scripts/check_claims.py cv/resumes/<id>.md`, fix every error, and report the result.
-- Roles, employers, dates and education come only from `evidence/profile.md`. Never change that file without the user's explicit approval.
+- Once `evidence/profile.md` is filled in, roles, employers, dates and education on a resume must match it. Add or change a row only after the user confirms it, the same as any card.
 - **Human review gate**: until the user says "approved", a version stays `Draft`. Don't edit a version marked `Sent`.
 
 **Permissions**

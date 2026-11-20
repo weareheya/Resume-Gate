@@ -339,14 +339,18 @@ class AuditBypasses(unittest.TestCase):
         self.assertEqual(code, 1, out)
 
     def test_numbers_outside_source_sections_do_not_count(self):
-        # 007 is the Claim ID, 5 is in "Don't rephrase as", 7 is in Notes
-        code, out = self.line("- Closed 007 deals worth 5M with 7 partners. <!-- C-007 -->")
-        for x in ('"007"', '"5M"', '"7"'):
-            self.assertIn(x, out)
+        # 19 is only in the Claim ID, 5M only in "Don't rephrase as"; 7 in Notes is a fair source
+        self.pipeline("C-019")
+        code, out = self.line("- Logged 019 deals worth 5M and prepared 7 answers. <!-- C-019 -->")
+        self.assertIn('"019"', out)
+        self.assertIn('"5M"', out)
+        self.assertNotIn('"7"', out)
 
-    def test_single_digits_and_number_words(self):
+    def test_single_digits_and_number_words_are_warnings(self):
+        # often just wording ("two teams", "3-tier"), so they're flagged, not failed
         code, out = self.line("- Signed 9 partners and eleven resellers. <!-- C-007 -->")
-        self.assertIn('"9"', out)
+        self.assertEqual(code, 0, out)
+        self.assertIn('WARN  r.md:2: "9"', out)
         self.assertIn('"eleven"', out)
 
     # the card bank itself
@@ -356,8 +360,14 @@ class AuditBypasses(unittest.TestCase):
         self.assertEqual(code, 1, out)
         self.assertIn("C-007 is defined by more than one card (C-007.md, Z-copy.md)", out)
 
-    def test_blank_or_misspelt_verified_is_not_confirmed(self):
-        for v in ("", "tbd", "cofnirmed"):
+    def test_blank_verified_counts_as_confirmed(self):
+        # the user gave the number; validate_evidence.py reminds them to tick it
+        self.pipeline("C-007", verified="")
+        code, out = self.line("- Pipeline reached US$2.1M. <!-- C-007 -->")
+        self.assertEqual(code, 0, out)
+
+    def test_other_verified_values_are_not_confirmed(self):
+        for v in ("tbd", "cofnirmed", "to verify"):
             self.pipeline("C-007", verified=v)
             code, out = self.line("- Pipeline reached US$2.1M. <!-- C-007 -->")
             self.assertIn('"US$2.1M" is not marked ✓ on C-007', out, repr(v))
@@ -397,15 +407,16 @@ class AuditBypasses(unittest.TestCase):
         self.assertEqual(out.count("Education line doesn't match"), 1, out)
         self.assertIn("PhD", out)
 
-    def test_missing_profile_fails(self):
+    def test_missing_profile_is_a_warning(self):
         (self.root / "evidence/profile.md").unlink()
         code, out = self.check("""
             ## Experience
             ### VP of AI · Google · 2018–2023
             - Pipeline reached US$2.1M. <!-- C-007 -->
             """)
-        self.assertEqual(code, 1, out)
-        self.assertIn("profile.md is missing", out)
+        self.assertEqual(code, 0, out)
+        self.assertIn("WARN", out)
+        self.assertIn("profile.md is missing or empty", out)
 
     def test_other_sections(self):
         code, out = self.check("""
@@ -417,8 +428,8 @@ class AuditBypasses(unittest.TestCase):
             Tripled revenue to US$90M.
             Chess, hiking
             """)
-        self.assertIn("no Claim ID on this line: Tripled revenue.", out)
-        self.assertIn("no Claim ID on this line: Tripled revenue to US$90M.", out)
+        self.assertIn("no Claim ID on this line: Tripled revenue.", out)   # Achievements is checked like Experience
+        self.assertIn('"Awards & Interests", line 6 has a number no card backs: Tripled revenue to US$90M.', out)
         self.assertIn('section "Awards & Interests" has 2 line(s)', out)
 
     # baseline
@@ -433,6 +444,33 @@ class AuditBypasses(unittest.TestCase):
         self.assertIn("no `base:`, but CV-INDEX already has a starting point for type 01", out)
         code, out = self.check("---\nid: base\ntype: 01\nbase:\n---\n## Summary\nGrew partners from 12 to 40. <!-- C-001 -->\n", "base")
         self.assertEqual(code, 0, out)  # the listed baseline itself is fine
+
+    def test_plain_experience_line_without_number_is_listed_not_failed(self):
+        code, out = self.check("""
+            ## Experience
+            ### Partnerships Manager · Northwind · 2022–2023
+            B2B SaaS company, partner channel team.
+            - Pipeline reached US$2.1M. <!-- C-007 -->
+            """)
+        self.assertEqual(code, 0, out)
+        self.assertIn('section "Experience" has 1 line(s)', out)
+
+    def test_profile_matching_tolerates_punctuation_and_variants(self):
+        (self.root / "evidence/profile.md").write_text(PROFILE.replace("| Partnerships Manager |", "| Partnerships Manager; 合作伙伴经理 |"), encoding="utf-8")
+        code, out = self.check("""
+            ## Experience
+            ### 合作伙伴经理 · Northwind · 2022–2023
+            - Pipeline reached US$2.1M. <!-- C-007 -->
+            ## Education
+            B.A. · Some University · 2015
+            """)
+        self.assertEqual(code, 0, out)
+
+    def test_protected_drop_approved_in_front_matter(self):
+        self.check("## Summary\nGrew active partners from 12 to 40. <!-- C-001 -->\n", "base")
+        code, out = self.check("---\nbase: base\nprotected-ok: C-001\n---\n## Summary\nDeal person. <!-- C-007 -->\n", "v2")
+        self.assertEqual(code, 0, out)
+        self.assertIn("NOTE  C-001: dropped or shortened with the user's approval", out)
 
     def test_protected_claim_weakened_fails(self):
         self.check("## Summary\nGrew active partners from 12 to 40. <!-- C-001 -->\n", "base")

@@ -5,9 +5,10 @@ What it checks:
   1. Every Claim Card has an `id`, and no two cards share one.
   2. `status` is one of: Needs review | Safe to draft | Interview only | Retired (or the Chinese names).
   3. `protected` is true or false.
-  4. The Numbers table has a Verified column, and every value in it is ✓ or a "to verify" marker.
-     A blank or misspelt value is an error: check_claims.py treats it as not confirmed.
-  5. evidence/profile.md exists and lists at least one role.
+  4. Every value in the Numbers table's Verified column is ✓, "to verify", or blank. A blank counts
+     as confirmed (you gave the number) and is only a reminder to tick it; any other value is an
+     error, because check_claims.py treats it as not confirmed.
+  5. evidence/profile.md lists at least one role (a reminder, not an error).
 
 Usage:
   python3 scripts/validate_evidence.py [--claims evidence/claims] [--profile evidence/profile.md] [--lang en|zh]
@@ -35,10 +36,11 @@ T = {
         "dup": "{c} is used by more than one card: {f}",
         "status": "{f}: status \"{s}\" isn't one of Needs review / Safe to draft / Interview only / Retired",
         "protected": "{f}: protected must be true or false, not \"{v}\"",
-        "no_verified": "{f}: the Numbers table has no Verified column, so its numbers can't be told apart from unconfirmed ones",
+        "no_verified": "{f}: the Numbers table has no Verified column; its numbers count as confirmed. Add the column to mark any that aren't",
+        "blank": "{f}: {k} number(s) with a blank Verified cell count as confirmed. Tick them ✓ when you next look at the card",
         "verified": "{f}: Verified value \"{v}\" on row \"{r}\" is neither ✓ nor \"to verify\"",
-        "no_profile": "{p} is missing or lists no roles. Role headings and Education can't be checked until it's filled in",
-        "ok": "OK: {n} cards checked, no errors",
+        "no_profile": "{p} is missing or lists no roles. Role headings and Education aren't checked until it's filled in",
+        "ok": "OK: {n} cards checked, no errors{w}",
         "fail": "FAILED: {e} error(s)",
     },
     "zh": {
@@ -47,10 +49,11 @@ T = {
         "dup": "{c} 被多张卡使用：{f}",
         "status": "{f}：状态「{s}」不是 需复核 / Safe to draft / 仅面试 / 已停用 之一",
         "protected": "{f}：protected 只能是 true 或 false，不是「{v}」",
-        "no_verified": "{f}：数字表没有「核实」一列，没法区分已确认和未确认的数字",
+        "no_verified": "{f}：数字表没有「核实」一列，里面的数字都按已确认处理。需要标出未确认的，就加上这一列",
+        "blank": "{f}：有 {k} 个数字的「核实」一栏是空的，按已确认处理。下次看这张卡时顺手打上 ✓",
         "verified": "{f}：「{r}」这一行的核实值「{v}」既不是 ✓ 也不是「待核实」",
-        "no_profile": "{p} 不存在或没有填写任职。填好之前，职位标题和教育背景没法检查",
-        "ok": "通过：检查了 {n} 张卡，没有错误",
+        "no_profile": "{p} 不存在或没有填写任职。填好之前，职位标题和教育背景不会被检查",
+        "ok": "通过：检查了 {n} 张卡，没有错误{w}",
         "fail": "未通过：{e} 个错误",
     },
 }
@@ -67,11 +70,15 @@ def main():
     if not files:
         print(t["no_claims"].format(p=a.claims)); return 2
 
-    errors, seen = 0, {}
+    errors, warns, seen = 0, 0, {}
 
     def err(msg):
         nonlocal errors
         print("ERROR " + msg); errors += 1
+
+    def warn(msg):
+        nonlocal warns
+        print("WARN  " + msg); warns += 1
 
     for f in files:
         text = f.read_text(encoding="utf-8")
@@ -94,13 +101,18 @@ def main():
         for header, rows in cc.parse_tables(numbers):
             vcol = next((i for i, c in enumerate(header) if c in cc.VERIFY_HEADERS), None)
             if vcol is None:
-                err(t["no_verified"].format(f=f.name)); continue
+                warn(t["no_verified"].format(f=f.name)); continue
+            blank = 0
             for cells in rows:
                 if not cc.tokens(cells[0]):
                     continue  # a row with no number in it, e.g. "(none yet)"
                 v = cells[vcol].strip() if vcol < len(cells) else ""
-                if v.lower() not in cc.VERIFIED_OK and v.lower() not in PENDING:
+                if not v:
+                    blank += 1
+                elif v.lower() not in cc.VERIFIED_OK and v.lower() not in PENDING:
                     err(t["verified"].format(f=f.name, v=v, r=cells[0][:40]))
+            if blank:
+                warn(t["blank"].format(f=f.name, k=blank))
     for cid, names in sorted(seen.items()):
         if len(names) > 1:
             err(t["dup"].format(c=cid, f=", ".join(names)))
@@ -108,9 +120,10 @@ def main():
     ppath = Path(a.profile) if a.profile else Path(a.claims).parent / "profile.md"
     profile = cc.load_profile(ppath)
     if not profile or not profile[0]:
-        err(t["no_profile"].format(p=ppath))
+        warn(t["no_profile"].format(p=ppath))
 
-    print(t["fail"].format(e=errors) if errors else t["ok"].format(n=len(files)))
+    w = ((f" ({warns} WARN)" if a.lang == "en" else f"（{warns} 条提醒）") if warns else "")
+    print(t["fail"].format(e=errors) if errors else t["ok"].format(n=len(files), w=w))
     return 1 if errors else 0
 
 

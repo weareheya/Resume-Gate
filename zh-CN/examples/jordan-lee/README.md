@@ -29,7 +29,7 @@ python3 ../../scripts/check_claims.py cv/resumes/acme-pdm-with-traps.md
 ```text
 WARN  acme-pdm.md：栏目「Skills」有 1 行，这个脚本不验证
 NOTE  C-002 在基线（channel-baseline.md）里用到了，这里没有
-通过：检查了 5 行，用到 3 个 Claim ID，没有错误
+通过：检查了 5 行，用到 3 个 Claim ID，没有错误（1 条提醒）
 ```
 
 NOTE 是预期内的：C-002 不受保护，Change Log 里写了为什么删。

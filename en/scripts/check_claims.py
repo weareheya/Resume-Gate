@@ -5,24 +5,26 @@ What it checks (these are the checks a script can do for certain):
   1. The resume has a Summary and/or Experience section the script recognizes (common names in
      English and Chinese are accepted, e.g. "Professional Summary", "Work Experience", "工作经历").
      If it recognizes neither, or finds nothing to check, the check FAILS instead of passing.
-  2. Every line under Summary, Experience and Projects/Achievements carries a Claim ID in an HTML
-     comment, e.g.  - Rebuilt the partner program ... <!-- C-001 -->
-     Bullets and plain lines both count. A line indented under a bullet is read as part of it.
+  2. Every line under Summary and Projects/Achievements, and every bullet under Experience, carries
+     a Claim ID in an HTML comment, e.g.  - Rebuilt the partner program ... <!-- C-001 -->
+     A line indented under a bullet is read as part of it. A plain line in Experience needs a
+     Claim ID only if it holds a number; otherwise it's listed as not verified.
   3. Every Claim ID points to exactly one card in evidence/claims/ whose status is "Safe to draft".
-     Numbers the card's Numbers table doesn't mark ✓ (to verify, blank, anything else) can't be used.
-  4. Every number on a checked line (counts, %, money, multiples, single digits and "two"–"twenty")
-     comes from the Claim Card(s) the line cites: the title, What happened, Attribution, Approved
-     wording or the Numbers table. Numbers in "Don't rephrase as", Source, Notes, To fill or the
-     Claim ID itself don't count. Scaled amounts are compared by value (US$2.1M = US$2,100,000,
-     but not US$2.1B), and a currency must match the card's.
+     Numbers the card marks "to verify" (or anything other than ✓ or blank) can't be used.
+  4. Every number on a checked line (counts, %, money, multiples) comes from the Claim Card(s) the
+     line cites. Numbers in "Don't rephrase as", Source, To fill or the Claim ID itself don't count.
+     Scaled amounts are compared by value (US$2.1M = US$2,100,000, but not US$2.1B), and a currency
+     must match the card's. A lone digit or "two"–"twenty" not on the card is only a warning.
   5. No checked line uses a word listed on a cited card's "Banned words:" line (e.g. revenue).
-  6. Role headings in Experience (### Title · Company · Years) and every Education line match
-     evidence/profile.md.
+  6. Once evidence/profile.md is filled in, role headings in Experience (### Title · Company · Years)
+     and every Education line must match it.
   7. Baseline: a new version must name its baseline (`base:`) when cv/CV-INDEX.md already has a
      starting point for its type. If it has one, every claim marked `protected: true` that the
-     baseline uses in Summary or Experience is still used there, with the same confirmed numbers.
-  Other non-empty sections (Skills, …) are reported as NOT verified; a line there that holds a
-  number must carry a Claim ID. Languages, Contact and References are skipped.
+     baseline uses in Summary or Experience is still used there, with the same confirmed numbers,
+     unless the user approved the change (`protected-ok: C-001` in the front matter).
+  Other non-empty sections (Skills, …) are reported as NOT verified, and a line there holding a
+  number no card backs is named. Languages, Contact and References are skipped.
+  Errors fail the check; WARN lines are worth a look but don't.
 
 What it does NOT check: whether a sentence is actually supported by its card (a valid ID can
 still sit on an invented sentence), or layout. Those still need a human (and the checklist).
@@ -58,15 +60,19 @@ T = {
         "no_sections": "{f}: no Summary or Experience section recognized (level-2 headings found: {h}). Nothing could be checked",
         "nothing": "{f}: Summary/Experience sections found but they contain no lines to check",
         "unchecked": "{f}: section \"{s}\" has {k} line(s) this script does not verify",
-        "no_profile": "{f}: role headings / Education can't be checked: {p} is missing or has no rows. Fill in your roles and education there",
+        "no_profile": "{f}: role headings / Education not checked yet: {p} is missing or empty. Fill in your roles and education there to turn this check on",
+        "weak_number": "{f}:{n}: \"{x}\" isn't on {c}. Fine if it's just wording; if it's a count, add it to the card",
+        "no_currency": "{f}:{n}: \"{x}\" has a currency, but {c} doesn't say which. Add the currency to the card's Numbers table",
+        "loose_number": "{f}: section \"{s}\", line {n} has a number no card backs: {t}",
+        "waived": "{c}: dropped or shortened with the user's approval (protected-ok in the front matter). Say why in the Change Log",
         "role": "{f}:{n}: role heading doesn't match any role in {p} (title, company and years): {t}",
         "education": "{f}:{n}: Education line doesn't match {p} (degree, school and year): {t}",
-        "dropped_protected": "Protected claim {c} is used in the baseline ({b}) but missing from Summary/Experience here. Restore it, or get the user's approval and explain why in the Change Log",
-        "weakened": "Protected claim {c}: the baseline ({b}) states {x} but this version no longer does. Restore it, or get the user's approval and explain why in the Change Log",
+        "dropped_protected": "Protected claim {c} is used in the baseline ({b}) but missing from Summary/Experience here. Restore it, or with the user's approval add `protected-ok: {c}` to the front matter and explain why in the Change Log",
+        "weakened": "Protected claim {c}: the baseline ({b}) states {x} but this version no longer does. Restore it, or with the user's approval add `protected-ok: {c}` to the front matter and explain why in the Change Log",
         "dropped": "{c} is used in the baseline ({b}) but not here",
         "base_missing": "Baseline file not found: {p}. The protected-claims check can't run. Fix `base:` or pass --base",
         "base_required": "{f}: no `base:`, but CV-INDEX already has a starting point for type {ty} ({s}). Set `base:` to the version this was copied from",
-        "ok": "OK: {n} lines checked, {c} Claim IDs used, no errors",
+        "ok": "OK: {n} lines checked, {c} Claim IDs used, no errors{w}",
         "fail": "FAILED: {e} error(s) in {f}",
         "scope": "Scope: this checks sourcing, numbers, banned words, roles/education and protected claims. It does not verify that each sentence is supported by its card, or check layout.",
     },
@@ -85,15 +91,19 @@ T = {
         "no_sections": "{f}：没有识别到 Summary 或 Experience 栏目（找到的二级标题：{h}），什么都没检查",
         "nothing": "{f}：找到了 Summary/Experience 栏目，但里面没有可检查的行",
         "unchecked": "{f}：栏目「{s}」有 {k} 行，这个脚本不验证",
-        "no_profile": "{f}：职位标题和教育背景没法检查：{p} 不存在或没有填写。请在那里填好任职和教育信息",
+        "no_profile": "{f}：职位标题和教育背景还没检查：{p} 不存在或是空的。在那里填好任职和教育信息后，这项检查就会生效",
+        "weak_number": "{f}:{n}：「{x}」不在 {c} 上。如果只是措辞可以不管；如果是数量，请补进卡片",
+        "no_currency": "{f}:{n}：「{x}」带了币种，但 {c} 上没写是哪种。请在卡片的数字表里补上币种",
+        "loose_number": "{f}：栏目「{s}」第 {n} 行有没有卡片支撑的数字：{t}",
+        "waived": "{c}：本人已同意删减（front matter 里的 protected-ok），请在 Change Log 里写明原因",
         "role": "{f}:{n}：职位标题和 {p} 里的任职对不上（职位、公司、年份）：{t}",
         "education": "{f}:{n}：教育这一行和 {p} 对不上（学位、学校、年份）：{t}",
-        "dropped_protected": "受保护的 claim {c} 在基线（{b}）里用到了，这里的 Summary/Experience 却没有。请补回，或取得本人批准并在 Change Log 里说明原因",
-        "weakened": "受保护的 claim {c}：基线（{b}）里写了 {x}，这一版没有了。请补回，或取得本人批准并在 Change Log 里说明原因",
+        "dropped_protected": "受保护的 claim {c} 在基线（{b}）里用到了，这里的 Summary/Experience 却没有。请补回；或经本人同意后在 front matter 里加 `protected-ok: {c}`，并在 Change Log 里说明原因",
+        "weakened": "受保护的 claim {c}：基线（{b}）里写了 {x}，这一版没有了。请补回；或经本人同意后在 front matter 里加 `protected-ok: {c}`，并在 Change Log 里说明原因",
         "dropped": "{c} 在基线（{b}）里用到了，这里没有",
         "base_missing": "找不到基线文件：{p}，受保护 claim 检查无法进行。请修正 `base:` 或用 --base 指定",
         "base_required": "{f}：没有写 `base:`，但 CV-INDEX 里类型 {ty} 已经有起点（{s}）。请把 `base:` 设为这份简历复制自的版本",
-        "ok": "通过：检查了 {n} 行，用到 {c} 个 Claim ID，没有错误",
+        "ok": "通过：检查了 {n} 行，用到 {c} 个 Claim ID，没有错误{w}",
         "fail": "未通过：{f} 里有 {e} 个错误",
         "scope": "范围：这里检查出处、数字、禁用词、职位/教育和受保护的 claim，不验证每句话是否真的由对应的卡支持，也不检查排版。",
     },
@@ -143,8 +153,8 @@ SKIP_SECTIONS = {
 }
 
 # Claim Card sections whose numbers are NOT a source for a resume line.
-CARD_NOT_SOURCE = {"don't rephrase as", "don’t rephrase as", "dont rephrase as", "source", "to fill", "notes",
-                   "禁止改写", "出处", "待补", "备注"}
+CARD_NOT_SOURCE = {"don't rephrase as", "don’t rephrase as", "dont rephrase as", "source", "to fill",
+                   "禁止改写", "出处", "待补"}
 BANNED_RE = re.compile(r"^\s*(?:[-*]\s*)?\**(?:banned words|禁用词)\**\s*[:：]\s*(.+)$", re.I)
 VERIFIED_OK = {"✓", "✔", "✔️", "✅", "confirmed", "yes", "已核实", "已确认", "是"}
 VERIFY_HEADERS = {"核实", "verified"}
@@ -275,7 +285,9 @@ def load_card(text):
         for cells in rows:
             if not cells:
                 continue
-            ok = vcol is None or (vcol < len(cells) and cells[vcol].strip().lower() in VERIFIED_OK)
+            # A blank Verified cell counts as confirmed: the user gave the number (validate_evidence.py
+            # reminds them to tick it). Only an explicit other value, like "to verify", holds it back.
+            ok = vcol is None or vcol >= len(cells) or not cells[vcol].strip() or cells[vcol].strip().lower() in VERIFIED_OK
             unit_cur = ""
             if ucol is not None and ucol < len(cells):
                 for word, code in CURRENCY.items():
@@ -319,16 +331,26 @@ def load_profile(path):
             nums = set(re.findall(r"\d+(?:\.\d+)?", " ".join(cells)))
             nums |= set(re.findall(r"\d+", " ".join(cells)))
             if title is not None and company is not None and get(title) and get(company):
-                roles.append((get(title).lower(), get(company).lower(), nums))
+                roles.append((alts(get(title)), alts(get(company)), nums))
             elif school is not None and degree is not None and get(school) and get(degree):
-                edu.append((get(degree).lower(), get(school).lower(), nums))
+                edu.append((alts(get(degree)), alts(get(school)), nums))
     return roles, edu
 
 
+def squash(text):
+    """Lower case, letters and digits only: "B.A., Economics" and "BA Economics" compare equal."""
+    return re.sub(r"[\W_]+", "", text.lower())
+
+
+def alts(cell):
+    """A profile cell may list accepted variants separated by ";" (e.g. a title in English and Chinese)."""
+    return [squash(x) for x in re.split(r"[;；]", cell) if squash(x)]
+
+
 def matches_profile(text, entries):
-    low = text.lower()
+    low = squash(text)
     nums = set(re.findall(r"\d+(?:\.\d+)?", text))
-    return any(a in low and b in low and nums <= n for a, b, n in entries)
+    return any(any(x in low for x in a) and any(x in low for x in b) and nums <= n for a, b, n in entries)
 
 
 def scan_resume(path):
@@ -341,7 +363,7 @@ def scan_resume(path):
     lines = text.split("\n")
     needs, used = [], set()
     headings, recognized, unchecked = [], 0, {}
-    roles, education = [], []
+    roles, education, loose = [], [], []
     kind, title, in_comment, last_bullet = "", "", False, None
     for idx in range(start, len(lines)):
         raw = lines[idx]
@@ -390,18 +412,25 @@ def scan_resume(path):
                 entry[2] = entry[2] + ids
                 used.update(ids)
                 continue
+            if kind == "experience" and not is_bullet and not ids and not tokens(body):
+                # a plain line with no number and no tag (company blurb, location): listed, not an error
+                unchecked[title] = unchecked.get(title, 0) + 1
+                last_bullet = None
+                continue
             needs.append([idx + 1, body, ids])
             used.update(ids)
             last_bullet = len(needs) - 1 if is_bullet else None
         elif kind == "education":
             education.append((idx + 1, body))
         elif kind == "other":
-            if ids or tokens(body):  # tagged lines are validated; a number with no tag is an error
+            if ids:  # tagged lines are validated
                 needs.append([idx + 1, body, ids])
-            if not ids:
+            else:
                 unchecked[title] = unchecked.get(title, 0) + 1
+                if tokens(body):
+                    loose.append((idx + 1, title, body))
     return {"fm": fm, "needs": needs, "used": used, "recognized": recognized, "headings": headings,
-            "unchecked": unchecked, "roles": roles, "education": education}
+            "unchecked": unchecked, "roles": roles, "education": education, "loose": loose}
 
 
 def cv_index_rule(resume, fm):
@@ -456,7 +485,7 @@ def main():
     if not claims:
         print(t["no_claims"].format(p=a.claims)); return 2
 
-    errors = 0
+    errors, warns = 0, 0
     for c, files in sorted(dups.items()):
         print("ERROR " + t["dup_id"].format(c=c, f=", ".join(files))); errors += 1
 
@@ -501,7 +530,11 @@ def main():
             if not found and is_year(tok) and any(plain in card["years"] for card in cards):
                 continue
             if not found:
-                print("ERROR " + t["number"].format(f=resume.name, n=n, x=shown, c=cited)); errors += 1
+                if kind == "word" or (plain.isdigit() and len(plain) == 1 and not scaled and not currency and not kind):
+                    # a lone digit or number word is often just wording ("two teams", "3-tier")
+                    print("WARN  " + t["weak_number"].format(f=resume.name, n=n, x=shown, c=cited)); warns += 1
+                else:
+                    print("ERROR " + t["number"].format(f=resume.name, n=n, x=shown, c=cited)); errors += 1
                 continue
             if all(any(same(v, p) for p in card["pending"]) for card in found):
                 hold = ", ".join(c for c in known if claims[c] in found)
@@ -509,20 +542,24 @@ def main():
                 continue
             if currency:
                 want = {cur for card in found for (x, cur) in card["currency"] if same(x, v)}
-                if currency not in want:
+                if not want:
+                    print("WARN  " + t["no_currency"].format(f=resume.name, n=n, x=shown, c=cited)); warns += 1
+                elif currency not in want:
                     print("ERROR " + t["currency"].format(f=resume.name, n=n, x=shown, cur=currency,
-                                                          c=cited, want="/".join(sorted(want)) or "no currency")); errors += 1
+                                                          c=cited, want="/".join(sorted(want)))); errors += 1
     if r["recognized"] and not checked:
         print("ERROR " + t["nothing"].format(f=resume.name)); errors += 1
     for s, k in r["unchecked"].items():
-        print("WARN  " + t["unchecked"].format(f=resume.name, s=s, k=k))
+        print("WARN  " + t["unchecked"].format(f=resume.name, s=s, k=k)); warns += 1
+    for n, s, text in r["loose"]:
+        print("WARN  " + t["loose_number"].format(f=resume.name, s=s, n=n, t=text)); warns += 1
 
     # roles and education vs evidence/profile.md
     if r["roles"] or r["education"]:
         ppath = Path(a.profile) if a.profile else Path(a.claims).parent / "profile.md"
         profile = load_profile(ppath)
         if not profile or not (profile[0] or profile[1]):
-            print("ERROR " + t["no_profile"].format(f=resume.name, p=ppath)); errors += 1
+            print("WARN  " + t["no_profile"].format(f=resume.name, p=ppath)); warns += 1
         else:
             for n, text in r["roles"]:
                 if not matches_profile(text, profile[0]):
@@ -542,13 +579,18 @@ def main():
         print("ERROR " + t["base_missing"].format(p=base)); errors += 1
     else:
         b = scan_resume(base)
+        waived = set(ID_RE.findall(fm.get("protected-ok", "")))
+        for c in sorted(waived & b["used"]):
+            print("NOTE  " + t["waived"].format(c=c))
         for c in sorted(b["used"] - used):
+            if c in waived:
+                continue
             if c in claims and claims[c]["protected"]:
                 print("ERROR " + t["dropped_protected"].format(c=c, b=base.name)); errors += 1
             else:
                 print("NOTE  " + t["dropped"].format(c=c, b=base.name))
         for c in sorted(b["used"] & used):
-            if c not in claims or not claims[c]["protected"]:
+            if c not in claims or not claims[c]["protected"] or c in waived:
                 continue
             now = numbers_for(needs, c)
             gone = []
@@ -562,7 +604,7 @@ def main():
     if errors:
         print(t["fail"].format(e=errors, f=resume.name))
     else:
-        print(t["ok"].format(n=checked, c=len(used)))
+        print(t["ok"].format(n=checked, c=len(used), w=(f" ({warns} WARN)" if a.lang == "en" else f"（{warns} 条提醒）") if warns else ""))
     print(t["scope"])
     return 1 if errors else 0
 

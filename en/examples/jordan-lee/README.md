@@ -29,7 +29,7 @@ python3 ../../scripts/check_claims.py cv/resumes/acme-pdm-with-traps.md
 ```text
 WARN  acme-pdm.md: section "Skills" has 1 line(s) this script does not verify
 NOTE  C-002 is used in the baseline (channel-baseline.md) but not here
-OK: 5 lines checked, 3 Claim IDs used, no errors
+OK: 5 lines checked, 3 Claim IDs used, no errors (1 WARN)
 ```
 
 The NOTE is expected: C-002 isn't protected, and the Change Log says why it was dropped.
