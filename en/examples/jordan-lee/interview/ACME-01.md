@@ -16,7 +16,7 @@ date: 2026-05-20
 
 ## Partners from 12 to 40 · C-001
 
-**On the resume**: Rebuilt the partner program into a three-tier model and grew active partners from 12 to 40 in 18 months; partner-sourced leads rose from 18% to 34% of new pipeline.
+**On the resume**: Rebuilt the partner program into a three-tier model and grew active partners from 12 to 40 in 18 months; partners' share of new leads rose from 18% to 34%.
 
 **30-second version**: Partners used to come through the founder's personal network, with no criteria. I built a three-tier model, wrote entry and renewal criteria, reached out to 60-plus candidates and signed 28. Over 18 months active partners went from 12 to 40, and partner-sourced leads went from 18% to 34% of new leads.
 

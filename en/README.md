@@ -56,7 +56,8 @@ Each step has an output you must be able to show before moving on. Details in [d
 | [cv/resumes/](cv/resumes/_TEMPLATE.md) | The resumes themselves, one Markdown file per version | Every new job |
 | [cv/changelogs/](cv/changelogs/_TEMPLATE.md) | What changed in each version and why | Every new job |
 | [interview/](interview/_TEMPLATE.md) | Follow-up cards for each interview | Once you're invited to interview |
-| [scripts/check_claims.py](scripts/check_claims.py) | Checks every bullet has a source, claims are usable, protected ones stay (Python 3) | Before you review a version |
+| [scripts/validate_evidence.py](scripts/validate_evidence.py) | Checks the evidence bank: unique IDs, valid statuses, every number marked ✓ or to verify (Python 3) | Before checking a resume |
+| [scripts/check_claims.py](scripts/check_claims.py) | Checks every line has a source, numbers keep their value and currency, roles match your profile, protected claims stay (Python 3) | Before you review a version |
 | [scripts/report_score.py](scripts/report_score.py) | Prints a report's score with the same formula as the template, so the chat and the page agree (Python 3) | After the AI fills a report |
 | [scripts/report_png.py](scripts/report_png.py) | Saves the share card (or, with `--full`, the whole report) as a PNG, for chat windows that can't run the report. Uses the Chrome, Edge or Brave you already have (Python 3) | After the AI fills a report |
 | [scripts/report_share.py](scripts/report_share.py) · [report_compare.py](scripts/report_compare.py) | A shareable card, or a before-and-after poster from two reports. Score only by default; you pick any extra modules. No private details (Python 3) | When you want to share |
@@ -112,7 +113,7 @@ To hear about new versions, open the [repo page](https://github.com/weareheya/Re
 
 ## What the scripts check, and what they don't
 
-`check_claims.py` checks sourcing mechanically: every bullet has a Claim ID, each ID points to a `Safe to draft` card, every number appears on the card it cites, and protected claims are still there. It fails if it can't find a Summary or Experience section, and it names any other section it didn't verify. `pdf_fill.swift` checks the page count and how far down the content reaches. It can't measure how much of each page is used, so look at the images too. Everything else is a rule your AI follows by reading it: whether a claim is true, whether the wording stays within a card's limits, whether the choices fit the job. For those, you're the check.
+`validate_evidence.py` checks the evidence bank itself: unique Claim IDs, valid statuses, and a ✓ or `to verify` on every number. `check_claims.py` checks sourcing mechanically: every line in Summary, Experience and Projects has a Claim ID, each ID points to a `Safe to draft` card, every number comes from the card it cites with the same value, scale and currency, no banned word from the card is used, role headings and Education match `evidence/profile.md`, and protected claims keep their numbers. It fails if it can't find a Summary or Experience section, and it names any other section it didn't verify. `pdf_fill.swift` checks the page count and how far down the content reaches. It can't measure how much of each page is used, so look at the images too. Everything else is a rule your AI follows by reading it: whether a claim is true, whether the wording stays within a card's limits, whether the choices fit the job. For those, you're the check.
 
 ## Tools: your choice
 

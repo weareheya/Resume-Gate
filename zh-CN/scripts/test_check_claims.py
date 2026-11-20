@@ -7,6 +7,7 @@ import subprocess
 import sys
 import tempfile
 import textwrap
+import importlib.util
 import unittest
 from pathlib import Path
 
@@ -34,6 +35,19 @@ period: 2022.03–2023.09
 """
 
 
+PROFILE = """\
+## Roles
+| Title | Company | Start | End |
+|---|---|---|---|
+| Partnerships Manager | Northwind | 2022.03 | 2023.09 |
+
+## Education
+| Degree | School | Year |
+|---|---|---|
+| BA | Some University | 2015 |
+"""
+
+
 class CheckClaims(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
@@ -43,6 +57,7 @@ class CheckClaims(unittest.TestCase):
         self.card("C-001", protected="true")
         self.card("C-002")
         self.card("C-003", status="Needs review")
+        (self.root / "evidence/profile.md").write_text(PROFILE, encoding="utf-8")
 
     def tearDown(self):
         self.tmp.cleanup()
@@ -112,7 +127,7 @@ class CheckClaims(unittest.TestCase):
 
     def test_unrecognized_headings_fail_instead_of_passing(self):
         self.resume("renamed", """
-            ## Highlights
+            ## What I do
             Led enterprise AI deployments for Fortune 500 clients.
             ## Career Story
             - Closed $10M in co-sell pipeline.
@@ -151,10 +166,10 @@ class CheckClaims(unittest.TestCase):
             """)
         code, out = self.run_check("num")
         self.assertEqual(code, 1, out)
-        self.assertIn('"5"', out)
+        self.assertIn('"$5M"', out)
         self.assertIn('"45"', out)
-        self.assertIn('"2"', out)       # "2x" is a claim; "3-tier" alone is not checked
-        self.assertNotIn('"3"', out)
+        self.assertIn('"2x"', out)
+        self.assertIn('"3"', out)       # single digits are claims too
         self.assertNotIn('"12"', out)
 
     def test_number_marked_to_verify_fails(self):
@@ -169,8 +184,8 @@ class CheckClaims(unittest.TestCase):
             """)
         code, out = self.run_check("pend")
         self.assertEqual(code, 1, out)
-        self.assertIn('"34" is marked "to verify" on C-004', out)
-        self.assertIn('"18" is marked "to verify"', out)
+        self.assertIn('"34%" is not marked ✓ on C-004', out)
+        self.assertIn('"18%" is not marked ✓', out)
         self.assertNotIn('"40"', out)    # confirmed numbers on the same card still pass
 
     def test_interview_only_fails(self):
@@ -240,6 +255,312 @@ class CheckClaims(unittest.TestCase):
         self.assertEqual(code, 0, out)
 
 
+PIPELINE = """\
+---
+id: {id}
+status: Safe to draft
+protected: false
+period: FY2023
+---
+
+# {id} · Partner-sourced pipeline reached US$2.1M
+
+## What happened (raw, unpolished)
+Set up deal registration with three partner tiers.
+
+## Numbers and what they mean
+| Number | Unit / currency | Time window | Basis | Verified |
+|---|---|---|---|---|
+| US$2.1M partner-sourced pipeline | USD | FY2023 | Pipeline, not revenue | {verified} |
+| 64 registered deals | deals | FY2023 | Open and closed | ✓ |
+
+## Approved wording
+> Set up partner deal registration; partner-sourced pipeline reached US$2.1M in FY2023.
+
+## Don't rephrase as
+- Banned words: revenue, closed
+- Don't round up to "US$5M+ in sales".
+
+## Notes
+Expect 7 follow-up questions.
+"""
+
+
+class AuditBypasses(unittest.TestCase):
+    """Every bypass reproduced in the 2026-11 audit must now fail (and the honest versions pass)."""
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.root = Path(self.tmp.name)
+        (self.root / "evidence/claims").mkdir(parents=True)
+        (self.root / "cv/resumes").mkdir(parents=True)
+        (self.root / "evidence/profile.md").write_text(PROFILE, encoding="utf-8")
+        (self.root / "evidence/claims/C-001.md").write_text(
+            CARD.format(id="C-001", status="Safe to draft", protected="true"), encoding="utf-8")
+        self.pipeline("C-007")
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def pipeline(self, cid, verified="✓", name=None):
+        (self.root / f"evidence/claims/{name or cid}.md").write_text(
+            PIPELINE.format(id=cid, verified=verified), encoding="utf-8")
+
+    def check(self, body, name="r", *extra):
+        (self.root / f"cv/resumes/{name}.md").write_text(textwrap.dedent(body).lstrip(), encoding="utf-8")
+        r = subprocess.run([sys.executable, "-I", str(SCRIPT), f"cv/resumes/{name}.md", "--lang", "en", *extra],
+                           cwd=self.root, capture_output=True, text=True)
+        return r.returncode, r.stdout
+
+    def line(self, text):
+        return self.check("## Experience\n" + text + "\n")
+
+    # numbers keep their meaning
+    def test_honest_and_equivalent_amounts_pass(self):
+        for text in ("- Partner-sourced pipeline reached US$2.1M in FY2023. <!-- C-007 -->",
+                     "- Partner-sourced pipeline reached US$2,100,000 across 64 deals. <!-- C-007 -->",
+                     "- Ran deal registration across three tiers. <!-- C-007 -->"):
+            code, out = self.line(text)
+            self.assertEqual(code, 0, text + "\n" + out)
+
+    def test_banned_word_fails(self):
+        code, out = self.line("- Closed US$2.1M in revenue. <!-- C-007 -->")
+        self.assertEqual(code, 1, out)
+        self.assertIn('"revenue" is a banned word on C-007', out)
+        self.assertIn('"closed" is a banned word on C-007', out)
+
+    def test_scale_and_currency_must_match(self):
+        code, out = self.line("- Pipeline reached EUR 2.1B. <!-- C-007 -->")
+        self.assertIn('"EUR 2.1B" doesn\'t appear', out)
+        code, out = self.line("- Pipeline reached EUR 2.1M. <!-- C-007 -->")
+        self.assertIn('"EUR 2.1M" is in EUR, but C-007 gives it in USD', out)
+        code, out = self.line("- Pipeline reached US$2M+. <!-- C-007 -->")
+        self.assertIn('"US$2M" doesn\'t appear', out)
+        self.assertEqual(code, 1, out)
+
+    def test_numbers_outside_source_sections_do_not_count(self):
+        # 19 is only in the Claim ID, 5M only in "Don't rephrase as"; 7 in Notes is a fair source
+        self.pipeline("C-019")
+        code, out = self.line("- Logged 019 deals worth 5M and prepared 7 answers. <!-- C-019 -->")
+        self.assertIn('"019"', out)
+        self.assertIn('"5M"', out)
+        self.assertNotIn('"7"', out)
+
+    def test_single_digits_and_number_words_are_warnings(self):
+        # often just wording ("two teams", "3-tier"), so they're flagged, not failed
+        code, out = self.line("- Signed 9 partners and eleven resellers. <!-- C-007 -->")
+        self.assertEqual(code, 0, out)
+        self.assertIn('WARN  r.md:2: "9"', out)
+        self.assertIn('"eleven"', out)
+
+    # the card bank itself
+    def test_duplicate_id_fails(self):
+        self.pipeline("C-007", name="Z-copy")
+        code, out = self.line("- Pipeline reached US$2.1M. <!-- C-007 -->")
+        self.assertEqual(code, 1, out)
+        self.assertIn("C-007 is defined by more than one card (C-007.md, Z-copy.md)", out)
+
+    def test_blank_verified_counts_as_confirmed(self):
+        # the user gave the number; validate_evidence.py reminds them to tick it
+        self.pipeline("C-007", verified="")
+        code, out = self.line("- Pipeline reached US$2.1M. <!-- C-007 -->")
+        self.assertEqual(code, 0, out)
+
+    def test_other_verified_values_are_not_confirmed(self):
+        for v in ("tbd", "cofnirmed", "to verify"):
+            self.pipeline("C-007", verified=v)
+            code, out = self.line("- Pipeline reached US$2.1M. <!-- C-007 -->")
+            self.assertIn('"US$2.1M" is not marked ✓ on C-007', out, repr(v))
+
+    # structure
+    def test_continuation_and_plain_lines_are_checked(self):
+        code, out = self.check("""
+            ## Experience
+            - Pipeline reached US$2.1M. <!-- C-007 -->
+              Also tripled company revenue to US$90M.
+            Raised a US$50M Series B.
+            """)
+        self.assertIn('"US$90M" doesn\'t appear', out)
+        self.assertIn("no Claim ID on this line: Raised a US$50M", out)
+
+    def test_wrapped_bullet_with_tag_on_second_line_passes(self):
+        code, out = self.check("""
+            ## Experience
+            - Set up partner deal registration;
+              pipeline reached US$2.1M in FY2023. <!-- C-007 -->
+            """)
+        self.assertEqual(code, 0, out)
+
+    def test_roles_and_education_must_match_profile(self):
+        code, out = self.check("""
+            ## Experience
+            ### VP of AI · Google · 2018–2023
+            - Pipeline reached US$2.1M. <!-- C-007 -->
+            ### Partnerships Manager · Northwind · 2022–2023
+            - Pipeline reached US$2.1M. <!-- C-007 -->
+            ## Education
+            PhD · Stanford · 2019
+            BA · Some University · 2015
+            """)
+        self.assertEqual(out.count("role heading doesn't match"), 1, out)
+        self.assertIn("VP of AI", out)
+        self.assertEqual(out.count("Education line doesn't match"), 1, out)
+        self.assertIn("PhD", out)
+
+    def test_missing_profile_is_a_warning(self):
+        (self.root / "evidence/profile.md").unlink()
+        code, out = self.check("""
+            ## Experience
+            ### VP of AI · Google · 2018–2023
+            - Pipeline reached US$2.1M. <!-- C-007 -->
+            """)
+        self.assertEqual(code, 0, out)
+        self.assertIn("WARN", out)
+        self.assertIn("profile.md is missing or empty", out)
+
+    def test_other_sections(self):
+        code, out = self.check("""
+            ## Experience
+            - Pipeline reached US$2.1M. <!-- C-007 -->
+            ## Achievements
+            Tripled revenue.
+            ## Awards & Interests
+            Tripled revenue to US$90M.
+            Chess, hiking
+            """)
+        self.assertIn("no Claim ID on this line: Tripled revenue.", out)   # Achievements is checked like Experience
+        self.assertIn('"Awards & Interests", line 6 has a number no card backs: Tripled revenue to US$90M.', out)
+        self.assertIn('section "Awards & Interests" has 2 line(s)', out)
+
+    # baseline
+    def test_base_required_when_index_has_a_starting_point(self):
+        (self.root / "cv/CV-INDEX.md").write_text(
+            "## Current starting point for each type\n| Type | Current starting point | Status |\n|---|---|---|\n"
+            "| 01 | base (2026-05-10) | Approved |\n\n## Resume list\n| File | Type |\n|---|---|\n| base.md | 01 |\n",
+            encoding="utf-8")
+        self.check("---\nid: base\ntype: 01\nbase:\n---\n## Summary\nGrew partners from 12 to 40. <!-- C-001 -->\n", "base")
+        code, out = self.check("---\nid: v2\ntype: 01\n---\n## Summary\nDeal person. <!-- C-007 -->\n", "v2")
+        self.assertEqual(code, 1, out)
+        self.assertIn("no `base:`, but CV-INDEX already has a starting point for type 01", out)
+        code, out = self.check("---\nid: base\ntype: 01\nbase:\n---\n## Summary\nGrew partners from 12 to 40. <!-- C-001 -->\n", "base")
+        self.assertEqual(code, 0, out)  # the listed baseline itself is fine
+
+    def test_plain_experience_line_without_number_is_listed_not_failed(self):
+        code, out = self.check("""
+            ## Experience
+            ### Partnerships Manager · Northwind · 2022–2023
+            B2B SaaS company, partner channel team.
+            - Pipeline reached US$2.1M. <!-- C-007 -->
+            """)
+        self.assertEqual(code, 0, out)
+        self.assertIn('section "Experience" has 1 line(s)', out)
+
+    def test_profile_matching_tolerates_punctuation_and_variants(self):
+        (self.root / "evidence/profile.md").write_text(PROFILE.replace("| Partnerships Manager |", "| Partnerships Manager; 合作伙伴经理 |"), encoding="utf-8")
+        code, out = self.check("""
+            ## Experience
+            ### 合作伙伴经理 · Northwind · 2022–2023
+            - Pipeline reached US$2.1M. <!-- C-007 -->
+            ## Education
+            B.A. · Some University · 2015
+            """)
+        self.assertEqual(code, 0, out)
+
+    def test_protected_drop_approved_in_front_matter(self):
+        self.check("## Summary\nGrew active partners from 12 to 40. <!-- C-001 -->\n", "base")
+        code, out = self.check("---\nbase: base\nprotected-ok: C-001\n---\n## Summary\nDeal person. <!-- C-007 -->\n", "v2")
+        self.assertEqual(code, 0, out)
+        self.assertIn("NOTE  C-001: dropped or shortened with the user's approval", out)
+
+    def test_protected_claim_weakened_fails(self):
+        self.check("## Summary\nGrew active partners from 12 to 40. <!-- C-001 -->\n", "base")
+        code, out = self.check("---\nbase: base\n---\n## Summary\nManaged partner relationships. <!-- C-001 -->\n", "v2")
+        self.assertEqual(code, 1, out)
+        self.assertIn("Protected claim C-001: the baseline (base.md) states 12, 40", out)
+
+
+class ValidateEvidence(unittest.TestCase):
+    def run_v(self, root):
+        r = subprocess.run([sys.executable, "-I", str(SCRIPT.with_name("validate_evidence.py")), "--lang", "en"],
+                           cwd=root, capture_output=True, text=True)
+        return r.returncode, r.stdout
+
+    def test_example_bank_is_valid(self):
+        code, out = self.run_v(SCRIPT.parent.parent / "examples" / "jordan-lee")
+        self.assertEqual(code, 0, out)
+
+    def test_bad_bank_fails(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            (root / "evidence/claims").mkdir(parents=True)
+            (root / "evidence/claims/a.md").write_text(PIPELINE.format(id="C-001", verified="tbd"), encoding="utf-8")
+            (root / "evidence/claims/b.md").write_text(PIPELINE.format(id="C-001", verified="✓")
+                                                       .replace("status: Safe to draft", "status: Safe"), encoding="utf-8")
+            code, out = self.run_v(root)
+            self.assertEqual(code, 1, out)
+            for snippet in ('"tbd"', "C-001 is used by more than one card: a.md, b.md", 'status "Safe"', "profile.md is missing"):
+                self.assertIn(snippet, out)
+
+
+class ScoreFormula(unittest.TestCase):
+    """The audit's score cases: a job-fit score can no longer reach 100 by leaving out the JD."""
+
+    def score(self, d):
+        spec = importlib.util.spec_from_file_location("report_score", SCRIPT.with_name("report_score.py"))
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        return mod.score(d)[0]
+
+    def report(self, reqs, dims=None):
+        bullets = [{"result": 1, "number": 1, "action": 1, "specific": 1, "sourced": True}] * 4
+        return {"meta": {"mode": "job"}, "bullets": bullets, "structure": [{"pass": 1}] * 5, "dims": dims or {},
+                "jd": {"requirements": reqs, "terms": {"supported": ["a"], "used": ["a"]}}}
+
+    def test_job_fit_without_requirements_is_not_100(self):
+        self.assertLess(self.score(self.report([])), 100)
+
+    def test_switching_off_jd_coverage_does_not_help(self):
+        one_of_three = [{"coverage": "direct", "top": True}, {"coverage": "none"}, {"coverage": "none"}]
+        self.assertEqual(self.score(self.report(one_of_three)), 86)
+        self.assertEqual(self.score(self.report(one_of_three, dims={"J1": False})), 86)
+
+
+class HonestResume(unittest.TestCase):
+    """D-017: an honest resume with ordinary gaps must pass. If a new rule breaks this, it's too strict."""
+
+    def test_ordinary_gaps_pass(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            (root / "evidence/claims").mkdir(parents=True)
+            (root / "cv/resumes").mkdir(parents=True)
+            # self-stated card, blank Verified cells, no evidence/profile.md yet
+            (root / "evidence/claims/C-001.md").write_text(PIPELINE.format(id="C-001", verified="")
+                .replace("evidence: on record", "evidence: can explain"), encoding="utf-8")
+            (root / "cv/resumes/r.md").write_text(textwrap.dedent("""
+                ---
+                id: r
+                base:
+                ---
+                ## Summary
+                Partnerships manager who works across two teams. <!-- C-001 -->
+                ## Experience
+                ### Partnerships Manager · Northwind · 2022–2023
+                B2B SaaS company, partner channel team.
+                - Set up partner deal registration across three tiers;
+                  partner-sourced pipeline reached US$2.1M in FY2023. <!-- C-001 -->
+                ## Education
+                BA · Some University · 2015
+                ## Skills
+                Partner programs, CRM, 3-tier models
+                """).lstrip(), encoding="utf-8")
+            r = subprocess.run([sys.executable, "-I", str(SCRIPT), "cv/resumes/r.md", "--lang", "en"],
+                               cwd=root, capture_output=True, text=True)
+            self.assertEqual(r.returncode, 0, r.stdout)
+            v = subprocess.run([sys.executable, "-I", str(SCRIPT.with_name("validate_evidence.py")), "--lang", "en"],
+                               cwd=root, capture_output=True, text=True)
+            self.assertEqual(v.returncode, 0, v.stdout)
+
+
 class WorkedExample(unittest.TestCase):
     """examples/jordan-lee must behave the way its README says."""
     EXAMPLE = SCRIPT.parent.parent / "examples" / "jordan-lee"
@@ -259,12 +580,12 @@ class WorkedExample(unittest.TestCase):
         self.assertEqual(code, 0, out)
         self.assertIn("NOTE  C-002", out)
 
-    def test_traps_fail_with_five_errors(self):
+    def test_traps_fail_with_six_errors(self):
         code, out = self.run_check("acme-pdm-with-traps")
         self.assertEqual(code, 1, out)
-        self.assertIn("FAILED: 5 error(s)", out)
+        self.assertIn("FAILED: 6 error(s)", out)
         for snippet in ("no Claim ID", "C-005 has status", '"420"', "C-009 does not match",
-                        "Protected claim C-001"):
+                        "Protected claim C-001", '"revenue" is a banned word on C-003'):
             self.assertIn(snippet, out)
 
 

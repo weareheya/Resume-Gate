@@ -2,6 +2,36 @@
 
 What changed in each version, and whether you need to do anything. Your version is in `VERSION`. To update, paste prompt 5 from `docs/PROMPTS.md`.
 
+## 0.3.0 · 2026-11-20
+
+Evidence checks are much harder to slip past, without asking for more proof than a job search can give. Your own word is still enough for a card: nothing here asks for documents.
+
+**Now fails** (each used to pass):
+- **Numbers keep their meaning.** Scaled amounts are compared by value (US$2.1M = US$2,100,000, but not US$2.1B or US$2M+), and a currency must match the card's (EUR 2.1M against a USD card fails). Numbers that appear only in "Don't rephrase as", Source, To fill or the Claim ID itself no longer count, so "Closed 003 deals" citing C-003 fails.
+- **Banned words.** A card can list them under "Don't rephrase as": `- Banned words: revenue, closed`. A line citing the card that uses one fails. The example's revenue trap is now caught by the script.
+- **Duplicate Claim IDs.** A second card with the same ID used to replace the first without a word.
+- **A Verified value that isn't ✓, blank, or `to verify`** (a typo such as "cofnirmed") holds the number back instead of counting as confirmed.
+- **Lines that hide claims.** A line indented under a bullet is read as part of it, a plain Experience line that holds a number needs a Claim ID, and Projects / Achievements / Highlights are checked like Experience.
+- **Roles and education**, once you fill in the new `evidence/profile.md`: a role heading or Education line that doesn't match it fails ("VP of AI · Google", "PhD · Stanford"). Punctuation doesn't matter, and a cell can list variants (`Partnerships Manager; 合作伙伴经理`).
+- **Dodging the baseline.** If `cv/CV-INDEX.md` already has a starting point for the resume's type and the file isn't in its resume list, it needs `base:`. Deleting `base:` no longer turns off the protected-claims check.
+- **Weakened protected claims.** A protected claim that stays but loses the confirmed numbers the baseline gave it fails, like a dropped one. When you agree to the change, add `protected-ok: C-001` to the resume's front matter and it becomes a note.
+- **Job-fit scores inflated by leaving the JD out.** In a job-fit report, JD coverage (J1) is always scored: with no requirements it counts 0, and switching it off no longer renormalizes the rest to 100. `report_score.py` also prints how many requirements are direct, partial or none, and any requirement marked `"gate": true` that isn't directly met.
+
+**Only a warning** (worth a look, never blocks you):
+- A lone digit or a word like "two" that isn't on the card ("two teams", "3-tier" are often just wording).
+- A currency on a number the card gives without one.
+- A plain Experience line with no number and no tag (a company blurb), and a number in Skills or another unchecked section.
+- No `evidence/profile.md` yet: roles and education simply aren't checked until you fill it in.
+- A blank Verified cell: it still counts as confirmed, since you gave the number; `validate_evidence.py` reminds you to tick it.
+
+**Also**
+- New `scripts/validate_evidence.py` checks the evidence bank itself: unique IDs, valid statuses, `protected` true or false, and Verified values.
+- Fixed the example card C-001: its two accounts of who signed the 28 partners disagreed, and its approved wording called a share of leads a share of "pipeline".
+- New rule **D-017** (and LESSONS L-13): a check may block only what stops a real misstatement; everything else is a reminder, every block has an approval path, and an update never needs work before your resumes pass. A new test keeps an honest resume with ordinary gaps passing.
+- The repo runs the tests in both languages on every pull request.
+
+**What you need to do**: nothing is required. Your resumes keep passing unless they hit one of the "now fails" cases above, which is the point. When you have five minutes, copy `evidence/profile.md` from the new kit into your `evidence/` folder (an update doesn't touch your evidence) and fill in your roles and education to turn that check on, then run `python3 scripts/validate_evidence.py`.
+
 ## 0.2.3 · 2026-11-20
 
 - **Follow-up cards.** Once you're invited to interview, prompt 7 or `/prep` takes the resume version you sent and lists, for each bullet, the questions it's likely to draw, answers that hold up, and what not to say. Every answer comes from your Claim Cards; anything they don't cover goes under "Fill before the interview", never made up. Example: `examples/jordan-lee/interview/ACME-01.md`.

@@ -17,7 +17,7 @@ What you actually did, in plain words. Include the context, what you specificall
 |---|---|---|---|---|
 | | | | | ✓ |
 
-The Verified column: a number the user gave in the interview is `✓` straight away. Mark it `to verify` when the user said "roughly" or "I'm not sure", or when the AI took it from old material the user hasn't confirmed. A number marked `to verify` can't go on a resume, and `check_claims.py` flags it; the card's other numbers can still be used.
+The Verified column: a number the user gave in the interview is `✓` straight away. A blank cell also counts as confirmed (`validate_evidence.py` reminds you to tick it); any other value holds the number back. Mark it `to verify` when the user said "roughly" or "I'm not sure", or when the AI took it from old material the user hasn't confirmed. A number marked `to verify` can't go on a resume, and `check_claims.py` flags it; the card's other numbers can still be used.
 
 ## Attribution
 - **What you did**:
@@ -28,6 +28,7 @@ The Verified column: a number the user gave in the interview is `✓` straight a
 > One or two sentences that can go straight into a resume.
 
 ## Don't rephrase as
+- Banned words: (optional; words a resume line citing this card must never use, e.g. revenue, closed)
 - Don't write … (because …)
 - Don't mix A and B together
 

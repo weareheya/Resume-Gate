@@ -412,7 +412,7 @@ const R = {
 R.J1.p = R.J1.d ? R.J1.n / R.J1.d : 0;
 // R6 (evidence) is not part of the score: it shows in the interview-readiness panel instead.
 const ids = ["R1","R2","R3","R4","R5"].concat(job ? ["J1","J2","J3"] : []);
-const on = id => (D.dims ? D.dims[id] !== false : true) && R[id].d > 0;
+const on = id => (job && id === "J1") || ((D.dims ? D.dims[id] !== false : true) && R[id].d > 0);
 let wsum = 0, acc = 0;
 ids.filter(on).forEach(id => { wsum += WEIGHTS[id]; acc += WEIGHTS[id] * R[id].p; });
 const score = wsum ? Math.round(acc / wsum * 100) : 0;

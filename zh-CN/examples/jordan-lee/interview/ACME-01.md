@@ -16,7 +16,7 @@ date: 2026-05-20
 
 ## 伙伴从 12 家到 40 家 · C-001
 
-**简历原文**：Rebuilt the partner program into a three-tier model and grew active partners from 12 to 40 in 18 months; partner-sourced leads rose from 18% to 34% of new pipeline.
+**简历原文**：Rebuilt the partner program into a three-tier model and grew active partners from 12 to 40 in 18 months; partners' share of new leads rose from 18% to 34%.
 
 **30 秒讲法**：伙伴原来靠创始人的个人关系，没有标准。我做了三层分级，写了准入和续约标准，主动联系了 60 多家候选，28 家签了约。18 个月里活跃伙伴从 12 家到 40 家，伙伴带来的线索占新线索的比例从 18% 到 34%。
 

@@ -12,7 +12,7 @@ A resume workflow for a long job search, where you tailor many versions over wee
 
 ![Resume-Gate overview: one fact, one card; every version and every interview traces back](assets/overview-en.svg)
 
-**New in 0.2.3 (2026-11-20):** follow-up cards for each interview, built from your own Claim Cards; an interview-readiness view that unlocks once you have cards; a checkup score that measures only the resume; and reports you can see right in the chat as an image. [All changes](en/CHANGELOG.md)
+**New in 0.3.0 (2026-11-20):** much stricter evidence checks. Numbers must keep their value, scale and currency, cards can ban words like "revenue", role headings and education are checked against your profile, protected claims keep their numbers, and a new script checks the evidence bank itself. [All changes](en/CHANGELOG.md)
 
 ## What's inside
 
@@ -108,7 +108,7 @@ Not sure about any of this? Ask the AI tool you picked in step 1. It can check w
 
 ![Resume-Gate 总览：事实只写一次，简历和面试都从这里来](assets/overview-zh.svg)
 
-**0.2.3 新增（2026-11-20）：** 每场面试前的追问卡，全部从你自己的 Claim Card 里来；有了卡就解锁的「面试底气」；只看简历本身的体检分数；以及能直接在对话里看的报告图片。[全部更新记录](zh-CN/CHANGELOG.md)
+**0.3.0 新增（2026-11-20）：** 证据检查严格得多。数字必须保持数值、量级和币种，卡片可以设禁用词（比如「营收」），职位和教育背景要对照个人档案，受保护的 claim 必须保留数字，还新增了检查证据库本身的脚本。[全部更新记录](zh-CN/CHANGELOG.md)
 
 ## 里面有什么
 

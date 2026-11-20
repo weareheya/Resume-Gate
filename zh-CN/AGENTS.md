@@ -37,11 +37,12 @@
 - 如果 `cv/CV-INDEX.md` 里还没有 Approved 的起点，先做 `docs/WORKFLOW.md` 里的 Step 0，再做别的。
 - 生成任何简历前先过 Evidence Retrieval Gate：读相关 Claim Card，并**列出读了哪些**。
 - 从匹配度最高的已批准版本改起（Delta），不从空白开始；改动写进 `cv/changelogs/`。
-- 标了 `protected: true` 的 claim，未经本人批准，不能删除或削弱。新版本里如果漏了一条，要明说并解释原因。
+- 标了 `protected: true` 的 claim，未经本人批准，不能删除或削弱。新版本里如果漏了一条，要明说并解释原因。本人同意后，在这份简历的 front matter 里写 `protected-ok: C-xxx`，`check_claims.py` 就不再报这一条。
 - 宣称「检查完成」时附 Coverage Report：查了什么范围、没查什么。
 - 给本人看之前先按 `docs/REVIEW-CHECKLIST.md` 自审。
 - 报告按 `docs/REPORT.md` 做。不要发送或上传完整报告：里面有本人的全部信息。要分享时，用 `scripts/report_share.py` 生成分享版。
-- 给本人看简历之前，先跑 `python3 scripts/check_claims.py cv/resumes/<id>.md`，修掉所有错误，并报告结果。
+- 给本人看简历之前，先跑 `python3 scripts/validate_evidence.py` 和 `python3 scripts/check_claims.py cv/resumes/<id>.md`，修掉所有错误，并报告结果。
+- `evidence/profile.md` 填好之后，简历上的职位、雇主、任职时间和教育背景必须和它一致。新增或修改其中一行，要先经本人确认，和卡片一样。
 - **人工审核关卡**：本人说「通过」之前，版本状态保持 `Draft`；已投递（`Sent`）的版本不再修改。
 
 **权限**
