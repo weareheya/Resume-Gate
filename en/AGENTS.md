@@ -6,7 +6,7 @@ The user may open this folder and say only "hi", "start", or nothing in particul
 
 1. **Nothing set up yet** (no Approved row in `cv/CV-INDEX.md`, and `evidence/INTAKE.md` is still the blank template): welcome them in three lines. What this does: every line of their resume will trace back to a fact they confirmed. What happens next: a scored checkup of their current resume, then a short interview about their 3 strongest accomplishments, about 30 minutes in all. What you need now: "Paste your current resume here, or put the file in `evidence/sources/`." Then follow Step 0 in `docs/WORKFLOW.md`, one step at a time.
 2. **Step 0 under way**: say where it stopped (from `evidence/INTAKE.md`) and offer to pick up there.
-3. **Set up**: one line of status (current baseline, latest report score if there is one), then a short menu: tailor for a new job (paste the JD) · got an interview, make follow-up cards · checkup report · before-and-after poster · check for updates.
+3. **Set up**: one line of status (current baseline, latest report score if there is one, and any file `python3 scripts/list_claims.py --health` says needs a recheck), then a short menu: tailor for a new job (paste the JD) · got an interview, make follow-up cards · checkup report · before-and-after poster · check for updates.
 4. If the first message is already a concrete task, do that task instead.
 
 Keep it short. Explain the method only if asked.
@@ -19,6 +19,7 @@ The hard rules below always apply. Beyond them, read what the task needs; every 
 |---|---|
 | Any resume work | `docs/MY-DECISIONS.md` (the user's own rules; they win over the starter rules) |
 | **Tailor** for a job (a new JD, or a new direction) | `docs/DECISIONS.md` (every **Active** rule is binding) · `docs/WORKFLOW.md` · `cv/CV-INDEX.md` · `docs/LESSONS.md` (skim) · the Claim Cards (with more than 15, start from `python3 scripts/list_claims.py`) · `docs/REVIEW-CHECKLIST.md` |
+| The user corrects a fact | The card it belongs to, then [When a fact changes](docs/WORKFLOW.md#when-a-fact-changes) |
 | **Quick edit** (a few lines of an existing version, no new JD) | The cards those lines cite, and the "Quick edit" row in [task modes](docs/WORKFLOW.md#task-modes) |
 | **Finalize** (about to send) | `docs/WORKFLOW.md` (Finalize) · `docs/REVIEW-CHECKLIST.md` C and D |
 | Step 0, first setup | `docs/WORKFLOW.md` (Step 0) · `evidence/INTAKE.md` |
@@ -38,6 +39,7 @@ The hard rules below always apply. Beyond them, read what the task needs; every 
 - If the JD asks for something with no evidence behind it, **don't write it**. Put it in the Coverage Report and let the user decide what to do. But before marking anything "no evidence," ask the user the probing questions in `docs/WORKFLOW.md` (D-014).
 - Among the defensible ways to say something, pick the strongest: never inflated, never written like a disclaimer (D-015).
 - If you're unsure of a fact, mark it "unverified". Don't guess.
+- **Correct once.** When the user corrects a fact (what happened, a number or what it measures, who did which part, what they may claim), update the Claim Card in the same turn and say back the change in one line. Then run `python3 scripts/list_claims.py --used-by C-xxx` and tell the user which files cite it. From then on the card wins over anything said earlier in the chat or written in an old resume. If the user only wants different wording and the facts stay the same, change the resume, not the card (D-020).
 
 **Process**
 - If `cv/CV-INDEX.md` has no Approved starting point yet, do Step 0 in `docs/WORKFLOW.md` before anything else.
@@ -50,7 +52,8 @@ The hard rules below always apply. Beyond them, read what the task needs; every 
 - Reports follow `docs/REPORT.md`. Never send or upload a full report: it holds all the user's details. For sharing, make a copy with `scripts/report_share.py`.
 - Before showing a resume to the user, run `python3 scripts/validate_evidence.py` and `python3 scripts/check_claims.py cv/resumes/<id>.md`, fix every error, and report the result.
 - Once `evidence/profile.md` is filled in, roles, employers, dates and education on a resume must match it. Add or change a row only after the user confirms it, the same as any card.
-- **Human review gate**: until the user says "approved", a version stays `Draft`. Don't edit a version marked `Sent`: when the user sends one, freeze it with `python3 scripts/freeze.py cv/resumes/<id>.md <exported file>`.
+- **Record what the user approved.** Right after the user approves a version, run `python3 scripts/check_claims.py cv/resumes/<id>.md --record all`; after writing follow-up cards, run it with `--record all` on them. When a card changes later, the check marks every file that cites it as needing a recheck. Show the user the lines citing that card; once they confirm, run `--record C-xxx`. Never record just to clear a warning: a record means the user looked (D-020).
+- **Human review gate**: until the user says "approved", a version stays `Draft`. Before it's sent, `check_claims.py cv/resumes/<id>.md --finalize` must pass. Don't edit a version marked `Sent`: when the user sends one, freeze it with `python3 scripts/freeze.py cv/resumes/<id>.md <exported file>`.
 
 **Permissions**
 | Level | Examples | Can the AI do it directly? |

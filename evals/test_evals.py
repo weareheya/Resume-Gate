@@ -78,6 +78,25 @@ class Catches(unittest.TestCase):
         self.assertEqual(r["missing_critical"], ["C-002"])
         self.assertEqual(score.cited("- Grew partners from 12 to 40,\n  in 18 months.\n  <!-- C-001 -->\n"), {"C-001"})
 
+    def test_old_wording_from_the_baseline_is_caught(self):
+        # fact-correction: copying the baseline's pre-correction line back in must fail
+        case = HERE / "cases" / "fact-correction"
+        old = ref(case, "resume.md").replace(
+            "- Designed a tailored sponsorship package for each of six partners around what they wanted from the 2023 launch, and negotiated all six deals, securing US$200K in sponsorship. <!-- C-006 -->",
+            "- Managed a US$200K partner marketing budget for the 2023 product launch. <!-- C-006 -->")
+        self.assertNotEqual(old, ref(case, "resume.md"))
+        r = score.score(case, old)
+        self.assertFalse(r["pass"])
+        self.assertTrue(r["forbidden_hits"])
+
+    def test_dropping_the_corrected_result_is_caught(self):
+        # value preservation: leaving C-006 out to play it safe is underselling
+        case = HERE / "cases" / "fact-correction"
+        text = "\n".join(l for l in ref(case, "resume.md").splitlines() if "C-006" not in l)
+        r = score.score(case, text)
+        self.assertFalse(r["pass"])
+        self.assertIn("C-006", r["missing_critical"])
+
     def test_crashed_check_is_not_a_pass(self):
         real = score.subprocess.run
         def crash(*a, **k):

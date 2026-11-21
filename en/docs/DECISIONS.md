@@ -7,7 +7,7 @@
 
 **applies-to**: `all` (the default), `type: 01`, or `job: ACME-01`. A rule that only fits one kind of job or one application shouldn't become a global rule. Only `all` binds every resume.
 
-D-001 to D-019 are starter rules, each born from a real mistake. D-001 to D-010 keep facts from getting lost or inflated; D-011 to D-016, D-018 and D-019 help you dig out what your experience is actually worth, so it doesn't get written too weakly; D-017 keeps the rules themselves from asking more than a real job search can give. To change or switch one off, add a rule in `MY-DECISIONS.md` that says which one it overrides.
+D-001 to D-020 are starter rules, each born from a real mistake. D-001 to D-010 keep facts from getting lost or inflated; D-020 keeps a corrected fact from coming back; D-011 to D-016, D-018 and D-019 help you dig out what your experience is actually worth, so it doesn't get written too weakly; D-017 keeps the rules themselves from asking more than a real job search can give. To change or switch one off, add a rule in `MY-DECISIONS.md` that says which one it overrides.
 
 ---
 
@@ -107,3 +107,12 @@ D-001 to D-019 are starter rules, each born from a real mistake. D-001 to D-010 
 - Keep the record light: unused cards can share one line by reason; a protected card, or one that clearly fits the job, gets its own row. `check_claims.py` warns when a card is missing from the table.
 
 ---
+
+## D-020 · Correct a fact once; everything that used it knows
+- scope: process · status: Active
+- The problem: the user corrected a fact, and later work still used the old version, from an approved resume, a follow-up card, or something said earlier in the chat.
+- A correction goes into the Claim Card first, in the same turn. From then on the card wins. The resumes, follow-up cards and answers that cite it are flagged for a recheck by `check_claims.py` and `list_claims.py --health`, worked out fresh from fingerprints in `cv/reviewed.txt`. Nothing is rewritten on its own, and a sent version stays as it was sent.
+- Only the lines citing the changed card need a recheck; the rest of the version keeps its approval. A draft gets a reminder; only `--finalize` blocks, and only for a major change or a card nobody has checked, because that's the point where an old fact would reach an employer (D-017).
+- A record means the user looked. Never write one to clear a warning.
+- Accepted when: after one correction, a fresh session uses the new fact without being told again, keeps the real value of the accomplishment, and doesn't treat a wording request as a correction (evals, `fact-correction`).
+

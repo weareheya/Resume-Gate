@@ -6,7 +6,7 @@
 
 1. **还没开始**（`cv/CV-INDEX.md` 里没有 Approved 的行，`evidence/INTAKE.md` 还是空模板）：用三句话打招呼。这是做什么的：简历的每一行都能追回本人确认过的事实。接下来会发生什么：先给现在这份简历做一份带分数的体检，再就最强的 3 项成果做个简短采访，前后大约 30 分钟。现在需要什么：「把现在的简历贴在这里，或者把文件放进 `evidence/sources/`。」然后按 `docs/WORKFLOW.md` 的 Step 0 一步一步做。
 2. **Step 0 做到一半**：说清楚上次停在哪（看 `evidence/INTAKE.md`），问要不要接着做。
-3. **已经在用**：一行现状（当前基线、最近一份报告的分数），再给一个短菜单：针对新岗位改一版（贴上 JD）· 拿到面试了，做追问卡 · 体检报告 · 改前改后海报 · 检查更新。
+3. **已经在用**：一行现状（当前基线、最近一份报告的分数，以及 `python3 scripts/list_claims.py --health` 提示需要复核的文件），再给一个短菜单：针对新岗位改一版（贴上 JD）· 拿到面试了，做追问卡 · 体检报告 · 改前改后海报 · 检查更新。
 4. 如果第一句话就是具体任务，直接做那件事。
 
 说短一点。本人不问，就不讲方法论。
@@ -19,6 +19,7 @@
 |---|---|
 | 任何简历相关工作 | `docs/MY-DECISIONS.md`（本人自己的规则，和起步规则冲突时以它为准） |
 | **定制**（新 JD，或换方向） | `docs/DECISIONS.md`（状态为 **Active** 的必须遵守）· `docs/WORKFLOW.md` · `cv/CV-INDEX.md` · `docs/LESSONS.md`（扫一眼）· Claim Card（超过 15 张时先跑 `python3 scripts/list_claims.py`）· `docs/REVIEW-CHECKLIST.md` |
+| 本人纠正一个事实 | 这个事实所在的卡，然后看[事实改了怎么办](docs/WORKFLOW.md#事实改了怎么办) |
 | **快改**（改已有版本的几行，没有新 JD） | 这几行引用的卡，以及[任务模式](docs/WORKFLOW.md#任务模式)里「快改」那一行 |
 | **定稿**（马上要投） | `docs/WORKFLOW.md`（定稿）· `docs/REVIEW-CHECKLIST.md` 的 C 和 D |
 | Step 0，第一次上手 | `docs/WORKFLOW.md`（Step 0）· `evidence/INTAKE.md` |
@@ -38,6 +39,7 @@
 - JD 要求但没有证据的能力，**不写**，记进 Coverage Report，由本人决定怎么补。但标「没有证据」之前，先用 `docs/WORKFLOW.md` 的追问清单问过本人（D-014）。
 - 在所有站得住的写法里选最有竞争力的那个：既不夸大，也不写成免责声明（D-015）。
 - 不确定的事实标「未核实」，不猜。
+- **只纠正一次。** 本人纠正一个事实（发生了什么、一个数字或它的口径、谁做了哪部分、能说什么）时，在同一轮里先改 Claim Card，并用一句话复述改了什么。然后跑 `python3 scripts/list_claims.py --used-by C-xxx`，告诉本人有哪些文件引用了它。从这以后以卡为准：聊天里之前说过的、旧简历里写过的，和卡不一致的都作废。如果本人只是想换个说法、事实没变，就改简历，不改卡（D-020）。
 
 **流程**
 - 如果 `cv/CV-INDEX.md` 里还没有 Approved 的起点，先做 `docs/WORKFLOW.md` 里的 Step 0，再做别的。
@@ -50,7 +52,8 @@
 - 报告按 `docs/REPORT.md` 做。不要发送或上传完整报告：里面有本人的全部信息。要分享时，用 `scripts/report_share.py` 生成分享版。
 - 给本人看简历之前，先跑 `python3 scripts/validate_evidence.py` 和 `python3 scripts/check_claims.py cv/resumes/<id>.md`，修掉所有错误，并报告结果。
 - `evidence/profile.md` 填好之后，简历上的职位、雇主、任职时间和教育背景必须和它一致。新增或修改其中一行，要先经本人确认，和卡片一样。
-- **人工审核关卡**：本人说「通过」之前，版本状态保持 `Draft`；已投递（`Sent`）的版本不再修改：本人投递时，用 `python3 scripts/freeze.py cv/resumes/<id>.md <导出的文件>` 冻结。
+- **记下本人批准了什么。** 本人批准一个版本后，马上跑 `python3 scripts/check_claims.py cv/resumes/<id>.md --record all`；写完追问卡后，也对它跑一次 `--record all`。之后某张卡改了，检查会把引用它的每个文件标成需要复核。把引用这张卡的行给本人看，本人确认后跑 `--record C-xxx`。不要为了消除提醒去记录：一条记录表示本人看过（D-020）。
+- **人工审核关卡**：投递前，`check_claims.py cv/resumes/<id>.md --finalize` 必须通过。本人说「通过」之前，版本状态保持 `Draft`；已投递（`Sent`）的版本不再修改：本人投递时，用 `python3 scripts/freeze.py cv/resumes/<id>.md <导出的文件>` 冻结。
 
 **权限**
 | 等级 | 例子 | AI 能否直接做 |
