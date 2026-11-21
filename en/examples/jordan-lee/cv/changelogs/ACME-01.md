@@ -39,11 +39,11 @@ Close match to type 01 (channel & partnerships), so one line: a partner develope
 
 ## JD Coverage Report
 
-| # | JD requirement | Gate | Kind | Evidence | Next step |
-|---|---|---|---|---|---|
-| R1 | Partner recruitment and tiering | yes | Direct | C-001 | n/a |
-| R2 | Co-selling with partners | | Transferable or combined | C-004 (co-marketing) + C-003 (deal registration) | Written as co-marketing, not co-selling. Prepare an interview story about joint account planning |
-| R3 | Cloud marketplace experience | | Buildable | n/a | Left out. A short marketplace listing course would close part of it; mention willingness to learn, don't imply experience |
+| # | JD requirement | Gate | Kind | Evidence | Checked | Next step |
+|---|---|---|---|---|---|---|
+| R1 | Partner recruitment and tiering | yes | Direct | C-001 | Cards | n/a |
+| R2 | Co-selling with partners | | Transferable or combined | C-004 (co-marketing) + C-003 (deal registration) | Cards | Written as co-marketing, not co-selling. Prepare an interview story about joint account planning |
+| R3 | Cloud marketplace experience | | Buildable | n/a | Cards | Left out. A short marketplace listing course would close part of it; mention willingness to learn, don't imply experience |
 
 **Main gap**: no direct co-selling or marketplace results.
 

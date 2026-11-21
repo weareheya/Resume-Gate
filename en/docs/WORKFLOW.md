@@ -21,9 +21,9 @@ A quick edit that turns out to touch a claim's meaning, a protected claim, or wh
 | Step | What to do | Output |
 |---|---|---|
 | S0 | **Save the JD.** Paste the posting into `jobs/<job-id>.md` (copy `jobs/_TEMPLATE.md`): the original text, where and when you found it, and its core requirements numbered R1, R2… Mark the must-haves as gates. Everything after this refers to those numbers, so nothing the JD asks for can quietly drop out. Tick each step in the file's "Progress" section as you finish it | `jobs/<job-id>.md` |
-| S1 | **Positioning, then baseline.** Ask what the job is really for: the business goal behind it, which requirements are hard gates (D-016), and what an ideal hire looks like. If the job is a stretch from your existing types, write 2 or 3 one-line positioning options (the angle, its strongest evidence, its main gap) and recommend one. For a close match, one line is enough. Then pick the baseline by fit: how close its positioning is to the chosen one, how much of the JD its claims already cover, whether it's Approved, and how recent it is. The baseline gives you facts and approved wording, not the story: the chosen positioning can reorder or reframe it (D-018). Choose the byline and contact variant by type | "Positioning: …; type X, starting point = …" |
+| S1 | **Positioning, then baseline.** Ask what the job is really for: the business goal behind it, which requirements are hard gates (D-016), and what an ideal hire looks like. If the job is a stretch from your existing types, write 2 or 3 one-line positioning options (the angle, its strongest evidence, its main gap) and recommend one, then stop and let the user choose before S2. For a close match, one line is enough and you carry on. Then pick the baseline by fit: how close its positioning is to the chosen one, how much of the JD its claims already cover, whether it's Approved, and how recent it is. The baseline gives you facts and approved wording, not the story: the chosen positioning can reorder or reframe it (D-018). Choose the byline and contact variant by type | "Positioning: …; type X, starting point = …" |
 | S2 | **Evidence Retrieval Gate.** Go through **every** Claim Card, not only the ones that sound related: a title alone can hide a skill the JD wants (check its capability facets, if it has them). With more than 15 cards, start from `python3 scripts/list_claims.py` (one line per card) and open in full every protected card and every card whose summary, role or facets touch the job; with fewer, read them all. Fill the evidence table in the Change Log: each used card on its own row, with where it went. Unused cards can share one line by reason ("Low: C-012, C-015, unrelated field"), so the table stays short; a protected card, or one that clearly fits the job, gets its own row and its reason. `check_claims.py` warns if a card is missing from the table. Then ask once: is any unused card stronger for this job than something already in the resume? If yes, swap it in or say why not. Stop when no swap clearly adds value (D-019) | Evidence table in the Change Log |
-| S3 | **Map to the JD.** For each requirement R1, R2…, sort it into one of five kinds: **Direct** · **Transferable or combined** (a skill from another setting, or several experiences that each prove part of it) · **Not found yet** (ask the [probing questions](#probing-questions) first, D-014; a number marked "to verify" belongs here too) · **Buildable** (a real gap you could close with a small project or course) · **Hard gap** (including an eligibility gate you don't meet). Only "Hard gap" means don't write it. If there's still no evidence after asking, don't stretch to cover the gap. The employer's name, the job title, the location, pay and benefits aren't requirements: they're never a gap. Whether the resume uses the JD's keywords is a separate check from whether it shows the value they ask for (D-011) | Five-way mapping in the Coverage Report |
+| S3 | **Map to the JD.** For each requirement R1, R2…, sort it into one of five kinds: **Direct** · **Transferable or combined** (a skill from another setting, or several experiences that each prove part of it) · **Not found yet** (ask the [probing questions](#probing-questions) first, D-014, then [look beyond the cards](#looking-beyond-the-cards), D-021; a number marked "to verify" belongs here too) · **Buildable** (a real gap you could close with a small project or course) · **Hard gap** (including an eligibility gate you don't meet). Only "Hard gap" means don't write it. If there's still no evidence after asking, don't stretch to cover the gap. The employer's name, the job title, the location, pay and benefits aren't requirements: they're never a gap. Whether the resume uses the JD's keywords is a separate check from whether it shows the value they ask for (D-011) | Five-way mapping in the Coverage Report |
 | S4 | **Delta.** Copy the baseline file in `cv/resumes/` and change only what needs changing: headline, summary, bullet order, keywords. Don't rewrite approved text. If `check_claims.py` says a line was copied from a baseline approved before its card changed, write that line from the current card | New draft |
 | S5 | **Change Log.** Number each change as a proposal: Before / After in quotes, the basis (card IDs), and Status `Pending`. Attach a JD Coverage Report and what you checked. Then run `python3 scripts/check_claims.py cv/changelogs/<id>.md --record all` once the user has looked at the rows. Each row is recorded on its own (`--record P2` for just row 2), so a proposal written against a card that later changes shows up as stale, and one that was never checked isn't treated as valid. Put the section or role in Location ("Summary", "Experience"): the script looks for the Before text there | `cv/changelogs/<id>.md` |
 | S6 | **AI self-review.** Go through the [REVIEW-CHECKLIST](REVIEW-CHECKLIST.md) sections A and B item by item. Run `python3 scripts/validate_evidence.py` and `python3 scripts/check_claims.py cv/resumes/<id>.md` (both must pass). The PDF and layout check wait for Finalize | Table of self-review fixes, check results |
@@ -184,7 +184,7 @@ When the user says a card is right in the interview, it's ready, unless it hits 
 
 **Dig before you filter.** Rules like "no evidence, no claim" and "a plan isn't a result" apply only after you've asked. Candidates often describe what they did in very few words: an "unlaunched proposal" may have had a part that was adopted, and a "coordinator" may have designed commercial deals. Use the probing questions to dig out the value first, then decide how far the wording can go (D-014).
 
-**No evidence, no claim.** If the JD wants something the evidence bank doesn't cover, put it under "None" in the Coverage Report. The user decides whether to build the evidence, cover it in the interview, or skip the job.
+**No evidence, no claim.** If the JD wants something the evidence bank doesn't cover, even after you've looked beyond the cards (D-021), put it under "None" in the Coverage Report. The user decides whether to build the evidence, cover it in the interview, or skip the job.
 
 **Don't cut strong results without a reason.** Removing an existing strong bullet has to pass three tests: relevance (it doesn't help for this job), accuracy (there's doubt about it), or space (it doesn't fit). Write the reason in the Change Log. A claim marked `protected: true` can't be weakened without the user's approval. If its card lists `keep-for` types, it must stay in resumes of those types and may be left out of others; with no `keep-for`, it stays everywhere.
 
@@ -204,18 +204,89 @@ Before writing a Claim Card, mapping to a JD, or marking anything "no evidence,"
 6. What does this number measure: unit, time window, cumulative or per item, actual or potential?
 7. Is there wording you've corrected before? (Weakened wording you've already fixed is the most likely to come back.)
 
+## Looking beyond the cards
+
+The cards are where confirmed facts live. But a real accomplishment can sit in the user's own material (a project review, a performance review, interview notes) with no card yet, and calling it "no evidence" would be wrong (D-021). This is how to look without reading everything every time.
+
+### When to look
+
+Start from the cards, including their text, not only the one-line list. Look further only in these cases:
+
+| Where the cards leave a requirement | Look further? |
+|---|---|
+| Strong, direct evidence | No. Stop |
+| Only weak or transferable evidence | Yes, if it's a gate or a core skill |
+| A card that lacks the result, scale or attribution the job needs | Ask the user first ([probing questions](#probing-questions), D-014), then look in the sources |
+| A gate requirement with nothing behind it | Always |
+| A nice-to-have | Only the few where an extra look could change the outcome |
+
+Effort follows importance, not a fixed count: every gate gets the look, so none is called "no evidence" for lack of effort. What you don't have the room to look into is reported as "not examined further", never as "no evidence".
+
+### Where to look, in order
+
+1. The cards, every status. A `Needs review` card or a "To fill" line may already hold it, and an `Interview only` card isn't for a resume. A `Retired` card is never support: if the same fact turns up again, it stays retired unless the user brings it back.
+2. `evidence/profile.md` and the reviewed answers in `interview/answers/`.
+3. The files in `evidence/sources/`, and any place the user's own rules name (for example "also look in my notes app"). `python3 scripts/list_claims.py --sources` lists the files with fingerprints and shows what is new, changed or skipped.
+4. Old resumes and follow-up cards: clues to follow, never proof (AGENTS).
+
+A file read before is still a place to look: one pass rarely takes everything out of a long document. "Read before", "changed since read", "renamed" and "skipped" describe the file, not the evidence in it.
+
+### How to read a source
+
+- Find the relevant part locally first (search, a table of contents, a page range) and give the model only that. If your tool can't read part of a file (a scanned PDF, an image, a connector), say so and let the user choose: send an excerpt, allow the whole file, or skip it.
+- A **skipped** source is one the user listed under "Skipped sources" in `evidence/INTAKE.md`: a file, or a folder written with a trailing `/`. Never open, search or quote it, and never give it to a model. The script doesn't open it either. For the other files the script only computes a fingerprint, on this computer; it reads no text and sends nothing anywhere.
+- Cloud-synced folders: `--sources` recognises iCloud placeholder files and doesn't open them. It recognises only iCloud. With any other sync tool, fingerprinting can download a file, so use `--sources --no-hash` to list names and sizes only.
+- Before you read a source, note its fingerprint (`python3 scripts/list_claims.py --fingerprint <file>`). Before you write what you found into a card, run it again, and also fingerprint the card you are about to change before you read it and again before you write. If either one changed, look at the affected part again instead of writing from the old read. This catches an edit made while you worked; it isn't a lock.
+- After a real read, add a row to "Source records" in `evidence/INTAKE.md`: the path, the fingerprint, the date. Don't register files you haven't read. Which job and requirement you looked at goes in that job's Coverage Report, not in INTAKE.
+
+### What to do with what you find
+
+- The same accomplishment as an existing card (any status, `Retired` included), or as something the user declined (below): update that card or leave it alone. Never open a new ID to get around one.
+- Something new: write a card with status `Needs review`, name the file and the page, section or a redacted excerpt as its Source, and ask the user one question.
+- Who has to confirm what:
+
+| The fact comes from | Confirm with the user? |
+|---|---|
+| An old resume, a document or notes, found by the AI | Yes, until they say it's right |
+| Something the AI worked out: who caused what, whose part it was | Yes |
+| What the user said in this chat | No: their own account is confirmed (D-017) |
+| A correction from the user | No: update the card (D-020) |
+| Something the user said they're unsure of | Yes |
+
+- **When a source disagrees with a card:**
+
+| What it is | What to do |
+|---|---|
+| An old document that contradicts something the user later corrected | The card wins; don't ask again |
+| New material that could overturn the card | Mark the conflict (below) and ask |
+| The user correcting a fact | Do it now (D-020) |
+| The same fact worded differently | Not a conflict |
+| A different amount, owner, unit or period | Mark it and settle it before Finalize |
+
+To mark a conflict, use what already exists: put `to verify` in the Verified cell of the disputed number, or set the card to `Needs review` if the accomplishment, or who did it, is disputed (split the card if only part of it is in doubt). Say why under "To fill" on the card. `check_claims.py` then stops any line that uses it, and `--finalize` stops a version that cites it; a version that doesn't cite it is not affected. `protected-ok` only approves leaving a protected claim out. It never excuses keeping a claim whose card is disputed.
+
+### Not asking twice
+
+When the user says no to something you found, add a row under "Declined facts" in `evidence/INTAKE.md`: what it was, why (wrong · not mine · true but not for a resume) and the date. If a card exists for it, fix the card instead (D-020). Don't record "not needed for this job" (that belongs in that job's evidence table) or "no time now" (leave the card `Needs review`). Check the list before you ask about something you found.
+
+### What to report
+
+In the Coverage Report keep two things apart: what the evidence is (confirmed, waiting for the user, conflict, not found) and how far you looked (cards, sources too, partly, not accessible, not examined further, waiting for the user). "No evidence" means the cards and the sources were checked and there is none; if something couldn't be checked, say that instead. List the files you actually read under "Scope of check". The report is your own account of the search: nothing in it proves it.
+
 ## Coverage Report format
 
 ```markdown
-| # | JD requirement | Gate | Kind | Evidence | Next step |
-|---|---|---|---|---|---|
-| R1 | Requirement A | yes | Direct | C-003 | n/a |
-| R2 | Requirement B | | Transferable or combined | C-007 (different setting) + C-002 | Lead with the transferable skill; be ready to say how the setting differs |
-| R3 | Requirement C | | Not found yet | n/a | Ask the probing questions; may turn up evidence |
-| R4 | Requirement D | | Buildable | n/a | A small project could close it; your call |
-| R5 | Requirement E | yes | Hard gap | n/a | Left out. Answer it in the interview, or skip the job |
+| # | JD requirement | Gate | Kind | Evidence | Checked | Next step |
+|---|---|---|---|---|---|---|
+| R1 | Requirement A | yes | Direct | C-003 | Cards | n/a |
+| R2 | Requirement B | | Transferable or combined | C-007 (different setting) + C-002 | Cards | Lead with the transferable skill; be ready to say how the setting differs |
+| R3 | Requirement C | | Not found yet | n/a | Cards and sources | Ask the probing questions; may turn up evidence |
+| R4 | Requirement D | | Buildable | n/a | Not examined further | A small project could close it; your call |
+| R5 | Requirement E | yes | Hard gap | n/a | Cards and sources; one source not accessible | Left out. Answer it in the interview, or skip the job |
 
-**Scope of check**: covered …; not covered … (reason)
+**Checked** says how far you looked: Cards · Cards and sources · Partly (say what's missing) · Not accessible · Not examined further · Waiting for the user. An evidence line that is waiting for the user, or in conflict with a source, says so in Evidence or Next step.
+
+**Scope of check**: covered …; not covered … (reason); files read: …
 ```
 
 In a job-fit report, Direct counts as `direct`, Transferable or combined as `partial`, and the other three as `none`.

@@ -7,7 +7,7 @@
 
 **applies-to**: `all` (the default), `type: 01`, or `job: ACME-01`. A rule that only fits one kind of job or one application shouldn't become a global rule. Only `all` binds every resume.
 
-D-001 to D-020 are starter rules, each born from a real mistake. D-001 to D-010 keep facts from getting lost or inflated; D-020 keeps a corrected fact from coming back; D-011 to D-016, D-018 and D-019 help you dig out what your experience is actually worth, so it doesn't get written too weakly; D-017 keeps the rules themselves from asking more than a real job search can give. To change or switch one off, add a rule in `MY-DECISIONS.md` that says which one it overrides.
+D-001 to D-021 are starter rules, each born from a real mistake. D-001 to D-010 keep facts from getting lost or inflated; D-020 keeps a corrected fact from coming back; D-021 makes the AI look in your own material before it says there is no evidence; D-011 to D-016, D-018 and D-019 help you dig out what your experience is actually worth, so it doesn't get written too weakly; D-017 keeps the rules themselves from asking more than a real job search can give. To change or switch one off, add a rule in `MY-DECISIONS.md` that says which one it overrides.
 
 ---
 
@@ -116,3 +116,12 @@ D-001 to D-020 are starter rules, each born from a real mistake. D-001 to D-010 
 - A record means the user looked. Never write one to clear a warning.
 - Accepted when: after one correction, a fresh session uses the new fact without being told again, keeps the real value of the accomplishment, and doesn't treat a wording request as a correction (evals, `fact-correction`).
 
+## D-021 · Look before you say there's no evidence
+- scope: process · status: Active
+- The problem: something the user had really done was in their own material (a project review, interview notes) but had no Claim Card, so it was written off as "no evidence" because only the cards had been checked.
+- Start from the cards. Look further only when a requirement has no card, only a weak or transferable one, or a card without the result, scale or attribution the job needs (WORKFLOW, "Looking beyond the cards"): the files in `evidence/sources/`, the reviewed answers, `evidence/profile.md`, and any place the user's own rules name. Strong, direct evidence ends the search. Every gate requirement gets the look; for the rest, look where it could change the outcome.
+- A file that was read before is still a place to look. A record says only that it was read for one job, never that nothing more can be found in it.
+- What turns up goes into the existing card, or a new `Needs review` card, and the user is asked. It never reaches a resume unconfirmed, though a fact the user states themselves is confirmed (D-017). Don't open a new card for something a card (a `Retired` one too) or a declined fact already covers.
+- "No evidence" means the cards and sources were checked and there is none. What couldn't be checked (not examined further, not accessible, waiting for the user) is reported as that.
+- Look in the relevant part only, and give the model only that. Never open a source the user skipped. If a disputed fact must stop a version, mark it with `to verify` or `Needs review`; `protected-ok` never overrides that.
+- Accepted when: a fact that exists only in a source file is found and put to the user as a `Needs review` card, not written off as "no evidence" and not used unconfirmed. Only the file listing and the dispute handling have deterministic tests; this behaviour has not been run as an eval.

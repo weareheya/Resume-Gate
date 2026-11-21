@@ -15,3 +15,24 @@ Status: `To do` · `In progress` · `Done` · `Skipped`
 ## Next session starts at
 
 (Which accomplishment and which question.)
+
+## Source records
+
+> One row for each file you actually read for a job. `list_claims.py --sources` compares the fingerprint, so it can tell when a file has changed. A row only says the file was read once: it never means nothing more can be found in it. Optional; an INTAKE from an older kit works without this section.
+
+| File | Fingerprint | Read |
+|---|---|---|
+
+## Skipped sources
+
+> Files, or a folder written with a trailing `/`, that the AI must never open, search or quote, and never give to a model.
+
+| File | Reason |
+|---|---|
+
+## Declined facts
+
+> Things the AI found and you said no to, so it doesn't ask again. Not for "not needed for this job" or "no time now".
+
+| What | Why (wrong · not mine · true but not for a resume) | Date |
+|---|---|---|

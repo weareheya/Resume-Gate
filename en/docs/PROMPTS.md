@@ -40,7 +40,7 @@ Follow docs/WORKFLOW.md, S0 through S6, for this job:
 
 [paste the JD here]
 
-Start by saving the JD in jobs/, then tell me the positioning (with options if this job is a stretch), the baseline you picked, and the evidence table: every Claim Card, whether it's used, and why not. Use only claims marked "Safe to draft." Stop before S7 and show me the full text, the diff against the baseline, and the Coverage Report.
+Start by saving the JD in jobs/, then tell me the positioning (with options if this job is a stretch; if you give options, stop and wait for my pick before you go on), the baseline you picked, and the evidence table: every Claim Card, whether it's used, and why not. Use only claims marked "Safe to draft." Stop before S7 and show me the full text, the diff against the baseline, and the Coverage Report.
 ```
 
 ## 4. Self-review a version

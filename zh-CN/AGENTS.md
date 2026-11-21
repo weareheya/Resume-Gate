@@ -20,6 +20,7 @@
 | 任何简历相关工作 | `docs/MY-DECISIONS.md`（本人自己的规则，和起步规则冲突时以它为准） |
 | **定制**（新 JD，或换方向） | `docs/DECISIONS.md`（状态为 **Active** 的必须遵守）· `docs/WORKFLOW.md` · `cv/CV-INDEX.md` · `docs/LESSONS.md`（扫一眼）· Claim Card（超过 15 张时先跑 `python3 scripts/list_claims.py`）· `docs/REVIEW-CHECKLIST.md` |
 | 本人纠正一个事实 | 这个事实所在的卡，然后看[事实改了怎么办](docs/WORKFLOW.md#事实改了怎么办)。只读这些：引用它的文件由 `list_claims.py --used-by` 找，不用自己搜索，也不用读其他卡、卡片模板或整份简历 |
+| 某条要求没有合适的卡 | [在卡片之外找](docs/WORKFLOW.md#在卡片之外找) · `python3 scripts/list_claims.py --sources` |
 | **快改**（改已有版本的几行，没有新 JD） | 这几行引用的卡，以及[任务模式](docs/WORKFLOW.md#任务模式)里「快改」那一行 |
 | **定稿**（马上要投） | `docs/WORKFLOW.md`（定稿）· `docs/REVIEW-CHECKLIST.md` 的 C 和 D |
 | Step 0，第一次上手 | `docs/WORKFLOW.md`（Step 0）· `evidence/INTAKE.md` |
@@ -37,7 +38,7 @@
 - 简历里的每条经历、每个数字都必须能追到 `evidence/claims/` 里的一张 Claim Card，并通过这张卡追到原始出处。没有出处的，不写。
 - 已批准 / 已投递的简历**不是证据**，它只记录本人批准过哪些措辞和结构。旧简历里的某条 bullet 如果没有 Claim Card 支撑，就当作未核实：不往新版本里照抄，先补写这张卡并经本人确认。
 - 数字保留单位、币种、时间窗口和限定词（「潜在」「累计」「单个项目」等）。不把团队成果写成个人成果。
-- JD 要求但没有证据的能力，**不写**，记进 Coverage Report，由本人决定怎么补。但标「没有证据」之前，先用 `docs/WORKFLOW.md` 的追问清单问过本人（D-014）。
+- JD 要求但没有证据的能力，**不写**，记进 Coverage Report，由本人决定怎么补。但标「没有证据」之前，先用 `docs/WORKFLOW.md` 的追问清单问过本人（D-014），并在卡片之外找：`evidence/sources/`、已审核的答案、`evidence/profile.md`，以及本人自己的规则指到的地方（D-021）。`python3 scripts/list_claims.py --sources` 会列出文件。「没有证据」的意思是卡片和资料都查过了；有什么没能查，就说没能查。本人标了跳过的资料，绝不要打开。
 - 在所有站得住的写法里选最有竞争力的那个：既不夸大，也不写成免责声明（D-015）。
 - 不确定的事实标「未核实」，不猜。
 - **只纠正一次。** 本人纠正一个事实（发生了什么、一个数字或它的口径、谁做了哪部分、能说什么）时，在同一轮里先改 Claim Card，并用一句话复述改了什么。然后跑 `python3 scripts/list_claims.py --used-by C-xxx`，告诉本人有哪些文件引用了它。从这以后以卡为准：聊天里之前说过的、旧简历里写过的，和卡不一致的都作废。如果本人只是想换个说法、事实没变，就改简历，不改卡（D-020）。

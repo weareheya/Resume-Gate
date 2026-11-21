@@ -69,7 +69,7 @@
 | [AGENTS.md](AGENTS.md) · [CLAUDE.md](CLAUDE.md) · [.claude/commands/](.claude/commands/) | 给 AI 的接手规范 | AI 先读；你自己扫一遍 |
 | [docs/WORKFLOW.md](docs/WORKFLOW.md) | Step 0、七步流程、追问清单、Coverage Report 格式 | 做第一份简历之前 |
 | [docs/PROMPTS.md](docs/PROMPTS.md) | 每个时刻可直接复制的提示词 | 每次开工 |
-| [docs/DECISIONS.md](docs/DECISIONS.md) | 20 条起步规则。不要改：更新时会被整份替换 | 看一次，知道默认规则 |
+| [docs/DECISIONS.md](docs/DECISIONS.md) | 21 条起步规则。不要改：更新时会被整份替换 | 看一次，知道默认规则 |
 | [docs/MY-DECISIONS.md](docs/MY-DECISIONS.md) | 你自己的规则，包括对起步规则的改动。只归你 | 定新规则或改规则时 |
 | [docs/REPORT.md](docs/REPORT.md) · [report/template.html](report/template.html) | 带分数的可视化体检报告和岗位匹配报告：量什么，以及模板 | Step 0，以及任何想看简历现状的时候 |
 | [evidence/INTAKE.md](evidence/INTAKE.md) | Step 0 的采访计划和进度，新会话能接着上次做 | Step 0 |
@@ -85,7 +85,7 @@
 | [scripts/validate_evidence.py](scripts/validate_evidence.py) | 检查证据库：ID 不重复、状态合法、每个数字都标了 ✓ 或待核实（Python 3） | 检查一份简历之前 |
 | [scripts/freeze.py](scripts/freeze.py) | 冻结已投递的简历：把 SHA-256 记进 `cv/frozen.txt`；`--check` 确认冻结的文件都没变（Python 3） | 投递一个版本时 |
 | [scripts/check_claims.py](scripts/check_claims.py) | 检查每一行有出处、数字的数值和币种不变、职位与档案一致、受保护的没丢；Change Log 的证据表漏了卡、或者某张卡在这一版批准后改过，会提醒。`--record` 记下你批准了什么；`--finalize` 是投递前最后一道检查（Python 3） | 你审一版之前 |
-| [scripts/list_claims.py](scripts/list_claims.py) | 每张 Claim Card 列一行，证据库大了也能很快过一遍；`--used-by C-001` 列出引用某张卡的文件，`--health` 列出卡改过、需要复核的文件。不写任何文件（Python 3） | 卡片超过 15 张时，或者纠正了一个事实之后 |
+| [scripts/list_claims.py](scripts/list_claims.py) | 每张 Claim Card 列一行，证据库大了也能很快过一遍；`--used-by C-001` 列出引用某张卡的文件，`--health` 列出卡改过、需要复核的文件；`--sources` 列出你的资料文件和指纹（哪些是新的、改过的、已跳过的），`--fingerprint 文件` 打印单个文件的指纹。不写任何文件（Python 3） | 卡片超过 15 张时，或者纠正了一个事实之后 |
 | [scripts/report_score.py](scripts/report_score.py) | 用和模板相同的公式算出报告分数，让对话里说的分数和页面一致（Python 3） | AI 填完报告后 |
 | [scripts/report_png.py](scripts/report_png.py) | 把分享卡（加 `--full` 就是整份报告）存成 PNG，给打不开报告的对话窗口用。用你已有的 Chrome、Edge 或 Brave（Python 3） | AI 填完报告后 |
 | [scripts/report_share.py](scripts/report_share.py) · [report_compare.py](scripts/report_compare.py) | 分享卡，或用两份报告做改前改后海报。默认只有分数，其余模块由你勾选；不含隐私信息（Python 3） | 想分享时 |

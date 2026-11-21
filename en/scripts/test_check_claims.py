@@ -3,6 +3,7 @@
 
 Run:  python3 scripts/test_check_claims.py
 """
+import os
 import subprocess
 import sys
 import tempfile
@@ -1242,6 +1243,68 @@ class DependencyHealth(unittest.TestCase):
         self.assertIn('proposal #1 was rejected, and its short new text appears in v2.md under "Experience"', out)
         self.assertIn("proposal #2 was rejected, but its new text is too short", out)
 
+    # --- 0.8.0: a disputed fact stops a version only where it is used ---------------------------
+
+    def set_status(self, cid, status):
+        p = self.root / f"evidence/claims/{cid}.md"
+        p.write_text(p.read_text(encoding="utf-8").replace("status: Safe to draft", f"status: {status}"), encoding="utf-8")
+
+    def only_newsletter(self, name, extra=""):
+        (self.root / f"cv/resumes/{name}.md").write_text(
+            f"---\nid: {name}\ntype: 01\nstatus: Approved\nbase: \n{extra}---\n## Experience\n"
+            "### Partnerships Manager · Northwind · 2022–2023\n- Ran the partner newsletter. <!-- C-002 -->\n", encoding="utf-8")
+
+    def test_disputed_number_blocks_finalize_only_where_it_is_used(self):
+        self.approved("v1")
+        self.only_newsletter("other")
+        self.assertEqual(self.sh("check_claims.py", "cv/resumes/other.md", "--record", "all")[0], 0)
+        p = self.root / "evidence/claims/C-001.md"
+        p.write_text(p.read_text(encoding="utf-8").replace("| ✓ |", "| to verify |"), encoding="utf-8")
+        code, out = self.check("v1", "--finalize")
+        self.assertEqual(code, 1, out)
+        self.assertIn("US$200,000", out)
+        self.assertIn("not marked ✓", out)
+        code, out = self.check("other", "--finalize")
+        self.assertEqual(code, 0, out)
+
+    def test_disputed_card_blocks_finalize_only_where_it_is_cited(self):
+        self.approved("v1")
+        self.set_status("C-001", "Needs review")
+        code, out = self.check("v1", "--finalize")
+        self.assertEqual(code, 1, out)
+        self.assertIn('only "Safe to draft" can be used', out)
+        self.card("C-001")
+        # a disputed card that this version doesn't cite doesn't stop it
+        (self.root / "evidence/claims/C-009.md").write_text(
+            DEP_CARD.format(id="C-009", protected="false", keep="", facts="x", did="y", wording="z", notes="n")
+            .replace("status: Safe to draft", "status: Needs review"), encoding="utf-8")
+        code, out = self.check("v1", "--finalize")
+        self.assertEqual(code, 0, out)
+
+    def test_protected_ok_does_not_waive_a_disputed_fact(self):
+        self.card("C-001", protected="true")
+        self.approved("base")
+        self.set_status("C-001", "Needs review")
+        # Leaving the protected claim out is what protected-ok is for ...
+        self.only_newsletter("v2", "protected-ok: C-001\n")
+        code, out = self.check("v2")
+        self.assertNotIn("Protected claim C-001", out)
+        # ... but it never excuses keeping a claim whose card is disputed.
+        (self.root / "cv/resumes/v3.md").write_text(
+            "---\nid: v3\ntype: 01\nstatus: Draft\nbase: base\nprotected-ok: C-001\n---\n## Experience\n"
+            "### Partnerships Manager · Northwind · 2022–2023\n- Secured US$200,000 in launch-stage sponsorships. <!-- C-001 -->\n"
+            "- Ran the partner newsletter. <!-- C-002 -->\n", encoding="utf-8")
+        code, out = self.check("v3")
+        self.assertEqual(code, 1, out)
+        self.assertIn('only "Safe to draft" can be used', out)
+        # Without protected-ok, dropping the protected claim is still an error.
+        (self.root / "cv/resumes/v4.md").write_text(
+            "---\nid: v4\ntype: 01\nstatus: Draft\nbase: base\n---\n## Experience\n"
+            "### Partnerships Manager · Northwind · 2022–2023\n- Ran the partner newsletter. <!-- C-002 -->\n", encoding="utf-8")
+        code, out = self.check("v4")
+        self.assertEqual(code, 1, out)
+        self.assertIn("Protected claim C-001", out)
+
 
 class ReportScore(unittest.TestCase):
     """report_score.py must agree with the sample in report/template.html (38, as the page shows)."""
@@ -1252,6 +1315,263 @@ class ReportScore(unittest.TestCase):
                            capture_output=True, text=True)
         self.assertEqual(r.returncode, 0, r.stdout)
         self.assertIn("38 / 100", r.stdout)
+
+
+LIST_CLAIMS = SCRIPT.with_name("list_claims.py")
+
+
+def load_list_claims():
+    spec = importlib.util.spec_from_file_location("list_claims_under_test", LIST_CLAIMS)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+class SourceScan(unittest.TestCase):
+    """list_claims.py --sources and --fingerprint (D-021): a read-only look at evidence/sources/."""
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.root = Path(self.tmp.name).resolve()
+        (self.root / "evidence/claims").mkdir(parents=True)
+        (self.root / "evidence/sources").mkdir(parents=True)
+        self.lc = load_list_claims()
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def src(self, name, text="hello"):
+        p = self.root / "evidence/sources" / name
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text(text, encoding="utf-8")
+        return p
+
+    def intake(self, records=(), skipped=(), heading_r="Source records", heading_s="Skipped sources"):
+        body = "# INTAKE\n\n## " + heading_r + "\n| File | Fingerprint | Read |\n|---|---|---|\n"
+        body += "".join(f"| `{p}` | {fp} | 2026-11-01 |\n" for p, fp in records)
+        body += "\n## " + heading_s + "\n| File | Reason |\n|---|---|\n" + "".join(f"| {p} | private |\n" for p in skipped)
+        (self.root / "evidence/INTAKE.md").write_text(body, encoding="utf-8")
+
+    def fp(self, name):
+        return self.lc.fingerprint(self.root / "evidence/sources" / name)
+
+    def run_cli(self, *args):
+        r = subprocess.run([sys.executable, "-I", str(LIST_CLAIMS), *args, "--lang", "en"],
+                           cwd=self.root, capture_output=True, text=True, timeout=30)
+        return r.returncode, r.stdout
+
+    def states(self):
+        records, skipped = self.lc.intake_tables(self.root)
+        return {r[0]: r for r in self.lc.scan_sources(self.root, records, skipped)}
+
+    def test_no_sources_folder_is_fine(self):
+        (self.root / "evidence/sources").rmdir()
+        code, out = self.run_cli("--sources")
+        self.assertEqual(code, 0, out)
+        self.assertIn("nothing to list", out)
+
+    def test_old_intake_without_the_new_sections_works_as_it_is(self):
+        self.src("review.txt")
+        (self.root / "evidence/INTAKE.md").write_text("# INTAKE\n\n**Mode**: just talk\n\n| # | Accomplishment |\n|---|---|\n| 1 | x |\n", encoding="utf-8")
+        code, out = self.run_cli("--sources")
+        self.assertEqual(code, 0, out)
+        self.assertIn("| evidence/sources/review.txt |", out)
+        self.assertIn("| new |", out)
+        (self.root / "evidence/INTAKE.md").unlink()
+        self.assertEqual(self.run_cli("--sources")[0], 0)
+
+    def test_read_before_and_changed_since_read(self):
+        a, b = self.src("a.txt", "one"), self.src("b.txt", "two")
+        self.intake([("evidence/sources/a.txt", self.fp("a.txt")), ("evidence/sources/b.txt", self.fp("b.txt"))])
+        b.write_text("two, edited", encoding="utf-8")
+        st = self.states()
+        self.assertEqual(st["evidence/sources/a.txt"][3], "read")
+        self.assertEqual(st["evidence/sources/b.txt"][3], "changed")
+
+    def test_headings_in_chinese_and_quoted_paths_are_read(self):
+        self.src("a.txt")
+        self.intake([("./evidence/sources/a.txt", self.fp("a.txt"))], heading_r="来源记录", heading_s="跳过的资料")
+        self.assertEqual(self.states()["evidence/sources/a.txt"][3], "read")
+
+    def test_a_unique_rename_is_followed(self):
+        self.src("new-name.txt", "same text")
+        self.intake([("evidence/sources/old-name.txt", self.fp("new-name.txt"))])
+        st = self.states()
+        self.assertEqual(st["evidence/sources/new-name.txt"][3:], ("renamed", "n_renamed", "evidence/sources/old-name.txt"))
+        self.assertNotIn("evidence/sources/old-name.txt", st)
+
+    def test_a_copy_is_not_a_rename(self):
+        self.src("project.txt", "same text")
+        self.src("project-copy.txt", "same text")
+        self.intake([("evidence/sources/project.txt", self.fp("project.txt"))])
+        st = self.states()
+        self.assertEqual(st["evidence/sources/project.txt"][3], "read")
+        self.assertEqual(st["evidence/sources/project-copy.txt"][3:5], ("new", "n_dup"))
+
+    def test_ambiguous_matches_are_not_migrated(self):
+        self.src("one.txt", "same text")
+        self.src("two.txt", "same text")
+        fp = self.fp("one.txt")
+        self.intake([("evidence/sources/gone.txt", fp)])
+        st = self.states()  # one vanished path, but two files share the content
+        self.assertEqual(st["evidence/sources/one.txt"][3], "new")
+        self.assertEqual(st["evidence/sources/two.txt"][3], "new")
+        self.assertEqual(st["evidence/sources/gone.txt"][3], "gone")
+        self.intake([("evidence/sources/gone1.txt", fp), ("evidence/sources/gone2.txt", fp)])
+        (self.root / "evidence/sources/two.txt").unlink()
+        st = self.states()  # two vanished paths, one file
+        self.assertEqual(st["evidence/sources/one.txt"][3], "new")
+        self.assertEqual(st["evidence/sources/gone1.txt"][3], "gone")
+
+    def test_a_file_with_the_same_content_still_there_blocks_a_rename(self):
+        self.src("kept.txt", "same text")
+        self.src("maybe-renamed.txt", "same text")
+        fp = self.fp("kept.txt")
+        self.intake([("evidence/sources/kept.txt", fp), ("evidence/sources/vanished.txt", fp)])
+        st = self.states()
+        self.assertEqual(st["evidence/sources/maybe-renamed.txt"][3], "new")
+        self.assertEqual(st["evidence/sources/vanished.txt"][3], "gone")
+
+    def test_a_skipped_file_is_never_opened_even_after_it_changes(self):
+        self.src("secret.txt", "v1")
+        self.src("fine.txt")
+        self.intake(skipped=["evidence/sources/secret.txt"])
+        opened = []
+        real_fp, real_inspect = self.lc.fingerprint, self.lc.inspect_file
+        self.lc.fingerprint = lambda p: opened.append(Path(p).name) or real_fp(p)
+        self.lc.inspect_file = lambda p, r: opened.append(Path(p).name) or real_inspect(p, r)
+        (self.root / "evidence/sources/secret.txt").write_text("v2, edited", encoding="utf-8")
+        st = self.states()
+        self.assertEqual(st["evidence/sources/secret.txt"][3], "skipped")
+        self.assertNotIn("secret.txt", opened)
+        self.assertIn("fine.txt", opened)
+
+    def test_a_skipped_folder_is_not_entered(self):
+        self.src("private/a.txt")
+        self.src("private/deep/b.txt")
+        self.intake(skipped=["evidence/sources/private/"])
+        opened = []
+        real_fp = self.lc.fingerprint
+        self.lc.fingerprint = lambda p: opened.append(str(p)) or real_fp(p)
+        st = self.states()
+        self.assertEqual(st["evidence/sources/private/"][3], "skipped")
+        self.assertEqual(len(st), 1)
+        self.assertEqual(opened, [])
+
+    def test_one_unreadable_file_does_not_stop_the_scan(self):
+        self.src("bad.txt")
+        self.src("good.txt")
+        real_fp = self.lc.fingerprint
+
+        def flaky(p):
+            if Path(p).name == "bad.txt":
+                raise PermissionError(13, "Permission denied")
+            return real_fp(p)
+        self.lc.fingerprint = flaky
+        st = self.states()
+        self.assertEqual(st["evidence/sources/bad.txt"][3], "unreadable")
+        self.assertEqual(st["evidence/sources/good.txt"][3], "new")
+
+    def test_a_link_pointing_outside_is_not_followed(self):
+        with tempfile.TemporaryDirectory() as other:
+            target = Path(other) / "outside.txt"
+            target.write_text("not part of the sources", encoding="utf-8")
+            link = self.root / "evidence/sources/link.txt"
+            try:
+                link.symlink_to(target)
+                (self.root / "evidence/sources/linked-dir").symlink_to(other, target_is_directory=True)
+            except (OSError, NotImplementedError):
+                self.skipTest("no symbolic links here")
+            opened = []
+            real_fp = self.lc.fingerprint
+            self.lc.fingerprint = lambda p: opened.append(Path(p).name) or real_fp(p)
+            st = self.states()
+            self.assertEqual(st["evidence/sources/link.txt"][3], "outside")
+            self.assertEqual(st["evidence/sources/linked-dir/"][3], "outside")
+            self.assertEqual(opened, [])
+            self.assertNotIn("evidence/sources/linked-dir/outside.txt", st)
+
+    def test_a_pipe_is_not_opened(self):
+        if not hasattr(os, "mkfifo"):
+            self.skipTest("no named pipes here")
+        os.mkfifo(self.root / "evidence/sources/pipe")
+        self.src("ok.txt")
+        code, out = self.run_cli("--sources")  # would hang for the timeout if the pipe were opened
+        self.assertEqual(code, 0, out)
+        self.assertIn("not a regular file", out)
+        self.assertIn("| new |", out)
+
+    def test_icloud_placeholders_are_named_but_not_opened(self):
+        (self.root / "evidence/sources/.report.pdf.icloud").write_text("stub", encoding="utf-8")
+        opened = []
+        real_fp = self.lc.fingerprint
+        self.lc.fingerprint = lambda p: opened.append(Path(p).name) or real_fp(p)
+        st = self.states()
+        self.assertEqual(st["evidence/sources/report.pdf"][3], "cloud")
+        self.assertEqual(opened, [])
+        self.intake(skipped=["evidence/sources/report.pdf"])
+        self.assertEqual(self.states()["evidence/sources/report.pdf"][3], "skipped")
+
+    def test_macos_dataless_flag_is_not_opened(self):
+        self.src("remote.txt")
+        real_stat = os.stat
+
+        class Fake:
+            st_mode, st_size, st_flags = real_stat(self.root / "evidence/sources/remote.txt").st_mode, 5, self.lc.DATALESS
+        self.lc.os = type("OS", (), {"stat": staticmethod(lambda p: Fake if Path(p).name == "remote.txt" else real_stat(p)),
+                                     "walk": os.walk})
+        opened = []
+        real_fp = self.lc.fingerprint
+        self.lc.fingerprint = lambda p: opened.append(Path(p).name) or real_fp(p)
+        self.assertEqual(self.states()["evidence/sources/remote.txt"][3], "cloud")
+        self.assertEqual(opened, [])
+
+    def test_no_hash_opens_nothing(self):
+        self.src("a.txt")
+        self.lc.fingerprint = lambda p: self.fail("--no-hash must not fingerprint")
+        rows = self.lc.scan_sources(self.root, {}, {}, hash_files=False)
+        self.assertEqual([r[3] for r in rows], ["listed"])
+        code, out = self.run_cli("--sources", "--no-hash")
+        self.assertEqual(code, 0, out)
+        self.assertIn("listed only", out)
+
+    def test_a_record_never_claims_the_file_is_used_up(self):
+        self.src("a.txt")
+        self.intake([("evidence/sources/a.txt", self.fp("a.txt"))])
+        code, out = self.run_cli("--sources")
+        self.assertIn("never means the file has no other usable evidence", out)
+
+    def test_fingerprint_catches_a_change_between_reading_and_writing(self):
+        p = self.src("a.txt", "as read")
+        code, h1 = self.run_cli("--fingerprint", "evidence/sources/a.txt")
+        self.assertEqual(code, 0, h1)
+        p.write_text("edited meanwhile", encoding="utf-8")
+        code, h2 = self.run_cli("--fingerprint", "evidence/sources/a.txt")
+        self.assertNotEqual(h1, h2)
+        card = self.root / "evidence/claims/C-001.md"
+        card.write_text("---\nid: C-001\n---\n# C-001 · x\n", encoding="utf-8")
+        c1 = self.run_cli("--fingerprint", "evidence/claims/C-001.md")[1]
+        card.write_text("---\nid: C-001\n---\n# C-001 · x\nedited by another session\n", encoding="utf-8")
+        self.assertNotEqual(c1, self.run_cli("--fingerprint", "evidence/claims/C-001.md")[1])
+
+    def test_fingerprint_refuses_skipped_missing_and_outside_files(self):
+        self.src("secret.txt")
+        self.intake(skipped=["evidence/sources/secret.txt"])
+        code, out = self.run_cli("--fingerprint", "evidence/sources/secret.txt")
+        self.assertEqual(code, 1)
+        self.assertIn("skipped: not opened", out)
+        self.assertEqual(self.run_cli("--fingerprint", "evidence/sources/nope.txt")[0], 1)
+        with tempfile.NamedTemporaryFile() as other:
+            code, out = self.run_cli("--fingerprint", other.name)
+            self.assertEqual(code, 1)
+            self.assertIn("outside", out)
+
+    def test_chinese_output(self):
+        self.src("a.txt")
+        r = subprocess.run([sys.executable, "-I", str(LIST_CLAIMS), "--sources", "--lang", "zh"],
+                           cwd=self.root, capture_output=True, text=True, timeout=30)
+        self.assertEqual(r.returncode, 0, r.stdout)
+        self.assertIn("新文件", r.stdout)
 
 
 class ListClaims(unittest.TestCase):

@@ -41,7 +41,7 @@ One experience can prove several different skills (D-012). List the ones worth p
 - Don't mix A and B together
 
 ## Source
-Where the proof is: emails, contracts, dashboard screenshots, a colleague who can vouch, a public link. You don't need to be able to hand it over; naming the source is enough ("the number from the quarterly review"). If there's nothing, write "own account only." That's common and doesn't stop the card going on a resume.
+Where the proof is: emails, contracts, dashboard screenshots, a colleague who can vouch, a public link. You don't need to be able to hand it over; naming the source is enough ("the number from the quarterly review"). If there's nothing, write "own account only." That's common and doesn't stop the card going on a resume. A page, a section, a redacted excerpt or your own words is enough: don't paste sensitive text. For a card written from a file, name the file. Drafted from an old resume or another document and not yet confirmed by the user? Say so here, and keep the card `Needs review` until they say it's right.
 
 ## To fill
 Questions skipped in the interview, to answer later. Delete this section once it's empty.
