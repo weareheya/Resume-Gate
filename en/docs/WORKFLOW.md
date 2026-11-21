@@ -122,6 +122,8 @@ The goal: the user corrects a fact once, and every later step knows. Nothing tha
 | Card missing | It cites a card ID that doesn't exist and was never recorded here: a typo, or a card deleted before 0.7.0. (A card deleted after the record shows as Needs recheck: card removed) | Listed by `--used-by` and `--health`. In a resume, `check_claims.py` already fails on an unknown ID |
 | Not checked | No record yet (versions made before 0.7.0, or an incomplete record), or the lines were edited after the record | One summary line. At `--finalize`, an error until the user confirms and you record |
 
+**Current is not approved.** These states only say whether the lines still match the cards. Whether the user approved a version is its status (Draft / Approved / Sent), and only the user changes that. A current Draft is still a draft, and a reviewed answer is reused only if it is both current and Approved.
+
 A draft copied from a baseline also gets a WARN on every line copied unchanged from a baseline that was approved before its card changed: that's how an old wording slips into a new version.
 
 | Major (can change what's true) | Minor (usually wording) |
