@@ -17,6 +17,8 @@ You don't need to learn the files first. Open this folder in your AI tool and sa
 | Changing a few lines | "Quick edit: only change this bullet." | Just those lines, no full pipeline |
 | Ready to send | "Finalize this resume." | Fact check, your approval, layout check, freeze |
 | Invited to interview | "I have an interview for this job: prepare me." | Follow-up cards from the version you sent, reusing answers you've approved |
+| Wanting a quick quality check | "Make a checkup report on my current resume." | A scored report with what's strong, what's weak, and what to fix first |
+| Checking for a new version | "Check whether there's a new version of Resume-Gate." | The AI compares your `VERSION` with the latest and shows what changed before touching anything (`docs/UPDATING.md`) |
 | Found an old fact was wrong | "Correct a fact I recorded earlier." | The card is fixed first, then everything that used it is flagged |
 
 ## What it fixes
@@ -167,7 +169,7 @@ The evidence bank holds your real work history: employers, numbers, and who you 
 
 By default the kit's `.gitignore` keeps your personal files out of Git: Claim Cards, `evidence/profile.md` and `INTAKE.md`, `cv/CV-INDEX.md`, resumes, Change Logs, jobs, interview notes, reports and `docs/MY-DECISIONS.md`. So pushing to GitHub, even a public repo, doesn't normally upload them. That's a safety net, not a guarantee, so look at what you commit. It also doesn't limit what the AI service you use sees. The catch: Git doesn't back them up either. If your repository is **private** and you want Git to keep them, delete the marked block at the end of `.gitignore`. Updates never put it back without asking.
 
-Already committed personal files before 0.6.0? The new `.gitignore` doesn't remove them from Git. Run `git rm -r --cached --ignore-unmatch evidence/claims evidence/profile.md evidence/INTAKE.md cv jobs interview reports` and then `git add .` (your files stay on disk; the templates come back), then commit. If the repo was ever public, treat what was pushed as already seen.
+Already committed personal files before 0.6.0? The new `.gitignore` doesn't remove them from Git. Run `git rm -r --cached --ignore-unmatch evidence/claims evidence/profile.md evidence/INTAKE.md cv jobs interview reports docs/MY-DECISIONS.md` and then `git add .` (your files stay on disk; the templates come back), then commit. Already tracking `docs/MY-DECISIONS.md` (it's new in the ignore list)? Adding it to `.gitignore` doesn't stop Git tracking it; the command above covers it, or run `git rm --cached --ignore-unmatch docs/MY-DECISIONS.md` on its own. Neither removes it from past commits. If the repo was ever public, treat what was pushed as already seen. Your own `.gitignore` is never replaced without asking (`docs/UPDATING.md`); add `/docs/MY-DECISIONS.md` to its personal-data block yourself.
 
 ## Design choices
 

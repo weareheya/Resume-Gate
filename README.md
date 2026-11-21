@@ -2,11 +2,13 @@
 
 **English** · [简体中文](#简体中文)
 
+[Get started](#get-started) · [See a full example](en/examples/jordan-lee/README.md)
+
 > Use AI to build your resume, but make sure every line has a source, every version can be traced, and every change goes through you.
 
-**The aim is neither overstated nor understated.** The kit stops the AI from inflating a number or claiming credit that wasn't yours, and it pushes just as hard against writing your real strengths too weakly. Reasonable, modest packaging is fine: shared work can be worded as collaboration, and the result you can back can lead. Only a wrong number or credit you didn't earn is blocked.
+**The aim is neither overstated nor understated.** The kit stops the AI from inflating a number or claiming credit that wasn't yours, and it pushes just as hard against writing your real strengths too weakly. Reasonable framing is encouraged, as long as the facts, results and attribution remain defensible: shared work can be worded as collaboration, and the result you can back can lead.
 
-**It digs for what you'd miss.** Before it drops or weakens anything, the AI asks follow-up questions (scope, your share, the result, what the experience says about you), and every card is checked against every job, so a strength you described in a few words doesn't get left out. What it finds still depends on the model, your materials and your answers, and the scripts check sources and numbers, not whether the writing persuades.
+**It digs for what you'd miss.** Before it drops or weakens anything, the AI asks follow-up questions (scope, your share, the result, what the experience says about you), and every card is checked against every job. This helps bring out strengths that might otherwise be overlooked, rather than judging an experience by the few words you first used for it. What it finds still depends on the model, your materials and your answers, and the scripts check sources and numbers, not whether the writing persuades.
 
 A resume workflow for a long job search, where you tailor many versions over weeks or months: **evidence bank → baseline resume → per-job delta → AI self-review → your sign-off → freeze → interview prep**. It's docs, templates, and a few small scripts, and it isn't tied to any AI or resume tool.
 
@@ -115,11 +117,13 @@ Not sure about any of this? Ask the AI tool you picked in step 1. It can check w
 
 ## 简体中文
 
+[开始使用](#开始使用) · [查看完整示例](zh-CN/examples/jordan-lee/README.md)
+
 > 用 AI 改简历可以，前提是每句话都有出处。
 
-**目标是既不夸大，也不写低。** 工具包拦住 AI 把数字写大、把不是你的功劳算到你头上，同样用力地防止把你真实的强项写得太弱。合理、适度的包装是允许的：共同完成的事可以写成协作，你能站得住的成果可以放前面。只有写错的数字、你没有的功劳会被拦下。
+**目标是既不夸大，也不写低。** 工具包拦住 AI 把数字写大、把不是你的功劳算到你头上，同样用力地防止把你真实的强项写得太弱。鼓励在事实支持的范围内进行合理包装，但不能改变成果口径、个人贡献或事实本身：共同完成的事可以写成协作，你能站得住的成果可以放前面。
 
-**它会帮你挖出你自己漏掉的东西。** 删掉或写弱任何内容之前，AI 先追问（范围、你的部分、结果、这段经历说明了你什么），而且每个岗位都会把每张卡过一遍，所以你随口一句带过的强项不会被漏掉。能挖出多少，仍取决于模型、你的材料和你的回答；脚本只检查出处和数字，不判断文字打不打动人。
+**它会帮你挖出你自己漏掉的东西。** 删掉或写弱任何内容之前，AI 先追问（范围、你的部分、结果、这段经历说明了你什么），而且每个岗位都会把每张卡过一遍，这样可以帮助挖掘原本可能被忽略的优势，而不是仅凭你最初描述经历时用的几个词来判断它的价值。能挖出多少，仍取决于模型、你的材料和你的回答；脚本只检查出处和数字，不判断文字打不打动人。
 
 一套给长期求职用的简历工作流。几周、几个月、几十版改下来不乱：**证据库 → 基线 → 按岗位改 Delta → AI 自审 → 本人审核 → 冻结 → 面试准备**。文档 + 模板 + 几个小脚本，不绑定任何 AI 或简历工具。
 

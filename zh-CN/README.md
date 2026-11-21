@@ -25,6 +25,8 @@
 | 只改几句话 | 「快改：只改这一条。」 | 只动这几行，不走完整流程 |
 | 准备投递 | 「帮我定稿这份简历。」 | 事实检查、你确认、排版检查、冻结 |
 | 拿到面试 | 「我拿到这个岗位的面试了，帮我准备。」 | 按你投出的那一版生成追问卡，复用你批准过的回答 |
+| 想快速看看简历质量 | 「帮我做一次简历体检。」 | 一份打分报告：哪里强、哪里弱、先改什么 |
+| 想看有没有新版本 | 「帮我检查 Resume-Gate 有没有新版本。」 | AI 对比你的 `VERSION` 和最新版本，改动任何东西之前先给你看有什么变化（`docs/UPDATING.md`） |
 | 发现之前记的事实不准 | 「我要纠正之前记录的一项事实。」 | 先改卡，再标出所有用过它的文件 |
 
 ## 它解决什么问题
@@ -175,7 +177,7 @@ Resume-Gate 还在持续改进。`VERSION` 写着你手上是哪个版本，[CHA
 
 工具包的 `.gitignore` 默认让你的个人文件不进 Git：Claim Card、`evidence/profile.md` 和 `INTAKE.md`、`cv/CV-INDEX.md`、简历、Change Log、岗位、面试记录、报告和 `docs/MY-DECISIONS.md`。所以即使推到 GitHub 的公开仓库，通常也不会把它们传上去。这是保险，不是保证，提交前自己看一眼。它也管不了你所用的 AI 服务能看到什么。代价是 Git 也不会备份它们。如果你的仓库是**私有**的、想让 Git 帮你保存，删掉 `.gitignore` 末尾标出的那一段就行。之后升级工具包，不会在没问你的情况下把它加回来。
 
-0.6.0 之前已经把个人文件提交进 Git 了？新的 `.gitignore` 不会把它们移出去。先跑 `git rm -r --cached --ignore-unmatch evidence/claims evidence/profile.md evidence/INTAKE.md cv jobs interview reports`，再跑 `git add .`（文件还留在你电脑上，模板会被重新加回来），然后提交。如果这个仓库公开过，就当推上去的内容已经被人看过了。
+0.6.0 之前已经把个人文件提交进 Git 了？新的 `.gitignore` 不会把它们移出去。先跑 `git rm -r --cached --ignore-unmatch evidence/claims evidence/profile.md evidence/INTAKE.md cv jobs interview reports docs/MY-DECISIONS.md`，再跑 `git add .`（文件还留在你电脑上，模板会被重新加回来），然后提交。已经在跟踪 `docs/MY-DECISIONS.md` 了（它是新加进忽略列表的）？只加进 `.gitignore` 不会让 Git 停止跟踪它；上面的命令已包含它，也可以单独跑 `git rm --cached --ignore-unmatch docs/MY-DECISIONS.md`。两种都不会把它从历史提交里抹掉。如果这个仓库公开过，就当推上去的内容已经被人看过了。你自己的 `.gitignore` 不会在没问你的情况下被替换（`docs/UPDATING.md`）；请自己把 `/docs/MY-DECISIONS.md` 加进它的个人数据那一段。
 
 ## 设计取舍
 
