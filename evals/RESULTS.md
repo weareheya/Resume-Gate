@@ -4,6 +4,26 @@ One section per run, newest first. Record the kit versions compared, how many ru
 
 **Scorer change in 0.6.0**: critical recall now counts a card only when its ID is tagged on a visible resume line, and a crashed `check_claims.py` is "could not run" instead of zero errors. Runs before 0.6.0 used the looser count, so their recall figures may read slightly high; compare new rounds with new rounds. The saved outputs of the rounds below weren't kept (`evals/runs/` is local), so they weren't re-scored. The reference answers pass under the new rules.
 
+## 2026-11-21 · v0.6.0 vs v0.7.0 · fact-correction, two sessions per run
+
+**Setup**: the new `fact-correction` case (see its README). Each run is two fresh sessions in its own workspace: session A gets the user's correction of C-006 (US$200K was sponsorship they designed and negotiated, not a marketing budget), session B tailors for a Strategic Partnerships Manager job with prompt 3. An AI assistant played the kit's AI, with no user answering questions. Two runs on v0.7.0, one on v0.6.0 as a control (the old kit has no way to know a card changed, so more runs wouldn't tell us much). Session B scored with `score.py --bank <workspace>`.
+
+| Kit | Run | A: card corrected | A: value kept | A: files named | A: approved files untouched | B: score | B: C-006 used | B: old wording | Tokens A / B |
+|---|---|---|---|---|---|---|---|---|---|
+| v0.7.0 | 1 | yes | yes | baseline, needs recheck | yes | PASS | yes, as sponsorship + negotiation | none | ~74k / ~119k |
+| v0.7.0 | 2 | yes | yes | baseline, needs recheck | yes | PASS | yes, as sponsorship + negotiation | none | ~74k / ~118k |
+| v0.6.0 | 1 | yes, but set to `Needs review` | yes | no check, said so in prose | **no**: deleted the line from the approved baseline | **FAIL** (C-006 missing) | no: blocked by `Needs review` | none | ~91k / ~116k |
+
+**What it says**
+- On v0.7.0 the loop held in both runs: the card was corrected in the same turn, kept the stronger true story (six tailored packages, all six negotiated), named the old wording under "Don't rephrase as", ran `--used-by`, and left the approved baseline alone. The fresh session B ran `--health`, saw the baseline needed a recheck, chose the other baseline, and wrote C-006 from the corrected card. Neither asked the user to explain the amount again.
+- The v0.6.0 control shows both failure modes this version targets. It edited an approved file in place (deleting the wrong line), and it put the corrected card back to `Needs review` because it had written the sentence itself, so the next session couldn't use the job's strongest evidence and undersold the candidate (critical recall 50%).
+- Neither v0.7.0 run copied from the out-of-date baseline, so the copied-line warning wasn't exercised here; the unit tests cover it.
+- Cost: session B is about the same as before (~118k). Session A is a light task (~74k, mostly reading AGENTS and WORKFLOW).
+
+**Changed because of this run**: nothing yet. Implicit corrections and wording-only requests are tested with PR 2.
+
+**Limits**: two runs on the new kit, one on the old, one AI playing the assistant, no blind read (the change is about facts, and score.py catches the failure). Gap-kind accuracy isn't comparable: the posting was pasted without numbered requirements, so each run numbered them its own way.
+
 ## 2026-11-20 · v0.5.2 vs v0.6.0 · product-manager, three runs per side, plus a blind read
 
 **Setup**: a spot check of 0.6.0's lighter reading on the case where wording matters most. Six fresh sessions (an AI assistant, no user answering questions), each in its own copy of that version's `en/` kit, with the `jordan-lee` cards, profile and two baselines. Each used prompt 3 with the job pasted in. Scored with `score.py` (0.6.0 rules). The blind read used one AI reviewer acting as a recruiter, with only the job posting and the A/B files from `blind.py`.
