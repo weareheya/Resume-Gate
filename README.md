@@ -4,11 +4,13 @@
 
 [Get started](#get-started) · [See a full example](en/examples/jordan-lee/README.md)
 
-> Use AI to build your resume, but make sure every line has a source, every version can be traced, and every change goes through you.
+> Use AI to tell the right story about your career: the strongest one you can still defend in the interview. Every line has a source, every version can be traced, and every change goes through you.
 
-**The aim is neither overstated nor understated.** The kit stops the AI from inflating a number or claiming credit that wasn't yours, and it pushes just as hard against writing your real strengths too weakly. Reasonable framing is encouraged, as long as the facts, results and attribution remain defensible: shared work can be worded as collaboration, and the result you can back can lead.
+**Why: the interview finds out.** An AI will happily make a number bigger, a role broader, or an outcome sound finished when it wasn't. It reads well on paper. Then an interviewer asks "how was that counted?" or "what did you do yourself?", and a line you can't back up can cost more than the whole resume gained and damage your credibility. Resume-Gate works backwards from that moment: every line traces to a fact you confirmed, and each Claim Card records how a number was counted, what was yours versus the team's, and wording you can't use.
 
-**It digs for what you'd miss.** Before it drops or weakens anything, the AI asks follow-up questions (scope, your share, the result, what the experience says about you), and every card is checked against every job. This helps bring out strengths that might otherwise be overlooked, rather than judging an experience by the few words you first used for it. What it finds still depends on the model, your materials and your answers, and the scripts check sources and numbers, not whether the writing persuades.
+**The right story isn't the smallest one.** Playing it safe is a failure too. Within what the facts support, the kit pushes for the strongest defensible wording: lead with the result you can back, and word shared work as collaboration. Before it drops or weakens anything the AI asks follow-up questions, and it checks every card against every job, which helps bring out strengths you might have overlooked. Before an interview, follow-up cards list the questions each bullet is likely to draw, with answers taken only from your cards.
+
+**What this doesn't promise.** It can't guarantee an interview or an offer, or that an AI never makes a mistake. The scripts check sources and numbers, not whether a story persuades; what the AI finds depends on the model, your materials and your answers; and you approve every change.
 
 A resume workflow for a long job search, where you tailor many versions over weeks or months: **evidence bank → baseline resume → per-job delta → AI self-review → your sign-off → freeze → interview prep**. It's docs, templates, and a few small scripts, and it isn't tied to any AI or resume tool.
 
@@ -119,11 +121,13 @@ Not sure about any of this? Ask the AI tool you picked in step 1. It can check w
 
 [开始使用](#开始使用) · [查看完整示例](zh-CN/examples/jordan-lee/README.md)
 
-> 用 AI 改简历可以，前提是每句话都有出处。
+> 用 AI 讲对你的职业故事：讲你在面试里还站得住的那个最强版本。每句话有出处，每一版可追溯，每处改动都经过你。
 
-**目标是既不夸大，也不写低。** 工具包拦住 AI 把数字写大、把不是你的功劳算到你头上，同样用力地防止把你真实的强项写得太弱。鼓励在事实支持的范围内进行合理包装，但不能改变成果口径、个人贡献或事实本身：共同完成的事可以写成协作，你能站得住的成果可以放前面。
+**为什么：面试会查出来。** AI 很乐意把数字写大、把职责写宽、把没做完的事写成已经做成。纸面上很好看，然后面试官问「这个数字怎么算的？」「你自己具体做了什么？」，一句答不上来的话，损失可能比整份简历带来的好处还大，还会伤到你的可信度。Resume-Gate 从这一刻倒推：每句话都要追溯到你确认过的事实，每张 Claim Card 记着数字怎么算的、哪部分是你做的哪部分是团队的、哪些说法不能用。
 
-**它会帮你挖出你自己漏掉的东西。** 删掉或写弱任何内容之前，AI 先追问（范围、你的部分、结果、这段经历说明了你什么），而且每个岗位都会把每张卡过一遍，这样可以帮助挖掘原本可能被忽略的优势，而不是仅凭你最初描述经历时用的几个词来判断它的价值。能挖出多少，仍取决于模型、你的材料和你的回答；脚本只检查出处和数字，不判断文字打不打动人。
+**对的故事不是最保守的故事。** 一味保守也是失败。在事实支持的范围内，工具包追求最强又站得住的写法：把你能证明的成果放前面，共同完成的事写成协作。AI 在删掉或写弱任何内容之前会先追问，每个岗位都把每张卡过一遍，这样可以帮助挖掘你可能忽略的优势。面试前，追问卡会列出每条经历可能被问到的问题，答案只取自你的卡片。
+
+**它不承诺什么。** 它不能保证拿到面试或 offer，也不能保证 AI 不出错。脚本检查的是出处和数字，不判断故事打不打动人；AI 能挖出多少取决于模型、你的材料和你的回答；每处改动都由你批准。
 
 一套给长期求职用的简历工作流。几周、几个月、几十版改下来不乱：**证据库 → 基线 → 按岗位改 Delta → AI 自审 → 本人审核 → 冻结 → 面试准备**。文档 + 模板 + 几个小脚本，不绑定任何 AI 或简历工具。
 
