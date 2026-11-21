@@ -1,6 +1,6 @@
 # Resume-Gate
 
-> Use AI to tell the right story about your career: the strongest one you can still defend in the interview. Every line has a source, every version can be traced, and every change goes through you.
+> Use AI to tell the right story about your career: one that shows how you make sense of your own experience, and that you can still defend in the interview. Every line has a source, every version can be traced, and every change goes through you.
 
 A resume workflow for a long job search: **evidence bank → baseline resume → per-job delta → AI self-review → your sign-off → freeze**. It's docs, templates, and a few small scripts. It isn't tied to any AI or resume tool. Any AI that can read your files can follow it: Claude Code and Codex read `AGENTS.md` automatically, and with other tools you just point the AI at it.
 

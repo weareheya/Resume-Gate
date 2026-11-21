@@ -4,9 +4,11 @@
 
 [Get started](#get-started) · [See a full example](en/examples/jordan-lee/README.md)
 
-> Use AI to tell the right story about your career: the strongest one you can still defend in the interview. Every line has a source, every version can be traced, and every change goes through you.
+> Use AI to tell the right story about your career: one that shows how you make sense of your own experience, and that you can still defend in the interview. Every line has a source, every version can be traced, and every change goes through you.
 
-**Why: the interview finds out.** An AI will happily make a number bigger, a role broader, or an outcome sound finished when it wasn't. It reads well on paper. Then an interviewer asks "how was that counted?" or "what did you do yourself?", and a line you can't back up can cost more than the whole resume gained and damage your credibility. Resume-Gate works backwards from that moment: every line traces to a fact you confirmed, and each Claim Card records how a number was counted, what was yours versus the team's, and wording you can't use.
+**Your career story is you.** How you tell your experience shows who you are and how you've digested what you've done: what you chose to own, what you learned, what you'd stand behind. An AI can polish that story or quietly replace it with a more impressive one that isn't yours. Resume-Gate keeps the story yours: it starts from facts you confirmed, and every change goes through you.
+
+**And the interview finds out.** An AI will happily make a number bigger, a role broader, or an outcome sound finished when it wasn't. It reads well on paper. Then an interviewer asks "how was that counted?" or "what did you do yourself?", and a line you can't back up can cost more than the whole resume gained and damage your credibility. Resume-Gate works backwards from that moment: every line traces to a fact you confirmed, and each Claim Card records how a number was counted, what was yours versus the team's, and wording you can't use.
 
 **The right story isn't the smallest one.** Playing it safe is a failure too. Within what the facts support, the kit pushes for the strongest defensible wording: lead with the result you can back, and word shared work as collaboration. Before it drops or weakens anything the AI asks follow-up questions, and it checks every card against every job, which helps bring out strengths you might have overlooked. Before an interview, follow-up cards list the questions each bullet is likely to draw, with answers taken only from your cards.
 
@@ -121,9 +123,11 @@ Not sure about any of this? Ask the AI tool you picked in step 1. It can check w
 
 [开始使用](#开始使用) · [查看完整示例](zh-CN/examples/jordan-lee/README.md)
 
-> 用 AI 讲对你的职业故事：讲你在面试里还站得住的那个最强版本。每句话有出处，每一版可追溯，每处改动都经过你。
+> 用 AI 讲对你的职业故事：它体现你如何消化自己的经历，也经得起面试的追问。每句话有出处，每一版可追溯，每处改动都经过你。
 
-**为什么：面试会查出来。** AI 很乐意把数字写大、把职责写宽、把没做完的事写成已经做成。纸面上很好看，然后面试官问「这个数字怎么算的？」「你自己具体做了什么？」，一句答不上来的话，损失可能比整份简历带来的好处还大，还会伤到你的可信度。Resume-Gate 从这一刻倒推：每句话都要追溯到你确认过的事实，每张 Claim Card 记着数字怎么算的、哪部分是你做的哪部分是团队的、哪些说法不能用。
+**你的职业故事就是你。** 你怎么讲自己的经历，体现你是谁、你如何消化自己做过的事：你认领什么、学到什么、哪些话你敢担保。AI 可以把这个故事打磨得更好，也可能悄悄换成一个更漂亮、却不是你的故事。Resume-Gate 让故事保持是你的：从你确认过的事实出发，每处改动都经过你。
+
+**而且面试会查出来。** AI 很乐意把数字写大、把职责写宽、把没做完的事写成已经做成。纸面上很好看，然后面试官问「这个数字怎么算的？」「你自己具体做了什么？」，一句答不上来的话，损失可能比整份简历带来的好处还大，还会伤到你的可信度。Resume-Gate 从这一刻倒推：每句话都要追溯到你确认过的事实，每张 Claim Card 记着数字怎么算的、哪部分是你做的哪部分是团队的、哪些说法不能用。
 
 **对的故事不是最保守的故事。** 一味保守也是失败。在事实支持的范围内，工具包追求最强又站得住的写法：把你能证明的成果放前面，共同完成的事写成协作。AI 在删掉或写弱任何内容之前会先追问，每个岗位都把每张卡过一遍，这样可以帮助挖掘你可能忽略的优势。面试前，追问卡会列出每条经历可能被问到的问题，答案只取自你的卡片。
 
