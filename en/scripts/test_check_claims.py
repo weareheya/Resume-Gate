@@ -11,6 +11,7 @@ import textwrap
 import importlib.util
 import unittest
 from pathlib import Path
+from unittest import mock
 
 SCRIPT = Path(__file__).with_name("check_claims.py")
 
@@ -1361,8 +1362,8 @@ class SourceScan(unittest.TestCase):
         return r.returncode, r.stdout
 
     def states(self):
-        records, skipped = self.lc.intake_tables(self.root)
-        return {r[0]: r for r in self.lc.scan_sources(self.root, records, skipped)}
+        records, skipped, unreliable = self.lc.intake_tables(self.root)
+        return {r[0]: r for r in self.lc.scan_sources(self.root, records, skipped, True, unreliable)}
 
     def test_no_sources_folder_is_fine(self):
         (self.root / "evidence/sources").rmdir()
@@ -1439,7 +1440,7 @@ class SourceScan(unittest.TestCase):
         opened = []
         real_fp, real_inspect = self.lc.fingerprint, self.lc.inspect_file
         self.lc.fingerprint = lambda p: opened.append(Path(p).name) or real_fp(p)
-        self.lc.inspect_file = lambda p, r: opened.append(Path(p).name) or real_inspect(p, r)
+        self.lc.inspect_file = lambda p: opened.append(Path(p).name) or real_inspect(p)
         (self.root / "evidence/sources/secret.txt").write_text("v2, edited", encoding="utf-8")
         st = self.states()
         self.assertEqual(st["evidence/sources/secret.txt"][3], "skipped")
@@ -1472,24 +1473,75 @@ class SourceScan(unittest.TestCase):
         self.assertEqual(st["evidence/sources/bad.txt"][3], "unreadable")
         self.assertEqual(st["evidence/sources/good.txt"][3], "new")
 
-    def test_a_link_pointing_outside_is_not_followed(self):
+    def link(self, link, target, directory=False):
+        try:
+            Path(link).symlink_to(target, target_is_directory=directory)
+        except (OSError, NotImplementedError):
+            self.skipTest("no symbolic links here")
+
+    def watch_fingerprints(self):
+        opened = []
+        real_fp = self.lc.fingerprint
+        self.lc.fingerprint = lambda p: opened.append(Path(p).name) or real_fp(p)
+        return opened
+
+    def test_links_are_never_followed(self):
         with tempfile.TemporaryDirectory() as other:
             target = Path(other) / "outside.txt"
             target.write_text("not part of the sources", encoding="utf-8")
-            link = self.root / "evidence/sources/link.txt"
-            try:
-                link.symlink_to(target)
-                (self.root / "evidence/sources/linked-dir").symlink_to(other, target_is_directory=True)
-            except (OSError, NotImplementedError):
-                self.skipTest("no symbolic links here")
-            opened = []
-            real_fp = self.lc.fingerprint
-            self.lc.fingerprint = lambda p: opened.append(Path(p).name) or real_fp(p)
+            self.link(self.root / "evidence/sources/link.txt", target)
+            self.link(self.root / "evidence/sources/linked-dir", other, directory=True)
+            self.src("inside.txt")
+            self.link(self.root / "evidence/sources/alias.txt", self.root / "evidence/sources/inside.txt")
+            opened = self.watch_fingerprints()
             st = self.states()
-            self.assertEqual(st["evidence/sources/link.txt"][3], "outside")
-            self.assertEqual(st["evidence/sources/linked-dir/"][3], "outside")
-            self.assertEqual(opened, [])
+            for name in ("link.txt", "alias.txt"):
+                self.assertEqual(st["evidence/sources/" + name][3], "link")
+            self.assertEqual(st["evidence/sources/linked-dir/"][3], "link")
+            self.assertEqual(opened, ["inside.txt"])
             self.assertNotIn("evidence/sources/linked-dir/outside.txt", st)
+
+    def test_an_alias_of_a_skipped_file_is_not_opened(self):
+        self.src("confidential.pdf", "secret")
+        self.link(self.root / "evidence/sources/project.pdf", self.root / "evidence/sources/confidential.pdf")
+        self.intake(skipped=["evidence/sources/confidential.pdf"])
+        opened = self.watch_fingerprints()
+        st = self.states()
+        self.assertEqual(st["evidence/sources/confidential.pdf"][3], "skipped")
+        self.assertEqual(st["evidence/sources/project.pdf"][3], "link")
+        self.assertEqual(opened, [])
+        code, out = self.run_cli("--fingerprint", "evidence/sources/project.pdf")
+        self.assertEqual(code, 1, out)
+        self.assertIn("link", out)
+
+    def test_fingerprint_refuses_a_link_to_a_skipped_file_and_a_skipped_link(self):
+        self.src("real.txt")
+        self.link(self.root / "evidence/sources/alias.txt", self.root / "evidence/sources/real.txt")
+        self.intake(skipped=["evidence/sources/alias.txt"])
+        self.assertEqual(self.run_cli("--fingerprint", "evidence/sources/alias.txt")[0], 1)
+        self.intake(skipped=[])
+        self.assertEqual(self.run_cli("--fingerprint", "evidence/sources/alias.txt")[0], 1)  # a link, skipped or not
+        self.assertEqual(self.run_cli("--fingerprint", "evidence/sources/real.txt")[0], 0)
+
+    def test_a_link_in_a_parent_folder_is_refused_too(self):
+        with tempfile.TemporaryDirectory() as other:
+            (Path(other) / "x.txt").write_text("outside", encoding="utf-8")
+            self.link(self.root / "evidence/sources/folder", other, directory=True)
+            code, out = self.run_cli("--fingerprint", "evidence/sources/folder/x.txt")
+            self.assertEqual(code, 1, out)
+            self.assertIn("link", out)
+
+    def test_a_sources_folder_that_is_a_link_is_not_scanned(self):
+        with tempfile.TemporaryDirectory() as other:
+            (Path(other) / "other.txt").write_text("outside", encoding="utf-8")
+            (self.root / "evidence/sources").rmdir()
+            self.link(self.root / "evidence/sources", other, directory=True)
+            opened = self.watch_fingerprints()
+            code, out = self.run_cli("--sources")
+            self.assertEqual(code, 1, out)
+            self.assertIn("not scanned", out)
+            self.assertNotIn("other.txt", out)
+            self.assertEqual(opened, [])
 
     def test_a_pipe_is_not_opened(self):
         if not hasattr(os, "mkfifo"):
@@ -1513,17 +1565,15 @@ class SourceScan(unittest.TestCase):
         self.assertEqual(self.states()["evidence/sources/report.pdf"][3], "skipped")
 
     def test_macos_dataless_flag_is_not_opened(self):
-        self.src("remote.txt")
+        remote = self.src("remote.txt")
         real_stat = os.stat
 
         class Fake:
-            st_mode, st_size, st_flags = real_stat(self.root / "evidence/sources/remote.txt").st_mode, 5, self.lc.DATALESS
-        self.lc.os = type("OS", (), {"stat": staticmethod(lambda p: Fake if Path(p).name == "remote.txt" else real_stat(p)),
-                                     "walk": os.walk})
-        opened = []
-        real_fp = self.lc.fingerprint
-        self.lc.fingerprint = lambda p: opened.append(Path(p).name) or real_fp(p)
-        self.assertEqual(self.states()["evidence/sources/remote.txt"][3], "cloud")
+            st_mode, st_size, st_flags = real_stat(remote).st_mode, 5, self.lc.DATALESS
+
+        opened = self.watch_fingerprints()
+        with mock.patch("os.stat", lambda p, *a, **k: Fake if Path(p).name == "remote.txt" else real_stat(p, *a, **k)):
+            self.assertEqual(self.states()["evidence/sources/remote.txt"][3], "cloud")
         self.assertEqual(opened, [])
 
     def test_no_hash_opens_nothing(self):
@@ -1572,6 +1622,100 @@ class SourceScan(unittest.TestCase):
                            cwd=self.root, capture_output=True, text=True, timeout=30)
         self.assertEqual(r.returncode, 0, r.stdout)
         self.assertIn("新文件", r.stdout)
+
+
+    # --- the skip list must be checkable, and must over-match rather than under-match ---------
+
+    def test_an_unreadable_intake_stops_the_listing(self):
+        self.src("a.txt")
+        (self.root / "evidence/INTAKE.md").mkdir()
+        code, out = self.run_cli("--sources")
+        self.assertEqual(code, 1, out)
+        self.assertIn("skip rules can't be verified", out)
+        self.assertIn("Do not read any raw source", out)
+        self.assertNotIn("a.txt", out)
+        code, out = self.run_cli("--fingerprint", "evidence/sources/a.txt")
+        self.assertEqual(code, 1, out)
+        self.assertIn("skip rules can't be verified", out)
+
+    def test_an_intake_with_broken_encoding_is_reported_not_a_traceback(self):
+        self.src("a.txt")
+        (self.root / "evidence/INTAKE.md").write_bytes(b"## Skipped sources\n| a |\n\xff\xfe broken")
+        code, out = self.run_cli("--sources")
+        self.assertEqual(code, 1, out)
+        self.assertIn("skip rules can't be verified", out)
+        self.assertNotIn("Traceback", out)
+
+    def test_a_missing_intake_is_still_fine(self):
+        self.src("a.txt")
+        code, out = self.run_cli("--sources")
+        self.assertEqual(code, 0, out)
+        self.assertIn("| new |", out)
+
+    def test_skip_matching_ignores_case_and_unicode_form(self):
+        self.src("Secret.txt")
+        self.src("caf\u00e9.txt")
+        self.intake(skipped=["evidence/sources/secret.TXT", "evidence/sources/cafe\u0301.txt"])
+        opened = self.watch_fingerprints()
+        st = self.states()
+        self.assertEqual(st["evidence/sources/Secret.txt"][3], "skipped")
+        self.assertEqual(st["evidence/sources/caf\u00e9.txt"][3], "skipped")
+        self.assertEqual(opened, [])
+        code, out = self.run_cli("--fingerprint", "evidence/sources/Secret.txt")
+        self.assertEqual(code, 1, out)
+        self.assertIn("skipped", out)
+
+    def test_records_match_regardless_of_case(self):
+        self.src("Report.txt")
+        self.intake([("evidence/sources/report.txt", self.fp("Report.txt"))])
+        self.assertEqual(self.states()["evidence/sources/Report.txt"][3], "read")
+
+    def test_a_skipped_folder_works_with_or_without_a_trailing_slash(self):
+        self.src("private/a.txt")
+        for entry in ("evidence/sources/private", "evidence/sources/private/"):
+            self.intake(skipped=[entry])
+            opened = self.watch_fingerprints()
+            self.assertEqual(self.states()["evidence/sources/private/"][3], "skipped")
+            self.assertEqual(opened, [])
+
+    def test_a_skip_row_that_cannot_be_read_reliably_covers_more_not_less(self):
+        self.src("a|b.txt")
+        self.src("a.txt")
+        self.src("other.txt")
+        self.intake(skipped=["evidence/sources/a|b.txt"])  # splits into extra cells
+        opened = self.watch_fingerprints()
+        st = self.states()
+        self.assertEqual(st["evidence/sources/a|b.txt"][3], "skipped")
+        self.assertEqual(st["evidence/sources/a.txt"][3], "skipped")
+        self.assertEqual(st["evidence/sources/other.txt"][3], "new")
+        self.assertEqual(opened, ["other.txt"])
+        code, out = self.run_cli("--sources")
+        self.assertIn("can't be read reliably", out)
+        self.assertEqual(self.run_cli("--fingerprint", "evidence/sources/a.txt")[0], 1)
+
+    def test_a_name_with_a_pipe_is_flagged_when_it_cannot_be_recorded(self):
+        self.src("a|b.txt")
+        code, out = self.run_cli("--sources")
+        self.assertIn("can't be written in the INTAKE table", out)
+
+    def test_a_folder_that_cannot_be_entered_is_reported_not_forgotten(self):
+        self.src("ok.txt")
+        self.src("locked/in.txt")
+        self.intake([("evidence/sources/locked/in.txt", "0" * 16)])
+        real_scandir = os.scandir
+
+        def fake(p="."):
+            if str(p).endswith("locked"):
+                raise PermissionError(13, "Permission denied", str(p))
+            return real_scandir(p)
+        os.scandir = fake
+        try:
+            st = self.states()
+        finally:
+            os.scandir = real_scandir
+        self.assertEqual(st["evidence/sources/locked/"][3], "unreadable")
+        self.assertNotIn("evidence/sources/locked/in.txt", st)  # not reported as a vanished file
+        self.assertEqual(st["evidence/sources/ok.txt"][3], "new")
 
 
 class ListClaims(unittest.TestCase):

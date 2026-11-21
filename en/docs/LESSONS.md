@@ -8,7 +8,7 @@
 - **What happened**: A requirement was marked "no evidence" because no Claim Card covered it. The support was in a project review the user had added to `evidence/sources/`.
 - **Why**: The Evidence Retrieval Gate went through Claim Cards only, and nothing said to look further before saying no.
 - **Guardrail**: Before a requirement is called "no evidence", look beyond the cards where the gap matters (WORKFLOW, "Looking beyond the cards", D-021). What turns up becomes a `Needs review` card and a question, never a line on a resume. Reading is local-first and never touches what the user marked as skipped. `list_claims.py --sources` lists the files with fingerprints: it reminds the AI what exists and what changed, and proves nothing about what was read.
-- **Side effects to watch**: more reading on jobs with many gaps (effort follows importance, not a fixed count), and more `Needs review` cards to confirm. A record in INTAKE says a file was read for one job, so the next job still looks.
+- **Side effects to watch**: more reading on jobs with many gaps (effort follows importance, not a fixed count), and more `Needs review` cards to confirm. A record in INTAKE says a file was read for one job, so the next job still looks. "Skipped" protects paths, not content: a renamed file escapes it.
 - **Test**: `SourceScan` and the dispute tests in `DependencyHealth`, in `test_check_claims.py`. Whether the AI actually looks, picks the right part and asks instead of using it needs an eval, and none has been run.
 
 ## L-15 · A corrected fact came back in the next version

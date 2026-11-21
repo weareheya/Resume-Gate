@@ -234,8 +234,9 @@ A file read before is still a place to look: one pass rarely takes everything ou
 ### How to read a source
 
 - Find the relevant part locally first (search, a table of contents, a page range) and give the model only that. If your tool can't read part of a file (a scanned PDF, an image, a connector), say so and let the user choose: send an excerpt, allow the whole file, or skip it.
-- A **skipped** source is one the user listed under "Skipped sources" in `evidence/INTAKE.md`: a file, or a folder written with a trailing `/`. Never open, search or quote it, and never give it to a model. The script doesn't open it either. For the other files the script only computes a fingerprint, on this computer; it reads no text and sends nothing anywhere.
-- Cloud-synced folders: `--sources` recognises iCloud placeholder files and doesn't open them. It recognises only iCloud. With any other sync tool, fingerprinting can download a file, so use `--sources --no-hash` to list names and sizes only.
+- A **skipped** source is one the user listed under "Skipped sources" in `evidence/INTAKE.md`: a file, or a folder written with a trailing `/`. Never open, search or quote it, and never give it to a model. The script doesn't open it either. For the other files the script only computes a fingerprint, on this computer; it reads no text and sends nothing anywhere. **Skipped is a rule about paths, not a lock on the content**: a skipped file that is renamed, or moved out of its skipped folder, looks like a new file, so skip a folder if you expect files to move. Paths are compared without regard to case or Unicode form, and a skip row the script can't read reliably (a `|` in the name) covers everything whose path starts the same way.
+- Links are never followed: a link to a file, a link in a folder on the way, or a sources folder that is itself a link is named in the list and not read. A folder the script can't enter is listed as not accessible: report that, not "no files". If `--sources` says the skip list in `evidence/INTAKE.md` can't be read, stop: it lists nothing, and you must not read any raw source until the file is fixed.
+- Cloud-synced folders: `--sources` recognises iCloud placeholder files and doesn't open them. It recognises only iCloud. With any other sync tool, fingerprinting can download a file, so use `--sources --no-hash` to list names and sizes only. For a big folder, start with `--no-hash`, then fingerprint just the files you choose. A fingerprint is the first 16 hex digits of a SHA-256: enough to tell that a file changed, not a proof of anything else.
 - Before you read a source, note its fingerprint (`python3 scripts/list_claims.py --fingerprint <file>`). Before you write what you found into a card, run it again, and also fingerprint the card you are about to change before you read it and again before you write. If either one changed, look at the affected part again instead of writing from the old read. This catches an edit made while you worked; it isn't a lock.
 - After a real read, add a row to "Source records" in `evidence/INTAKE.md`: the path, the fingerprint, the date. Don't register files you haven't read. Which job and requirement you looked at goes in that job's Coverage Report, not in INTAKE.
 
@@ -243,6 +244,7 @@ A file read before is still a place to look: one pass rarely takes everything ou
 
 - The same accomplishment as an existing card (any status, `Retired` included), or as something the user declined (below): update that card or leave it alone. Never open a new ID to get around one.
 - Something new: write a card with status `Needs review`, name the file and the page, section or a redacted excerpt as its Source, and ask the user one question.
+- New material for a card the user already confirmed: the card's `Safe to draft` doesn't cover it. A new number goes in marked `to verify`; a new accomplishment, contribution or attribution waits as a proposal for the user (or the card goes back to `Needs review`) until they confirm. Don't let the old confirmation carry the new content.
 - Who has to confirm what:
 
 | The fact comes from | Confirm with the user? |
@@ -280,11 +282,11 @@ In the Coverage Report keep two things apart: what the evidence is (confirmed, w
 |---|---|---|---|---|---|---|
 | R1 | Requirement A | yes | Direct | C-003 | Cards | n/a |
 | R2 | Requirement B | | Transferable or combined | C-007 (different setting) + C-002 | Cards | Lead with the transferable skill; be ready to say how the setting differs |
-| R3 | Requirement C | | Not found yet | n/a | Cards and sources | Ask the probing questions; may turn up evidence |
-| R4 | Requirement D | | Buildable | n/a | Not examined further | A small project could close it; your call |
-| R5 | Requirement E | yes | Hard gap | n/a | Cards and sources; one source not accessible | Left out. Answer it in the interview, or skip the job |
+| R3 | Requirement C | | Not found yet | n/a | Cards and sources; one source not accessible | Ask the probing questions, and ask for an excerpt of that source; may turn up evidence |
+| R4 | Requirement D | | Buildable | n/a | Cards and sources | A small project could close it; your call |
+| R5 | Requirement E | yes | Hard gap | n/a | Cards and sources | Left out. Answer it in the interview, or skip the job |
 
-**Checked** says how far you looked: Cards · Cards and sources · Partly (say what's missing) · Not accessible · Not examined further · Waiting for the user. An evidence line that is waiting for the user, or in conflict with a source, says so in Evidence or Next step.
+**Checked** says how far you looked: Cards · Cards and sources · Partly (say what's missing) · Not accessible · Not examined further · Waiting for the user. An evidence line that is waiting for the user, or in conflict with a source, says so in Evidence or Next step. A requirement whose sources couldn't be read is "Not found yet" with that in Checked, never a "Hard gap".
 
 **Scope of check**: covered …; not covered … (reason); files read: …
 ```

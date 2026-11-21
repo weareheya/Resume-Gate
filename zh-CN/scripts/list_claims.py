@@ -23,6 +23,7 @@ import os
 import re
 import stat
 import sys
+import unicodedata
 from pathlib import Path
 
 DEFAULT_LANG = "zh"
@@ -72,7 +73,6 @@ T = {
         "st_skipped": "skipped",
         "st_cloud": "not downloaded",
         "st_unreadable": "unreadable",
-        "st_outside": "outside the folder (not read)",
         "st_nonreg": "not a regular file (not read)",
         "st_gone": "gone",
         "st_listed": "listed only",
@@ -82,6 +82,12 @@ T = {
         "n_gone": "recorded, but the file is no longer here",
         "n_cloud": "a cloud-sync placeholder; not opened",
         "n_listed_rec": "has a record",
+        "st_link": "a link (not followed)",
+        "n_pipe": "the name contains \"|\", which can't be written in the INTAKE table: rename it, or skip its folder",
+        "src_link_root": "{d} is, or sits inside, a link: not scanned. Links are never followed; use a real folder.",
+        "src_intake_bad": "The skip list in evidence/INTAKE.md can't be read ({e}), so the skip rules can't be verified. No file was listed, opened or fingerprinted. Do not read any raw source until this is fixed.",
+        "src_unreliable": "These skipped rows can't be read reliably (a \"|\" in a name?), so each covers everything whose path starts the same way: {rows}",
+        "fp_link": "{p} is, or sits behind, a link: links are never followed, so it wasn't opened.",
         "src_none": "No {d} folder: nothing to list.",
         "src_empty": "{d} has no files.",
         "src_counts": "{n} file(s): {a} new, {b} read before, {c} changed since read, {s} skipped, {o} not fingerprinted.",
@@ -133,7 +139,6 @@ T = {
         "st_skipped": "已跳过",
         "st_cloud": "未下载",
         "st_unreadable": "读不了",
-        "st_outside": "在资料文件夹之外（没有读）",
         "st_nonreg": "不是普通文件（没有读）",
         "st_gone": "已不在",
         "st_listed": "只列出",
@@ -143,6 +148,12 @@ T = {
         "n_gone": "有记录，但文件已经不在这里",
         "n_cloud": "云同步占位文件；没有打开",
         "n_listed_rec": "有记录",
+        "st_link": "链接（没有跟随）",
+        "n_pipe": "文件名里有「|」，没法写进 INTAKE 的表格：请改名，或者跳过它所在的文件夹",
+        "src_link_root": "{d} 本身或它的上级是链接：没有扫描。链接一律不跟随，请改成真正的文件夹。",
+        "src_intake_bad": "evidence/INTAKE.md 里的跳过规则读不了（{e}），没法验证跳过规则。没有列出、打开或计算任何文件。修好之前，不要读任何原始资料。",
+        "src_unreliable": "这些跳过的行没法可靠解析（文件名里有「|」？），所以每一行都覆盖路径以它开头的所有文件：{rows}",
+        "fp_link": "{p} 本身或它的上级是链接：链接一律不跟随，所以没有打开。",
         "src_none": "没有 {d} 文件夹：没有可列的。",
         "src_empty": "{d} 里没有文件。",
         "src_counts": "共 {n} 个文件：新文件 {a} 个，读过 {b} 个，读过之后变了 {c} 个，已跳过 {s} 个，没算指纹 {o} 个。",
@@ -318,6 +329,10 @@ SKIP_HEADINGS = ("skipped sources", "跳过的资料")
 HEADER_CELLS = ("file", "文件")
 
 
+class IntakeUnreadable(Exception):
+    """evidence/INTAKE.md exists but can't be read, so the skip list can't be checked."""
+
+
 def fingerprint(path):
     """First 16 hex digits of the file's SHA-256, computed in chunks on this computer."""
     h = hashlib.sha256()
@@ -327,21 +342,42 @@ def fingerprint(path):
     return h.hexdigest()[:FP_LEN]
 
 
+def norm(rel):
+    """How two paths are compared: Unicode-normalised and without regard to case, because macOS
+    stores names in a different Unicode form and is usually case-insensitive. Over-matching is
+    the safe direction for a skip list."""
+    return unicodedata.normalize("NFC", rel.replace("\\", "/")).casefold()
+
+
+def one_cell(raw):
+    """A table cell without its padding, and without one pair of wrapping backticks."""
+    c = raw.strip()
+    if len(c) > 1 and c.startswith("`") and c.endswith("`"):
+        c = c[1:-1].strip()
+    return c
+
+
 def intake_tables(root):
-    """(records {path: fingerprint}, skipped {path: reason}) from evidence/INTAKE.md. Both are empty
-    when the file or the two sections aren't there, so an INTAKE from before 0.8.0 works as it is."""
-    records, skipped, section = {}, {}, None
+    """(records {path: fingerprint}, skipped {path: reason}, unreliable [lines]) from evidence/INTAKE.md.
+    A missing INTAKE, or one without the sections, gives empty results, so an INTAKE from before 0.8.0
+    works as it is. An INTAKE that exists but can't be read raises IntakeUnreadable: the skip list can't
+    be checked, and that must never look the same as "nothing is skipped". A skipped row with more
+    cells than the table has columns can't be read reliably (a "|" in a name); it is kept as a
+    prefix, so it covers more rather than less, and it is reported."""
+    records, skipped, unreliable, section = {}, {}, [], None
     try:
         text = (root / "evidence/INTAKE.md").read_text(encoding="utf-8")
-    except OSError:
-        return records, skipped
+    except FileNotFoundError:
+        return records, skipped, unreliable
+    except (OSError, UnicodeDecodeError) as e:
+        raise IntakeUnreadable(str(getattr(e, "strerror", None) or e))
     for line in text.splitlines():
         if line.startswith("## "):
             title = line[3:].strip().lower()
             section = "records" if title.startswith(RECORD_HEADINGS) else "skipped" if title.startswith(SKIP_HEADINGS) else None
             continue
         if section and line.strip().startswith("|"):
-            cells = [c.strip().strip("`").strip() for c in line.strip().strip("|").split("|")]
+            cells = [one_cell(c) for c in line.strip().strip("|").split("|")]
             first = cells[0].replace("\\", "/")
             if first.startswith("./"):
                 first = first[2:]
@@ -352,64 +388,97 @@ def intake_tables(root):
                     records[first] = cells[1].lower()
             else:
                 skipped[first] = cells[1] if len(cells) > 1 else ""
-    return records, skipped
+                if len(cells) > 2:
+                    unreliable.append(first)
+    return records, skipped, unreliable
 
 
-def is_skipped(rel, skipped):
-    """A skipped entry is a file, or a folder when it ends with "/"."""
-    return any(rel == s or (s.endswith("/") and rel.startswith(s)) for s in skipped)
+def is_skipped(rel, skipped, unreliable=()):
+    """A skipped entry covers a file, a folder (with or without a trailing "/") and everything in it;
+    an unreliable entry covers everything whose path starts with it."""
+    r = norm(rel).rstrip("/")
+    for s in skipped:
+        n = norm(s).rstrip("/")
+        if r == n or r.startswith(n + "/") or (s in unreliable and r.startswith(n)):
+            return True
+    return False
+
+
+def has_link(root, path):
+    """True if path, or any folder between root and it, is a symbolic link. Nothing is followed."""
+    try:
+        parts = Path(os.path.abspath(path)).relative_to(root).parts
+    except ValueError:
+        return True
+    cur = Path(root)
+    for part in parts:
+        cur = cur / part
+        if cur.is_symlink():
+            return True
+    return False
 
 
 def size_text(n):
     return f"{n} B" if n < 1024 else f"{n / 1024:.0f} KB" if n < 1024 * 1024 else f"{n / 1024 / 1024:.1f} MB"
 
 
-def inspect_file(full, root_real):
-    """Open nothing but the file itself, and only to fingerprint it. Returns (state, size, fingerprint, note-key)."""
+def inspect_file(full):
+    """Look at one file without following links. Returns (state, size, note)."""
     try:
-        if full.is_symlink() and root_real not in full.resolve().parents:
-            return "outside", None, None, ""
+        if full.is_symlink():
+            return "link", None, ""
         st = os.stat(full)
     except OSError as e:
-        return "unreadable", None, None, str(e.strerror or e)
+        return "unreadable", None, str(e.strerror or e)
     if not stat.S_ISREG(st.st_mode):
-        return "nonreg", None, None, ""
+        return "nonreg", None, ""
     if getattr(st, "st_flags", 0) & DATALESS:
-        return "cloud", st.st_size, None, ""
-    return "ok", st.st_size, None, ""
+        return "cloud", st.st_size, ""
+    return "ok", st.st_size, ""
 
 
-def scan_sources(root, records, skipped, hash_files=True):
+def scan_sources(root, records, skipped, hash_files=True, unreliable=()):
     """One row per file in evidence/sources/: (path, fingerprint, size, state, note-key, note-arg).
-    Skipped files are never opened or even stat'ed. Nothing is written."""
+    Skipped files and anything behind a link are never opened. Nothing is written. Returns None when
+    there is no folder, and the string "link" when the folder itself (or its parent) is a link."""
     base = root / SOURCES_DIR
+    if has_link(root, base):
+        return "link"
     if not base.is_dir():
         return None
-    root_real, base_real = root.resolve(), base.resolve()
-    found = []  # [rel, fp, size, state, note_key, note_arg]
-    for dirpath, dirnames, filenames in os.walk(base):
+    found, blocked = [], []  # found: [rel, fp, size, state, note_key, note_arg]
+    recorded = {norm(p): p for p in records}
+
+    def on_error(e):
+        rel = Path(os.path.abspath(e.filename)).relative_to(root).as_posix() + "/"
+        blocked.append(norm(rel))
+        found.append([rel, None, None, "unreadable", "", str(e.strerror or e)])
+
+    for dirpath, dirnames, filenames in os.walk(base, onerror=on_error):
         dirnames.sort()
         keep = []
         for d in dirnames:
             full = Path(dirpath) / d
             rel = full.relative_to(root).as_posix()
-            if is_skipped(rel + "/", skipped):
+            if is_skipped(rel, skipped, unreliable):
                 found.append([rel + "/", None, None, "skipped", "", ""]); continue
             if full.is_symlink():
-                found.append([rel + "/", None, None, "outside", "", ""]); continue
+                found.append([rel + "/", None, None, "link", "", ""]); continue
             keep.append(d)
         dirnames[:] = keep
         for name in sorted(filenames):
             if name == ".DS_Store":
                 continue
             full = Path(dirpath) / name
-            shown = name[1:-len(".icloud")] if name.startswith(".") and name.endswith(".icloud") and len(name) > 8 else name
+            stub = name.startswith(".") and name.endswith(".icloud") and len(name) > 8
+            shown = name[1:-len(".icloud")] if stub else name
             rel = (Path(dirpath) / shown).relative_to(root).as_posix()
-            if is_skipped(rel, skipped):
+            if is_skipped(rel, skipped, unreliable):
                 found.append([rel, None, None, "skipped", "", ""]); continue
-            if shown != name:
+            if stub:
                 found.append([rel, None, None, "cloud", "n_cloud", ""]); continue
-            state, size, fp, note = inspect_file(full, base_real)
+            state, size, note = inspect_file(full)
+            fp = None
             if state == "ok":
                 if hash_files:
                     try:
@@ -419,13 +488,14 @@ def scan_sources(root, records, skipped, hash_files=True):
                 else:
                     state = "listed"
             found.append([rel, fp, size, state, "", note])
-    paths = {r[0] for r in found}
-    unrecorded = [r for r in found if r[3] == "ok" and r[0] not in records]
-    missing = [p for p in records if p not in paths and not is_skipped(p, skipped)]
+    present = {norm(r[0]) for r in found}
+    unrecorded = [r for r in found if r[3] == "ok" and norm(r[0]) not in recorded]
+    missing = [p for p in records if norm(p) not in present and not is_skipped(p, skipped, unreliable)
+               and not any(norm(p).startswith(b) for b in blocked)]
     if hash_files:
         for r in found:
-            if r[3] == "ok" and r[0] in records:
-                r[3] = "read" if records[r[0]] == r[1] else "changed"
+            if r[3] == "ok" and norm(r[0]) in recorded:
+                r[3] = "read" if records[recorded[norm(r[0])]] == r[1] else "changed"
         for m in sorted(missing):
             fp = records[m]
             gone_same = [x for x in missing if records[x] == fp]
@@ -438,7 +508,7 @@ def scan_sources(root, records, skipped, hash_files=True):
                 missing = [x for x in missing if x != m]
         for r in unrecorded:
             if r[3] == "ok":
-                same = sorted(p for p, f in records.items() if f == r[1] and p in paths and p != r[0])
+                same = sorted(p for p, f in records.items() if f == r[1] and norm(p) in present and norm(p) != norm(r[0]))
                 gone = sorted(p for p in missing if records[p] == r[1])
                 if same:
                     r[4], r[5] = "n_dup", same[0]
@@ -448,15 +518,23 @@ def scan_sources(root, records, skipped, hash_files=True):
     else:
         for r in found:
             if r[3] == "listed":
-                r[4] = "n_listed_rec" if r[0] in records else ""
+                r[4] = "n_listed_rec" if norm(r[0]) in recorded else ""
+    for r in found:
+        if "|" in r[0] and r[3] not in ("skipped",) and not r[4]:
+            r[4] = "n_pipe"
     rows = [tuple(r) for r in found]
     rows += [(m, records[m], None, "gone", "n_gone", "") for m in sorted(missing)]
     return rows
 
 
 def show_sources(root, t, hash_files):
-    records, skipped = intake_tables(root)
-    rows = scan_sources(root, records, skipped, hash_files)
+    try:
+        records, skipped, unreliable = intake_tables(root)
+    except IntakeUnreadable as e:
+        print(t["src_intake_bad"].format(e=e)); return 1
+    rows = scan_sources(root, records, skipped, hash_files, unreliable)
+    if rows == "link":
+        print(t["src_link_root"].format(d=SOURCES_DIR)); return 1
     if rows is None:
         print(t["src_none"].format(d=SOURCES_DIR)); return 0
     if not rows:
@@ -464,15 +542,14 @@ def show_sources(root, t, hash_files):
     print(t["src_head"])
     print("|---|---|---|---|---|")
     for rel, fp, size, state, key, arg in rows:
-        if key:
-            note = t[key].format(p=arg)
-        else:
-            note = arg
+        note = t[key].format(p=arg) if key else arg
         print(f"| {cell(rel)} | {fp or ''} | {size_text(size) if size is not None else ''} | {t['st_' + state] if 'st_' + state in t else state} | {cell(note)} |")
     count = lambda s: sum(1 for r in rows if r[3] == s)
-    other = sum(1 for r in rows if r[3] in ("cloud", "unreadable", "outside", "nonreg", "listed"))
+    other = sum(1 for r in rows if r[3] in ("cloud", "unreadable", "link", "nonreg", "listed"))
     print()
     print(t["src_counts"].format(n=len(rows), a=count("new"), b=count("read"), c=count("changed"), s=count("skipped"), o=other))
+    if unreliable:
+        print(t["src_unreliable"].format(rows=", ".join(unreliable)))
     print(t["src_remind"])
     if hash_files:
         print(t["src_cloud"])
@@ -486,18 +563,21 @@ def show_fingerprint(root, t, arg):
     if not os.path.lexists(full):
         print(t["fp_missing"].format(p=arg)); return 1
     try:
-        rel = full.resolve().relative_to(root.resolve()).as_posix()
+        rel = Path(os.path.abspath(full)).relative_to(root).as_posix()
     except ValueError:
         print(t["fp_outside"].format(p=arg)); return 1
-    _, skipped = intake_tables(root)
-    if is_skipped(rel, skipped):
+    if has_link(root, full):
+        print(t["fp_link"].format(p=arg)); return 1
+    try:
+        _, skipped, unreliable = intake_tables(root)
+    except IntakeUnreadable as e:
+        print(t["src_intake_bad"].format(e=e)); return 1
+    if is_skipped(rel, skipped, unreliable):
         print(t["fp_skipped"].format(p=rel)); return 1
     name = full.name
     if name.startswith(".") and name.endswith(".icloud") and len(name) > 8:
         print(t["fp_cloud"].format(p=rel)); return 1
-    state, _, _, note = inspect_file(full, root.resolve())
-    if state == "outside":
-        print(t["fp_outside"].format(p=arg)); return 1
+    state, _, note = inspect_file(full)
     if state == "cloud":
         print(t["fp_cloud"].format(p=rel)); return 1
     if state != "ok":
