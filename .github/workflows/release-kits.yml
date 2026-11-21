@@ -46,7 +46,7 @@ jobs:
         run: |
           bad=$(for kit in en zh-CN; do
             for d in evidence/claims evidence/sources cv/resumes cv/changelogs jobs interview reports; do
-              [ -d "$kit/$d" ] && find "$kit/$d" -type f ! -name _TEMPLATE.md ! -name .gitkeep
+              if [ -d "$kit/$d" ]; then find "$kit/$d" -type f ! -name _TEMPLATE.md ! -name .gitkeep; fi
             done
           done)
           if [ -n "$bad" ]; then echo "Personal files found:"; echo "$bad"; exit 1; fi
