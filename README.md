@@ -4,11 +4,22 @@
 
 [Get started](#get-started) · [See a full example](en/examples/jordan-lee/README.md)
 
-> Use AI to build your resume, but make sure every line has a source, every version can be traced, and every change goes through you.
+> Use AI to tell the right story about your career: one that shows how you make sense of your own experience, and that you can still defend in the interview. Every line has a source, every version can be traced, and every change goes through you.
 
-**The aim is neither overstated nor understated.** The kit stops the AI from inflating a number or claiming credit that wasn't yours, and it pushes just as hard against writing your real strengths too weakly. Reasonable framing is encouraged, as long as the facts, results and attribution remain defensible: shared work can be worded as collaboration, and the result you can back can lead.
+**Your career story is you.** How you tell your experience shows who you are and how you've digested what you've done: what you chose to own, what you learned, what you'd stand behind. An AI can polish that story or quietly replace it with a more impressive one that isn't yours. Resume-Gate keeps the story yours: it starts from facts you confirmed, and every change goes through you.
 
-**It digs for what you'd miss.** Before it drops or weakens anything, the AI asks follow-up questions (scope, your share, the result, what the experience says about you), and every card is checked against every job. This helps bring out strengths that might otherwise be overlooked, rather than judging an experience by the few words you first used for it. What it finds still depends on the model, your materials and your answers, and the scripts check sources and numbers, not whether the writing persuades.
+**A faked story may get you the interview; the cost can be one you can't undo.** An AI can hallucinate: make a number bigger, a role broader, or an outcome sound finished when it wasn't, or invent a detail that never happened. It reads well on paper. Then an interviewer asks "how was that counted?" or "what did you do yourself?", and a line you can't back up can cost more than the whole resume gained and damage your credibility. Resume-Gate works backwards from that moment and does its best to keep AI hallucination off your resume: every line traces to a fact you confirmed, the scripts check sources and numbers, and each Claim Card records how a number was counted, what was yours versus the team's, and wording you can't use.
+
+**The right story isn't the smallest one.** Playing it safe is a failure too. Within what the facts support, the kit pushes for the strongest defensible wording: lead with the result you can back, and word shared work as collaboration. Before it drops or weakens anything the AI asks follow-up questions, and it checks every card against every job, which helps bring out strengths you might have overlooked. Before an interview, follow-up cards list the questions each bullet is likely to draw, with answers taken only from your cards.
+
+**Every tool has limits; know Resume-Gate's before you start.**
+
+- It can't guarantee an interview or an offer.
+- It does its best to catch AI mistakes, but can't catch them all. The scripts check sources, numbers and some known risky wording. A wrong attribution or an exaggeration they don't recognize can still get through, so read every change before you approve it.
+- It is only as accurate as the facts you confirm. If a Claim Card is wrong, everything built from it is wrong too.
+- Whether a story persuades is a human judgment. The scripts don't judge it, and the blind reads in our own tests are done by an AI, not by real hiring managers.
+- What the AI finds and how well it words things depend, to a degree, on the model you use, your materials and your answers.
+- Whatever you paste in or let the AI read goes to the company behind that AI, and is handled under its own privacy policy (see Privacy below).
 
 A resume workflow for a long job search, where you tailor many versions over weeks or months: **evidence bank → baseline resume → per-job delta → AI self-review → your sign-off → freeze → interview prep**. It's docs, templates, and a few small scripts, and it isn't tied to any AI or resume tool.
 
@@ -119,11 +130,22 @@ Not sure about any of this? Ask the AI tool you picked in step 1. It can check w
 
 [开始使用](#开始使用) · [查看完整示例](zh-CN/examples/jordan-lee/README.md)
 
-> 用 AI 改简历可以，前提是每句话都有出处。
+> 用 AI 讲对你的职业故事：它体现你如何消化自己的经历，也经得起面试的追问。每句话有出处，每一版可追溯，每处改动都经过你。
 
-**目标是既不夸大，也不写低。** 工具包拦住 AI 把数字写大、把不是你的功劳算到你头上，同样用力地防止把你真实的强项写得太弱。鼓励在事实支持的范围内进行合理包装，但不能改变成果口径、个人贡献或事实本身：共同完成的事可以写成协作，你能站得住的成果可以放前面。
+**你的职业故事就是你。** 你怎么讲自己的经历，体现你是谁、你如何消化自己做过的事：你认领什么、学到什么、哪些话你敢担保。AI 可以把这个故事打磨得更好，也可能悄悄换成一个更漂亮、却不是你的故事。Resume-Gate 让故事保持是你的：从你确认过的事实出发，每处改动都经过你。
 
-**它会帮你挖出你自己漏掉的东西。** 删掉或写弱任何内容之前，AI 先追问（范围、你的部分、结果、这段经历说明了你什么），而且每个岗位都会把每张卡过一遍，这样可以帮助挖掘原本可能被忽略的优势，而不是仅凭你最初描述经历时用的几个词来判断它的价值。能挖出多少，仍取决于模型、你的材料和你的回答；脚本只检查出处和数字，不判断文字打不打动人。
+**编出来的经历也许能换到面试，代价却可能无法挽回。** AI 会产生幻觉：把数字写大、把职责写宽、把没做完的事写成已经做成，甚至编出根本没发生过的细节。纸面上很好看，然后面试官问「这个数字怎么算的？」「你自己具体做了什么？」，一句答不上来的话，损失可能比整份简历带来的好处还大，还会伤到你的可信度。Resume-Gate 从这一刻倒推，尽力避免 AI 幻觉进入你的简历：每句话都要追溯到你确认过的事实，脚本检查出处和数字，每张 Claim Card 记着数字怎么算的、哪部分是你做的哪部分是团队的、哪些说法不能用。
+
+**对的故事不是最保守的故事。** 一味保守也是失败。在事实支持的范围内，工具包追求最强又站得住的写法：把你能证明的成果放前面，共同完成的事写成协作。AI 在删掉或写弱任何内容之前会先追问，每个岗位都把每张卡过一遍，这样可以帮助挖掘你可能忽略的优势。面试前，追问卡会列出每条经历可能被问到的问题，答案只取自你的卡片。
+
+**再好的产品也有局限，用之前请先了解 Resume-Gate 的局限。**
+
+- 它不能保证你拿到面试或 offer。
+- 它尽力抓住 AI 的错误，但不可能全部抓住。脚本检查出处、数字和一些已知的高风险措辞；脚本认不出来的错误归属或夸大，仍可能漏过去，所以每处改动你批准之前都要自己读一遍。
+- 它的准确度取决于你确认过的事实。Claim Card 写错了，由它生成的一切都会跟着错。
+- 故事打不打动人，是人的判断。脚本不判断，我们自己测试里的盲评也是由 AI 来读，不是真正的招聘经理。
+- AI 能挖出什么、写得多好，在一定程度上取决于你用的模型、你的材料和你的回答。
+- 你发给 AI 的简历和经历，会被你用的那家 AI 公司收到，按它自己的隐私规定处理（见下面的隐私说明）。
 
 一套给长期求职用的简历工作流。几周、几个月、几十版改下来不乱：**证据库 → 基线 → 按岗位改 Delta → AI 自审 → 本人审核 → 冻结 → 面试准备**。文档 + 模板 + 几个小脚本，不绑定任何 AI 或简历工具。
 
