@@ -1770,6 +1770,46 @@ class SourceScan(unittest.TestCase):
         self.assertEqual([r[3] for r in rows], ["skipped"])
         self.assertEqual(self.run_cli("--sources")[0], 0)
 
+    def test_an_absolute_skip_path_fails_closed(self):
+        self.src("secret.txt")
+        self.skip_table("| " + str(self.root / "evidence/sources/secret.txt") + " | private |")
+        code, out = self.run_cli("--sources")
+        self.assertEqual(code, 1, out)
+        self.assertIn("skip rules can't be verified", out)
+        self.assertNotRegex(out, r"[0-9a-f]{16}")
+
+    def test_a_name_with_a_pipe_cut_in_two_fails_closed(self):
+        self.src("a|b.txt")
+        self.skip_table("| evidence/sources/a|b.txt |")  # no reason column: it splits into two cells
+        for args in (("--sources",), ("--fingerprint", "evidence/sources/a|b.txt")):
+            code, out = self.run_cli(*args)
+            self.assertEqual(code, 1, out)
+            self.assertIn("skip rules can't be verified", out)
+
+    def test_an_unpaired_backtick_fails_closed(self):
+        self.src("a.txt")
+        self.skip_table("| `evidence/sources/a.txt | private |")
+        code, out = self.run_cli("--sources")
+        self.assertEqual(code, 1, out)
+        self.assertIn("skip rules can't be verified", out)
+
+    def test_an_unreadable_folder_does_not_hide_a_folder_with_a_similar_name(self):
+        self.src("a/in.txt"); self.src("ab/other.txt")
+        self.intake([("evidence/sources/ab/x.txt", "0" * 16)])
+        real_scandir = os.scandir
+
+        def fake(p="."):
+            if str(p).endswith("sources/a"):
+                raise PermissionError(13, "Permission denied", str(p))
+            return real_scandir(p)
+        os.scandir = fake
+        try:
+            st = self.states()
+        finally:
+            os.scandir = real_scandir
+        self.assertEqual(st["evidence/sources/a/"][3], "unreadable")
+        self.assertEqual(st["evidence/sources/ab/x.txt"][3], "gone")  # "ab" is not inside "a"
+
     def test_a_name_with_a_pipe_is_flagged_when_it_cannot_be_recorded(self):
         self.src("a|b.txt")
         code, out = self.run_cli("--sources")

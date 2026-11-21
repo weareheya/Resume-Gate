@@ -353,6 +353,8 @@ def norm(rel):
 def one_cell(raw):
     """A table cell without its padding, and without one pair of wrapping backticks."""
     c = raw.strip()
+    if c.count("`") % 2:
+        raise IntakeUnreadable(row_error(c))  # an unpaired backtick: can't tell where the name ends
     if len(c) > 1 and c.startswith("`") and c.endswith("`"):
         c = c[1:-1]
         if c != c.strip():
@@ -361,7 +363,7 @@ def one_cell(raw):
 
 
 def row_error(first):
-    return f"a row in the INTAKE tables can't be read reliably (a | in a name or a reason, spaces just inside backticks, or a '..' in a path). The row starts: {first}"
+    return f"a row in the INTAKE tables can't be read reliably (a | in a name or a reason, spaces just inside backticks, an unpaired backtick, or a path that isn't relative to the kit or has '..'). The row starts: {first}"
 
 
 def intake_tables(root):
@@ -390,8 +392,16 @@ def intake_tables(root):
             first = cells[0].replace("\\", "/")
             if first.startswith("./"):
                 first = first[2:]
-            if section == "skipped" and ".." in first.split("/"):
-                raise IntakeUnreadable(row_error(first))
+            if section == "skipped":
+                if ".." in first.split("/") or first.startswith(("/", "~")) or re.match(r"[A-Za-z]:", first):
+                    raise IntakeUnreadable(row_error(first))  # only paths relative to the kit are understood
+                for k in range(1, len(cells)):  # a name with a "|" in it, cut in two, with no reason column
+                    try:
+                        cut = os.path.lexists(root / "|".join(cells[:k + 1]))
+                    except ValueError:
+                        cut = False
+                    if cut:
+                        raise IntakeUnreadable(row_error(first))
             if not first or set(first) <= set("-: ") or first.lower() in HEADER_CELLS:
                 continue
             if section == "records":
@@ -507,7 +517,7 @@ def scan_sources(root, records, skipped, hash_files=True):
     present = {norm(r[0]) for r in found}
     unrecorded = [r for r in found if r[3] == "ok" and norm(r[0]) not in recorded]
     missing = [p for p in records if norm(p) not in present and not is_skipped(p, skipped)
-               and not any(norm(p).startswith(b) for b in blocked)]
+               and not any(norm(p) == b or norm(p).startswith(b + "/") for b in blocked)]
     if hash_files:
         for r in found:
             if r[3] == "ok" and norm(r[0]) in recorded:
