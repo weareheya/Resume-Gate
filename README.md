@@ -12,7 +12,14 @@
 
 **The right story isn't the smallest one.** Playing it safe is a failure too. Within what the facts support, the kit pushes for the strongest defensible wording: lead with the result you can back, and word shared work as collaboration. Before it drops or weakens anything the AI asks follow-up questions, and it checks every card against every job, which helps bring out strengths you might have overlooked. Before an interview, follow-up cards list the questions each bullet is likely to draw, with answers taken only from your cards.
 
-**What this doesn't promise.** It can't guarantee an interview or an offer, or that an AI never makes a mistake. The scripts check sources and numbers, not whether a story persuades; what the AI finds depends on the model, your materials and your answers; and you approve every change.
+**Every tool has limits; know Resume-Gate's before you start.**
+
+- It can't guarantee an interview or an offer.
+- It does its best to catch AI mistakes, but can't catch them all. The scripts check sources, numbers and some known risky wording. A wrong attribution or an exaggeration they don't recognize can still get through, so read every change before you approve it.
+- It is only as accurate as the facts you confirm. If a Claim Card is wrong, everything built from it is wrong too.
+- Whether a story persuades is a human judgment. The scripts don't judge it, and the blind reads in our own tests are done by an AI, not by real hiring managers.
+- What the AI finds and how well it words things depend on the model you use, your materials and your answers.
+- What you give the AI goes to that AI service (see Privacy below).
 
 A resume workflow for a long job search, where you tailor many versions over weeks or months: **evidence bank → baseline resume → per-job delta → AI self-review → your sign-off → freeze → interview prep**. It's docs, templates, and a few small scripts, and it isn't tied to any AI or resume tool.
 
@@ -131,7 +138,14 @@ Not sure about any of this? Ask the AI tool you picked in step 1. It can check w
 
 **对的故事不是最保守的故事。** 一味保守也是失败。在事实支持的范围内，工具包追求最强又站得住的写法：把你能证明的成果放前面，共同完成的事写成协作。AI 在删掉或写弱任何内容之前会先追问，每个岗位都把每张卡过一遍，这样可以帮助挖掘你可能忽略的优势。面试前，追问卡会列出每条经历可能被问到的问题，答案只取自你的卡片。
 
-**它不承诺什么。** 它不能保证拿到面试或 offer，也不能保证 AI 不出错。脚本检查的是出处和数字，不判断故事打不打动人；AI 能挖出多少取决于模型、你的材料和你的回答；每处改动都由你批准。
+**再好的产品也有局限，用之前请先了解 Resume-Gate 的局限。**
+
+- 它不能保证你拿到面试或 offer。
+- 它尽力抓住 AI 的错误，但不可能全部抓住。脚本检查出处、数字和一些已知的高风险措辞；脚本认不出来的错误归属或夸大，仍可能漏过去，所以每处改动你批准之前都要自己读一遍。
+- 它的准确度取决于你确认过的事实。Claim Card 写错了，由它生成的一切都会跟着错。
+- 故事打不打动人，是人的判断。脚本不判断，我们自己测试里的盲评也是由 AI 来读，不是真正的招聘经理。
+- AI 能挖出什么、写得多好，取决于你用的模型、你的材料和你的回答。
+- 你交给 AI 的内容会交给那家 AI 服务（见下面的隐私说明）。
 
 一套给长期求职用的简历工作流。几周、几个月、几十版改下来不乱：**证据库 → 基线 → 按岗位改 Delta → AI 自审 → 本人审核 → 冻结 → 面试准备**。文档 + 模板 + 几个小脚本，不绑定任何 AI 或简历工具。
 
