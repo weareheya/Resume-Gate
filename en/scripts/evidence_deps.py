@@ -49,6 +49,8 @@ MAJOR = {"facts", "numbers", "attribution", "meta", "dont", "removed"}
 ORDER = ("removed", "facts", "numbers", "attribution", "meta", "dont", "protect", "wording", "facets", "source", "other")
 
 ID_RE = re.compile(r"\b[A-Za-z]+-\d+\b")
+CARD_ID_RE = re.compile(r"C-\d+")  # the kit's card ID convention (C-001); C-000 is the templates' placeholder
+PLACEHOLDER = "C-000"
 COMMENT_RE = re.compile(r"<!--.*?-->", re.S)
 
 
@@ -58,7 +60,8 @@ THOUSANDS_RE = re.compile(r"(?<![\d.,])\d{1,3}(?:,\d{3})+(?![\d,])")
 
 def normalize(text):
     """Conservative clean-up before fingerprinting. Only changes that can't alter a fact.
-    Not touched on purpose: "1.234" or "1 234" style thousands, a decimal comma ("2,5"), number lists
+    Convention: a comma between digits followed by exactly three digits is a thousands separator
+    (€2,100 = €2100); cards write decimals with a point. Not touched on purpose: "1.234" or "1 234" style thousands, a decimal comma ("2,5"), number lists
     ("2022,2023"), the minus sign, any letter or punctuation. Those count as changes, which is the safe side."""
     out = []
     for line in text.replace("\r\n", "\n").split("\n"):
@@ -201,13 +204,15 @@ def card_state(record, blocks, lines, job_type=""):
     Returns ("not_checked", reason) | ("current", None) | ("changed", {"blocks": [...], "major": bool, "edited": bool}).
     A record that is incomplete or from another format version is "not checked", never "current".
     "edited" is reported with a change too, so a card change can't hide an unreviewed edit to the lines."""
+    if blocks is None:  # cited, but there's no such card now
+        if record is None:
+            return "missing", None  # never recorded: a typo, or a card deleted before 0.7.0
+        return "changed", {"blocks": ["removed"], "major": True, "edited": False}
     if record is None:
         return "not_checked", "no_record"
     if record.get("v") != FORMAT or "lines" not in record or "meta" not in record:
         return "not_checked", "no_record"
     edited = lines is not None and record["lines"] != lines_hash(lines)
-    if blocks is None:
-        return "changed", {"blocks": ["removed"], "major": True}
     changed, major = [], False
     for name in set(record) | set(blocks):
         if name in ("lines", "date", "v"):
@@ -231,20 +236,26 @@ def card_state(record, blocks, lines, job_type=""):
 
 
 def asset_health(states):
-    """Overall health from {card id: (state, detail)}: changed beats not_checked beats current."""
+    """Overall health from {card id: (state, detail)}: changed, then missing, then not_checked, then current."""
     kinds = {s for s, _ in states.values()}
     if "changed" in kinds:
         return "changed"
+    if "missing" in kinds:
+        return "missing"
     if "not_checked" in kinds:
         return "not_checked"
     return "current"
 
 
-def is_cited(cid, known, recorded):
-    """An ID counts as a card citation if it's a card now, or it was one when this file was recorded
-    (so a deleted card still shows up as "removed" instead of vanishing). Other IDs such as a job ID
-    or a template's C-000 don't count."""
-    return cid in known or cid in recorded
+def is_cited(cid, known, recorded, tagged=False):
+    """Does this ID refer to a card? Worked out without needing the card to exist, so a deleted card
+    shows up as "removed" (it was recorded) or "missing" (it wasn't) instead of vanishing.
+    Yes if: it's a card now; it was one when this file was recorded; it's in a resume's <!-- --> tag
+    (tagged: those hold card IDs only); or it follows the C-001 convention. A job ID such as ACME-01
+    or the templates' C-000 doesn't count."""
+    if cid == PLACEHOLDER and cid not in known:
+        return False
+    return tagged or cid in known or cid in recorded or bool(CARD_ID_RE.fullmatch(cid))
 
 
 def generic_citations(text, known, recorded=()):

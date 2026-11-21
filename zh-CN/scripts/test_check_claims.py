@@ -937,6 +937,36 @@ class DependencyHealth(unittest.TestCase):
         code, out = self.sh("list_claims.py", "--health")
         self.assertIn("| cv/resumes/v1.md | Approved | needs recheck |", out)
 
+    def test_deleted_card_without_a_record_is_missing_not_gone(self):
+        # removed = recorded, then deleted; missing = cited, never recorded, no card; not checked = card exists, no record
+        self.approved()                      # v1 recorded against C-001
+        self.resume("old")                   # a pre-0.7.0 version: no record
+        (self.root / "interview/JOB-0.md").write_text(
+            "---\njob: JOB-0\n---\n# Follow-up cards\n\n## Sponsorships · C-001\n\nHow it was counted.\n\n## Job ACME-01 notes\n", encoding="utf-8")
+        (self.root / "evidence/claims/C-001.md").unlink()
+        code, out = self.sh("list_claims.py", "--used-by", "C-001")
+        self.assertIn("3 file(s) cite C-001", out)
+        self.assertIn("| cv/resumes/v1.md | Approved | needs recheck | C-001: card removed · major |", out)
+        self.assertIn("| cv/resumes/old.md | Approved | card missing | C-001: no such card (never recorded here) |", out)
+        self.assertIn("| interview/JOB-0.md | - | card missing |", out)
+        self.assertNotIn("ACME-01", out)
+        code, out = self.sh("list_claims.py", "--used-by", "C-002")
+        self.assertIn("| cv/resumes/old.md | Approved | not checked |", out)
+        code, out = self.sh("list_claims.py", "--health")
+        self.assertIn("3 need a recheck", out)
+        code, out = self.sh("check_claims.py", "interview/JOB-0.md", "--record", "all")
+        self.assertEqual(code, 1, out)  # C-001 is gone: nothing to record against
+        self.assertIn("nothing recorded", out)
+
+    def test_record_on_a_follow_up_card_refused_on_duplicate_ids(self):
+        (self.root / "evidence/claims/C-001-copy.md").write_text(
+            (self.root / "evidence/claims/C-001.md").read_text(encoding="utf-8"), encoding="utf-8")
+        (self.root / "interview/JOB-1.md").write_text("---\njob: JOB-1\n---\n## Sponsorships · C-001\n", encoding="utf-8")
+        code, out = self.sh("check_claims.py", "interview/JOB-1.md", "--record", "all")
+        self.assertEqual(code, 1, out)
+        self.assertIn("nothing was recorded", out)
+        self.assertFalse((self.root / "cv/reviewed.txt").exists())
+
     def test_minor_change_does_not_hide_edited_lines(self):
         self.approved()
         self.card("C-001", wording="Secured US$200,000 in launch-stage sponsorships.")

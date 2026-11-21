@@ -632,7 +632,7 @@ def main():
     mine = {c for p, c in records if p == me}
     is_resume = resume.parent.name == "resumes"
     if is_resume:
-        cites = {c: lines_for(needs, c) for c in sorted({c for _, _, ids in needs for c in ids}) if deps.is_cited(c, fps, mine)}
+        cites = {c: lines_for(needs, c) for c in sorted({c for _, _, ids in needs for c in ids}) if deps.is_cited(c, fps, mine, tagged=True)}
     else:  # a follow-up card or an answer: the sections that name each card
         cites = deps.generic_citations(resume.read_text(encoding="utf-8"), set(fps), mine)
 
@@ -652,6 +652,8 @@ def main():
         if frozen_entry(resume) is not None or r["fm"].get("status", "").strip().lower() == "sent":
             print(t["rec_frozen"].format(f=resume.name)); return 1
         if not is_resume:
+            if errors:  # e.g. a duplicate card ID: which card the file means is unknowable
+                print(t["rec_blocked"].format(f=resume.name, e=errors)); return 1
             return record()
         # a resume is recorded only if it passes the check below
     if not r["recognized"]:

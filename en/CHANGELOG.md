@@ -10,7 +10,7 @@ What changed in each version, and whether you need to do anything. Your version 
 - When a card changes later, `check_claims.py` says which card, which part (numbers, attribution, what happened…) and whether that's a major change. A new version copied from an out-of-date baseline gets a reminder on each copied line. These are reminders; only `--finalize`, the last check before you send, stops on a major change.
 - `list_claims.py --used-by C-001` lists every file that cites a card; `list_claims.py --health` lists only the ones that need a recheck. At the start of a session the AI includes them in its one-line status.
 - Rechecking is per card: confirm the lines citing the changed card and only that card is recorded again. Sent versions are never edited; their follow-up cards get the warning instead.
-- A record is written only when the file passes the check, and it says which IDs it skipped. A card deleted later still shows up where it was used, as removed. A small card change can't hide an edit to the lines citing it: at `--finalize` that combination needs your OK too.
+- A record is written only when the file passes the check, and it says which IDs it skipped. A deleted card still shows up where it was used: as removed if it was recorded there, as missing if it never was. A small card change can't hide an edit to the lines citing it: at `--finalize` that combination needs your OK too.
 
 **What you need to do**: nothing before your resumes keep passing. Versions made before 0.7.0 show as "not checked" in one summary line; when you reuse or send one, the AI shows you its lines and records your OK. If you keep your own `.gitignore`, add `/cv/reviewed.txt` to the personal-data block.
 

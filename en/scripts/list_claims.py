@@ -39,6 +39,8 @@ T = {
         "changed": "needs recheck",
         "historical": "sent before the change",
         "not_checked": "not checked",
+        "missing": "card missing",
+        "no_card": "no such card (never recorded here)",
         "edited": "edited after it was recorded",
         "health_ok": "{n} file(s) cite cards; none needs a recheck.",
         "health_counts": "{c} current, {k} need a recheck, {h} sent before a change.",
@@ -59,6 +61,8 @@ T = {
         "changed": "需要复核",
         "historical": "改动前已投递",
         "not_checked": "未检查",
+        "missing": "卡片不存在",
+        "no_card": "没有这张卡（这里也没有记录过）",
         "edited": "记录之后被改过",
         "health_ok": "共 {n} 个文件引用了卡片，没有需要复核的。",
         "health_counts": "最新 {c} 个，需要复核 {k} 个，改动前已投递 {h} 个。",
@@ -115,7 +119,7 @@ def assets(root, known, records):
         fm = r["fm"]
         mine = recorded.get(deps.rel(p, root), set())
         ids = sorted({c for _, _, xs in r["needs"] for c in xs})
-        cites = {c: cc.lines_for(r["needs"], c) for c in ids if deps.is_cited(c, known, mine)}
+        cites = {c: cc.lines_for(r["needs"], c) for c in ids if deps.is_cited(c, known, mine, tagged=True)}
         frozen = cc.frozen_entry(p) is not None or fm.get("status", "").strip().lower() == "sent"
         out.append((p, fm.get("status", "") or "-", frozen, fm.get("type", ""), cites))
     for p in sorted((root / "interview").rglob("*.md")):
@@ -129,7 +133,7 @@ def assets(root, known, records):
 
 def dependency_rows(root, cards, only=None):
     """[(file, lifecycle, health, {card: (state, detail)})], health one of current / changed /
-    historical / not_checked. `only` limits it to one card."""
+    missing / historical / not_checked. `only` limits it to one card."""
     records = deps.read_records(root)
     rows = []
     for p, life, frozen, ty, cites in assets(root, set(cards), records):
@@ -152,6 +156,8 @@ def describe(states, t, names):
         if st == "changed":
             parts.append(f"{c}: " + ", ".join(names.get(x, x) for x in d["blocks"]) + " · " + (t["major"] if d["major"] else t["minor"])
                          + (" · " + t["edited"] if d.get("edited") else ""))
+        elif st == "missing":
+            parts.append(f"{c}: {t['no_card']}")
         elif st == "not_checked" and d == "edited":
             parts.append(f"{c}: {t['edited']}")
     return "; ".join(parts)
@@ -177,7 +183,7 @@ def main():
         else:
             if not rows:
                 print(t["health_ok"].format(n=0)); return 0
-            show = [r for r in rows if r[2] in ("changed", "historical")]
+            show = [r for r in rows if r[2] in ("changed", "missing", "historical")]
         if show:
             print(t["dep_head"])
             print("|---|---|---|---|")
@@ -188,7 +194,7 @@ def main():
             if not show:
                 print(t["health_ok"].format(n=len(rows)))
             else:
-                print(t["health_counts"].format(c=count("current"), k=count("changed"), h=count("historical")))
+                print(t["health_counts"].format(c=count("current"), k=count("changed") + count("missing"), h=count("historical")))
             unchecked = [r[0] for r in rows if r[2] == "not_checked"]
             if unchecked:
                 print(t["health_unchecked"].format(n=len(unchecked), fs=", ".join(Path(u).name for u in unchecked)))

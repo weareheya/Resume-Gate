@@ -110,6 +110,7 @@ The goal: the user corrects a fact once, and every later step knows. Nothing tha
 | Current | Every card it cites matches what was approved | Nothing |
 | Needs recheck | A cited card changed after approval | WARN, naming the card and the blocks that changed. At `--finalize`, a major change is an error, and so is any change when the lines citing the card were also edited after approval |
 | Sent before the change | The version was sent, then a card changed | A note only. The sent file stays as it is; the follow-up cards get the warning |
+| Card missing | It cites a card ID that doesn't exist and was never recorded here: a typo, or a card deleted before 0.7.0. (A card deleted after the record shows as Needs recheck: card removed) | Listed by `--used-by` and `--health`. In a resume, `check_claims.py` already fails on an unknown ID |
 | Not checked | No record yet (versions made before 0.7.0, or an incomplete record), or the lines were edited after the record | One summary line. At `--finalize`, an error until the user confirms and you record |
 
 A draft copied from a baseline also gets a WARN on every line copied unchanged from a baseline that was approved before its card changed: that's how an old wording slips into a new version.
@@ -118,7 +119,7 @@ A draft copied from a baseline also gets a WARN on every line copied unchanged f
 |---|---|
 | What happened (and the card's title), numbers and their Verified column, attribution, status / evidence / role / period, don't rephrase as, and protected / keep-for when it changes what this file's job type must keep | Approved wording, capability facets, source, any section the template doesn't have. Notes and To fill never count |
 
-Spacing, a line wrapped inside a paragraph, bold, dash styles and 1,234-style thousands separators don't count as changes. A new bullet or row does, and so does `1.234`, `1 234` or a decimal comma, since those differ by region; every other character does, so `$2.1M` → `$21M` is a change and `$200,000` → `$200000` isn't.
+Spacing, a line wrapped inside a paragraph, bold, dash styles and 1,234-style thousands separators don't count as changes. A new bullet or row does, and so does `1.234`, `1 234` or a decimal comma, since those differ by region. The convention: a comma between digits followed by exactly three digits is a thousands separator, so `€2,100` and `€2100` are the same number. Write decimals with a point (`€2.1K`), never a comma, on the cards; every other character does, so `$2.1M` → `$21M` is a change and `$200,000` → `$200000` isn't.
 
 **Rechecking.** Show the user only the lines citing the changed card, next to the card's current text. If they still hold, run `--record C-xxx` for that card only; the rest of the version keeps its approval. If not, make a new version (an approved or sent file isn't edited in place).
 
