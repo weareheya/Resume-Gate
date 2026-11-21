@@ -1150,6 +1150,24 @@ class DependencyHealth(unittest.TestCase):
         self.assertNotIn("| yes |", out)
         self.assertIn("edited", self.sh("list_claims.py", "--used-by", "C-001")[1])
 
+    def test_answer_text_is_bound_even_when_the_tag_is_only_in_the_cards_table(self):
+        (self.root / "interview/answers").mkdir(exist_ok=True)
+        f = self.root / "interview/answers/A-001.md"
+        def write(answer, notes):
+            f.write_text(
+                "---\nid: A-001\nquestion: Biggest win?\nscope: reusable\nstatus: Approved\n---\n# A-001\n\n"
+                f"## Answer (reviewed)\n\n{answer}\n\n## Cards it uses\n\n| Card | Part |\n|---|---|\n| C-001 | the packages |\n\n"
+                f"## Notes\n\n{notes}\n", encoding="utf-8")
+        write("I designed the packages and negotiated each deal.", "Used for ACME-01.")
+        self.assertEqual(self.sh("check_claims.py", "interview/answers/A-001.md", "--record", "all")[0], 0)
+        self.assertIn("| yes |", self.answers_out())
+        write("I designed the packages and negotiated each deal.", "Used for ACME-01 and HARBOR-01, went well.")
+        self.assertIn("| yes |", self.answers_out())          # a use record in Notes isn't a new approval
+        write("I designed the packages and closed every deal myself.", "Used for ACME-01.")
+        out = self.answers_out()
+        self.assertNotIn("| yes |", out)                       # the answer text changed: confirm again
+        self.assertIn("edited after it was recorded", self.sh("list_claims.py", "--used-by", "C-001")[1])
+
     def changelog_rows(self, rows):
         (self.root / "cv/changelogs").mkdir(exist_ok=True)
         body = "".join(f"| {i} | {loc} | {b} → {a} | {basis} | {st} |\n" for i, (loc, b, a, basis, st) in enumerate(rows, 1))

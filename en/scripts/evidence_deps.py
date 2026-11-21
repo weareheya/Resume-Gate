@@ -259,15 +259,22 @@ def is_cited(cid, known, recorded, tagged=False):
 
 
 def binding_lines(text):
-    """What an answer's approval is bound to besides its text: the question and the scope. Changing
-    who an answer may be used for is a change to what the user approved."""
-    fm = _front_matter(text)[0]
-    return [f"question: {fm.get('question', '')}", f"scope: {fm.get('scope', '')}"]
+    """What an answer's approval is bound to: its question, its scope and the whole reviewed answer
+    (every section except Notes, where use records go), whether or not the Answer section carries a
+    card tag. Changing any of them, or who the answer may be used for, needs a new confirmation."""
+    fm, start = _front_matter(text)
+    out, skip = [f"question: {fm.get('question', '')}", f"scope: {fm.get('scope', '')}"], False
+    for line in text.split("\n")[start:]:
+        if line.startswith("#"):
+            skip = line.lstrip("#").strip().lower().startswith(IGNORED)
+        if not skip:
+            out.append(line)
+    return out
 
 
 def asset_citations(asset_rel, text, known, recorded=()):
-    """{card: [lines]} for a follow-up card or an answer. For an answer the lines include its question
-    and scope, so editing either needs a new confirmation."""
+    """{card: [lines]} for a follow-up card or an answer. For an answer the lines also include its question,
+    scope and the whole reviewed answer (see binding_lines)."""
     cites = generic_citations(text, known, recorded)
     if asset_rel.startswith("interview/answers/"):
         bind = binding_lines(text)
