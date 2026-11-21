@@ -344,19 +344,22 @@ def norm(rel):
     """How two paths are compared: Unicode-normalised and without regard to case, because macOS
     stores names in a different Unicode form and is usually case-insensitive. Over-matching is
     the safe direction for a skip list."""
-    return unicodedata.normalize("NFC", rel.replace("\\", "/")).casefold()
+    parts = [x for x in rel.replace("\\", "/").split("/") if x not in ("", ".")]
+    return unicodedata.normalize("NFC", "/".join(parts)).casefold()
 
 
 def one_cell(raw):
     """A table cell without its padding, and without one pair of wrapping backticks."""
     c = raw.strip()
     if len(c) > 1 and c.startswith("`") and c.endswith("`"):
-        c = c[1:-1].strip()
+        c = c[1:-1]
+        if c != c.strip():
+            raise IntakeUnreadable(row_error(c.strip()))
     return c
 
 
 def row_error(first):
-    return f"有一行跳过记录的格子比表格的列数多：文件名或原因里是不是有 |？这一行以此开头：{first}"
+    return f"INTAKE 表格里有一行没法可靠解析（文件名或原因里有 |、反引号里面首尾有空格，或路径里有 '..'）。这一行以此开头：{first}"
 
 
 def intake_tables(root):
@@ -370,6 +373,8 @@ def intake_tables(root):
     try:
         text = (root / "evidence/INTAKE.md").read_text(encoding="utf-8")
     except FileNotFoundError:
+        if (root / "evidence/INTAKE.md").is_symlink():
+            raise IntakeUnreadable("evidence/INTAKE.md is a link that leads nowhere")
         return records, skipped
     except (OSError, UnicodeDecodeError) as e:
         raise IntakeUnreadable(str(getattr(e, "strerror", None) or e))
@@ -383,6 +388,8 @@ def intake_tables(root):
             first = cells[0].replace("\\", "/")
             if first.startswith("./"):
                 first = first[2:]
+            if section == "skipped" and ".." in first.split("/"):
+                raise IntakeUnreadable(row_error(first))
             if not first or set(first) <= set("-: ") or first.lower() in HEADER_CELLS:
                 continue
             if section == "records":
@@ -447,6 +454,8 @@ def scan_sources(root, records, skipped, hash_files=True):
     Skipped files and anything behind a link are never opened. Nothing is written. Returns None when
     there is no folder, and the string "link" when the folder itself (or its parent) is a link."""
     base = root / SOURCES_DIR
+    if is_skipped(SOURCES_DIR, skipped):
+        return [[SOURCES_DIR + "/", None, None, "skipped", "", ""]]  # the whole folder: not entered
     if has_link(root, base):
         return "link"
     if not base.is_dir():

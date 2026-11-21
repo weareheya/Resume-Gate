@@ -1720,6 +1720,56 @@ class SourceScan(unittest.TestCase):
         self.assertEqual(code, 1, out)  # a ".." is refused outright, even when it would be harmless
         self.assertEqual(self.run_cli("--fingerprint", "evidence/sources/fine.txt")[0], 0)
 
+    def skip_table(self, row):
+        (self.root / "evidence/INTAKE.md").write_text(
+            "## Skipped sources\n| File | Reason |\n|---|---|\n" + row + "\n", encoding="utf-8")
+
+    def test_skip_paths_with_dots_and_double_slashes_still_match(self):
+        self.src("secret.txt")
+        for row in ("evidence/sources//secret.txt", "evidence/sources/./secret.txt", "evidence/./sources/secret.txt"):
+            with self.subTest(row=row):
+                self.skip_table("| " + row + " | private |")
+                code, out = self.run_cli("--sources")
+                self.assertNotRegex(out, r"[0-9a-f]{16}", out)
+                self.assertEqual(self.run_cli("--fingerprint", "evidence/sources/secret.txt")[0], 1)
+
+    def test_a_dotdot_in_a_skip_row_fails_closed(self):
+        self.src("secret.txt")
+        self.skip_table("| evidence/sources/x/../secret.txt | private |")
+        code, out = self.run_cli("--sources")
+        self.assertEqual(code, 1, out)
+        self.assertIn("skip rules can't be verified", out)
+
+    def test_an_intake_link_that_leads_nowhere_fails_closed(self):
+        self.src("secret.txt")
+        self.link(self.root / "evidence/INTAKE.md", self.root / "nowhere.md")
+        for args in (("--sources",), ("--fingerprint", "evidence/sources/secret.txt")):
+            code, out = self.run_cli(*args)
+            self.assertEqual(code, 1, out)
+            self.assertIn("skip rules can't be verified", out)
+        # a really missing INTAKE is still just "no records"
+        (self.root / "evidence/INTAKE.md").unlink()
+        self.assertEqual(self.run_cli("--sources")[0], 0)
+
+    def test_spaces_inside_backticks_fail_closed(self):
+        self.src("a.txt")
+        self.skip_table("| ` evidence/sources/a.txt ` | private |")
+        code, out = self.run_cli("--sources")
+        self.assertEqual(code, 1, out)
+        self.assertIn("skip rules can't be verified", out)
+        (self.root / "evidence/INTAKE.md").write_text(
+            "## Source records\n| File | Fingerprint |\n|---|---|\n| ` evidence/sources/a.txt ` | 0123456789abcdef |\n", encoding="utf-8")
+        self.assertEqual(self.run_cli("--sources")[0], 1)
+
+    def test_a_skipped_sources_folder_is_not_entered(self):
+        self.src("a.txt"); self.src("deep/b.txt")
+        self.skip_table("| evidence/sources | all private |")
+        with mock.patch("os.walk", side_effect=AssertionError("entered")):
+            records, skipped = self.lc.intake_tables(self.root)
+            rows = self.lc.scan_sources(self.root, records, skipped)
+        self.assertEqual([r[3] for r in rows], ["skipped"])
+        self.assertEqual(self.run_cli("--sources")[0], 0)
+
     def test_a_name_with_a_pipe_is_flagged_when_it_cannot_be_recorded(self):
         self.src("a|b.txt")
         code, out = self.run_cli("--sources")
