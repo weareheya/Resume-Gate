@@ -19,7 +19,7 @@
 - It is only as accurate as the facts you confirm. If a Claim Card is wrong, everything built from it is wrong too.
 - Whether a story persuades is a human judgment. The scripts don't judge it, and the blind reads in our own tests are done by an AI, not by real hiring managers.
 - What the AI finds and how well it words things depend, to a degree, on the model you use, your materials and your answers.
-- What you give the AI goes to that AI service (see Privacy below).
+- Whatever you paste in or let the AI read goes to the company behind that AI, and is handled under its own privacy policy (see Privacy below).
 
 A resume workflow for a long job search, where you tailor many versions over weeks or months: **evidence bank → baseline resume → per-job delta → AI self-review → your sign-off → freeze → interview prep**. It's docs, templates, and a few small scripts, and it isn't tied to any AI or resume tool.
 
@@ -145,7 +145,7 @@ Not sure about any of this? Ask the AI tool you picked in step 1. It can check w
 - 它的准确度取决于你确认过的事实。Claim Card 写错了，由它生成的一切都会跟着错。
 - 故事打不打动人，是人的判断。脚本不判断，我们自己测试里的盲评也是由 AI 来读，不是真正的招聘经理。
 - AI 能挖出什么、写得多好，在一定程度上取决于你用的模型、你的材料和你的回答。
-- 你交给 AI 的内容会交给那家 AI 服务（见下面的隐私说明）。
+- 你发给 AI 的简历和经历，会被你用的那家 AI 公司收到，按它自己的隐私规定处理（见下面的隐私说明）。
 
 一套给长期求职用的简历工作流。几周、几个月、几十版改下来不乱：**证据库 → 基线 → 按岗位改 Delta → AI 自审 → 本人审核 → 冻结 → 面试准备**。文档 + 模板 + 几个小脚本，不绑定任何 AI 或简历工具。
 
