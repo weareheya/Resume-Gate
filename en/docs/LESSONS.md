@@ -4,6 +4,13 @@
 > Rules about facts and numbers belong in DECISIONS or a Claim Card. This file is for **process** mistakes.
 > Before adding a guardrail, ask what it costs: who it slows down, which honest case it could block, and whether a later step already catches the mistake. Several guardrails below were revised in 0.6.0 because they did more harm than the mistake they fixed (L-01, L-04, L-07, L-10, L-12).
 
+## L-15 · A corrected fact came back in the next version
+- **What happened**: The user explained that an amount was sponsorship they negotiated, not a marketing budget. The chat moved on, but the card and the approved baseline still said budget, so the next tailored version copied the old wording from the baseline.
+- **Why**: The correction lived only in the chat. Nothing linked the baseline's lines to the version of the card they were approved against, so nothing could say they were out of date.
+- **Guardrail**: Correct the card first, in the same turn (AGENTS, "Correct once"). `check_claims.py --record` stores what each approved file was checked against; when a card changes, the files that cite it are flagged, and lines copied from an out-of-date baseline get a warning. Only `--finalize` blocks (D-020).
+- **Side effect to watch**: a big correction can flag many files. Recheck only what you're about to reuse or send; the rest can wait.
+- **Test**: `DependencyHealth` in `test_check_claims.py`, and the `fact-correction` eval.
+
 ## L-14 · Sole credit vs shared credit
 - **What happened**: In the first eval run (2026-11-20), a product-manager version said the candidate wrote the requirements for "a self-serve partner portal, built with engineering", where the card says engineering built it. The next kit version (0.5.1) treated that as oversell. In the following run, all three product-manager versions dropped engineering altogether, and a blind reviewer preferred the older versions, which named the collaboration.
 - **Why**: The line between packaging and fabrication was drawn in the wrong place. Shared wording ("built with engineering", "launched with the product team", "partnered with engineering on") is ordinary, defensible framing: it's true, and the candidate can explain their part in an interview. What a card rules out is **sole credit**: "built the portal", "launched the portal" as if no one else did.

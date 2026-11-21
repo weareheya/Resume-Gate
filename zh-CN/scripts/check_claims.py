@@ -21,6 +21,10 @@
   7. 基线：如果 cv/CV-INDEX.md 里这份简历的类型已经有起点，新版本必须写 `base:`。有基线时，
      基线 Summary/Experience 里用到的 `protected: true` claim，这里也必须还在（卡上的 `keep-for` 只列了其他岗位类型时除外），而且已确认的
      数字不能少，除非本人同意（front matter 里写 `protected-ok: C-001`）。
+  8. 批准后改过的卡（D-020，scripts/evidence_deps.py）：这一版引用的卡在 `--record` 之后改过，会指出
+     是哪张卡、改了哪些区块、算不算重大变化。原样复制自基线、而基线批准时卡还没改的行，也会指出。
+     这些都是 WARN；加 --finalize 时，重大变化或从没记录过的卡是 ERROR。已投递的版本只给 NOTE。
+     没有记录的旧版本只汇总成一行提示。
   其他非空栏目（Skills 等）会提示"未验证"，其中没有卡片支撑的数字会单独指出。
   Languages、联系方式、References 直接跳过。ERROR 判为未通过；WARN 值得看一眼，但不影响通过。
 
@@ -30,17 +34,33 @@
 用法：
   python3 scripts/check_claims.py cv/resumes/<id>.md [--base cv/resumes/<基线id>.md]
                                   [--claims evidence/claims] [--profile evidence/profile.md]
-                                  [--lang en|zh]
+                                  [--finalize] [--lang en|zh]
+  python3 scripts/check_claims.py <简历或追问卡> --record all|C-001,C-002
+      本人批准（或确认复核）之后运行：记下它对照的是每张卡的哪个版本
 
 退出码：0 = 没有错误，1 = 发现错误，2 = 没能运行（缺文件、用法错误）。
 """
 import argparse
+import importlib.util
 import math
 import re
 import sys
 from pathlib import Path
 
 DEFAULT_LANG = "zh"
+
+_spec = importlib.util.spec_from_file_location("evidence_deps", Path(__file__).with_name("evidence_deps.py"))
+deps = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(deps)
+
+BLOCK_NAMES = {
+    "en": {"removed": "card removed", "facts": "what happened", "numbers": "numbers", "attribution": "attribution",
+           "meta": "status/evidence/role", "dont": "don't rephrase as", "protect": "protection",
+           "wording": "approved wording", "facets": "facets", "source": "source", "other": "other text"},
+    "zh": {"removed": "卡片已删除", "facts": "事实", "numbers": "数字与口径", "attribution": "归因",
+           "meta": "状态/证据/职位", "dont": "禁止改写", "protect": "保护设置",
+           "wording": "已批准措辞", "facets": "能力切面", "source": "出处", "other": "其他内容"},
+}
 
 T = {
     "en": {
@@ -74,6 +94,20 @@ T = {
         "base_required": "{f}: no `base:`, but CV-INDEX already has a starting point for type {ty} ({s}). Set `base:` to the version this was copied from",
         "frozen": "{f} was frozen when it was sent (cv/frozen.txt) and has been edited since. Restore it, and make any change in a new version (D-010)",
         "table_gap": "{f}: the evidence table in {cl} doesn't mention {cs}. Look at them, or add them as unused with a reason; unused cards can share one line (D-019)",
+        "dep_changed": "{f}: {c} changed after this version was {how} ({b}). Needs recheck: read the lines citing {c} against the card, then with the user's OK run --record {c}",
+        "dep_changed_final": "{f}: {c} has an unresolved major change since this version was approved ({b}). This doesn't mean the resume is wrong, only that nobody has checked it against the corrected card yet. Show the user the lines citing {c}; once they confirm, run --record {c}",
+        "dep_historical": "{f} was sent before {c} changed ({b}). The sent file stays as it is; prepare for the interview from the current card",
+        "dep_inherited": "{f}:{n}: copied unchanged from {base}, which was approved before {c} changed ({b}). Check this line against the current card",
+        "dep_unchecked": "{f}: not checked against the current cards yet ({cs}). Older versions start this way; nothing to do until you reuse or send this one",
+        "dep_unchecked_final": "{f}: {cs} not checked against the current cards. Before sending, show the user the lines citing them; once they confirm, run --record {cs}",
+        "dep_edited": "edited after it was recorded",
+        "rec_frozen": "{f} is frozen (sent). Its record can't change; make a new version instead",
+        "rec_none": "{f}: none of {cs} is cited here, nothing recorded",
+        "rec_done": "Recorded {f} against the current version of {cs} (cv/reviewed.txt). Record only what the user has looked at",
+        "how_approved": "approved",
+        "how_recorded": "recorded",
+        "major": "major",
+        "minor": "minor",
         "ok": "OK: {n} lines checked, {c} Claim IDs used, no errors{w}",
         "fail": "FAILED: {e} error(s) in {f}",
         "scope": "Scope: this checks sourcing, numbers, banned words, roles/education and protected claims. It does not verify that each sentence is supported by its card, or check layout.",
@@ -109,6 +143,20 @@ T = {
         "base_required": "{f}：没有写 `base:`，但 CV-INDEX 里类型 {ty} 已经有起点（{s}）。请把 `base:` 设为这份简历复制自的版本",
         "frozen": "{f} 投递时已冻结（cv/frozen.txt），之后又被改过。请恢复原样，要改就复制成一个新版本（D-010）",
         "table_gap": "{f}：{cl} 的证据表没有提到 {cs}。请看一下这些卡；用不上的写进表里并说明原因，没用的卡可以合成一行（D-019）",
+        "dep_changed": "{f}：这一版{how}之后，{c} 改过（{b}）。需要复核：对照卡片看一遍引用 {c} 的行，本人确认后运行 --record {c}",
+        "dep_changed_final": "{f}：这一版批准之后，{c} 有尚未处理的重大变化（{b}）。这不代表简历有错，只是还没人对照改过的卡检查过。请把引用 {c} 的行给本人看，确认后运行 --record {c}",
+        "dep_historical": "{f} 是在 {c} 改动（{b}）之前投出去的。已投递的文件保持原样；准备面试时以现在的卡为准",
+        "dep_inherited": "{f}:{n}：这一行原样复制自 {base}，而那一版批准时 {c} 还没改（{b}）。请对照现在的卡检查这一行",
+        "dep_unchecked": "{f}：还没有对照现在的卡记录过（{cs}）。旧版本一开始都是这样，等再次复用或投递时再处理",
+        "dep_unchecked_final": "{f}：{cs} 还没有对照现在的卡确认过。投递前请把引用它们的行给本人看，确认后运行 --record {cs}",
+        "dep_edited": "记录之后被改过",
+        "rec_frozen": "{f} 已冻结（已投递），它的记录不能再改；要改请复制成新版本",
+        "rec_none": "{f}：这里没有引用 {cs}，没有记录任何内容",
+        "rec_done": "已记录：{f} 对照的是 {cs} 的当前版本（cv/reviewed.txt）。只记录本人看过的内容",
+        "how_approved": "批准",
+        "how_recorded": "记录",
+        "major": "重大",
+        "minor": "一般",
         "ok": "通过：检查了 {n} 行，用到 {c} 个 Claim ID，没有错误{w}",
         "fail": "未通过：{f} 里有 {e} 个错误",
         "scope": "范围：这里检查出处、数字、禁用词、职位/教育和受保护的 claim，不验证每句话是否真的由对应的卡支持，也不检查排版。",
@@ -527,6 +575,11 @@ def frozen_changed(resume):
     return want is not None and hashlib.sha256(resume.read_bytes()).hexdigest() != want
 
 
+def lines_for(needs, cid):
+    """The checked lines that cite this card."""
+    return [text for _, text, ids in needs if cid in ids]
+
+
 def numbers_for(needs, cid):
     vals = []
     for _, text, ids in needs:
@@ -542,6 +595,8 @@ def main():
     ap.add_argument("--claims", default="evidence/claims")
     ap.add_argument("--profile", help="profile file (default: profile.md next to the claims folder)")
     ap.add_argument("--changelog", help="this version's Change Log (default: the one in cv/changelogs/ that names this resume)")
+    ap.add_argument("--finalize", action="store_true", help="准备投递：卡片有未处理的重大变化，或有卡没检查过，就算错误（D-020）")
+    ap.add_argument("--record", metavar="IDS", help="本人批准或确认复核之后：把这些 Claim ID（或 all）当前的卡片版本记到 cv/reviewed.txt")
     ap.add_argument("--lang", choices=["en", "zh"], default=DEFAULT_LANG)
     a = ap.parse_args()
     t = T[a.lang]
@@ -562,6 +617,23 @@ def main():
     r = scan_resume(resume)
     needs, used = r["needs"], r["used"]
     checked = 0
+    fps, root = deps.load_cards(a.claims), deps.kit_root(a.claims)
+    me = deps.rel(resume, root)
+
+    if a.record:
+        # D-020: a record says "the user has looked at these lines against this version of the card".
+        if frozen_entry(resume) is not None or r["fm"].get("status", "").strip().lower() == "sent":
+            print(t["rec_frozen"].format(f=resume.name)); return 1
+        if resume.parent.name == "resumes":
+            cites = {c: lines_for(needs, c) for c in used}
+        else:  # a follow-up card or an answer: the sections that name each card
+            cites = deps.generic_citations(resume.read_text(encoding="utf-8"), set(fps))
+        want = set(cites) if a.record.strip().lower() in ("all", "全部") else set(ID_RE.findall(a.record))
+        cited = sorted(want & set(cites) & set(fps))
+        if not cited:
+            print(t["rec_none"].format(f=resume.name, cs=", ".join(sorted(want)) or "-")); return 1
+        deps.write_records(root, me, {c: dict(fps[c], lines=deps.lines_hash(cites[c])) for c in cited})
+        print(t["rec_done"].format(f=resume.name, cs=", ".join(cited))); return 0
     if not r["recognized"]:
         print("ERROR " + t["no_sections"].format(f=resume.name, h=", ".join(r["headings"]) or "-")); errors += 1
     for n, text, ids in needs:
@@ -646,6 +718,7 @@ def main():
 
     # protected claims vs the baseline
     fm = r["fm"]
+    b = None
     base = Path(a.base) if a.base else (resume.parent / (fm["base"] + ".md") if fm.get("base") else None)
     if base is None:
         rule = cv_index_rule(resume, fm)
@@ -691,6 +764,55 @@ def main():
             missing = sorted(c for c in claims if c not in listed)
             if missing:
                 print("WARN  " + t["table_gap"].format(f=resume.name, cl=cl.name, cs=", ".join(missing))); warns += 1
+
+    # D-020: did a card this version cites change after it was approved? Worked out fresh each run;
+    # nothing is written to the resume. A sent version is history: it's only noted.
+    records = deps.read_records(root)
+    status = fm.get("status", "").strip().lower()
+    frozen = frozen_entry(resume) is not None or status == "sent"
+    names = BLOCK_NAMES[a.lang]
+    how = t["how_approved"] if status in ("approved", "sent") else t["how_recorded"]
+
+    def what(d):
+        return ", ".join(names.get(x, x) for x in d["blocks"]) + " · " + (t["major"] if d["major"] else t["minor"])
+
+    unchecked, settled = [], set()
+    for c in sorted(used & set(claims) & set(fps)):
+        st, d = deps.card_state(records.get((me, c)), fps[c], lines_for(needs, c), fm.get("type", ""))
+        if st != "not_checked":
+            settled.add(c)  # current, or already reported above: the copied-lines check below would repeat it
+        if st == "current":
+            pass
+        elif st == "changed":
+            if frozen:
+                print("NOTE  " + t["dep_historical"].format(f=resume.name, c=c, b=what(d)))
+            elif a.finalize and d["major"]:
+                print("ERROR " + t["dep_changed_final"].format(f=resume.name, c=c, b=what(d))); errors += 1
+            else:
+                print("WARN  " + t["dep_changed"].format(f=resume.name, c=c, how=how, b=what(d))); warns += 1
+        else:
+            unchecked.append(c)
+    if unchecked and not frozen:
+        if a.finalize:
+            print("ERROR " + t["dep_unchecked_final"].format(f=resume.name, cs=", ".join(unchecked))); errors += 1
+        elif status == "approved":
+            print("NOTE  " + t["dep_unchecked"].format(f=resume.name, cs=", ".join(unchecked)))
+    # A new version copied from its baseline carries the baseline's lines. If the baseline was
+    # approved before a card changed, the copied lines still say what the old card said.
+    if b is not None and not frozen:
+        bme = deps.rel(base, root)
+        for c in sorted((used & set(fps)) - settled):
+            st, d = deps.card_state(records.get((bme, c)), fps[c], None, fm.get("type", ""))
+            if st != "changed":
+                continue
+            old = {deps.normalize(x) for x in lines_for(b["needs"], c)}
+            for n, text, ids in needs:
+                if c in ids and deps.normalize(text) in old:
+                    msg = t["dep_inherited"].format(f=resume.name, n=n, base=base.name, c=c, b=what(d))
+                    if a.finalize and d["major"]:
+                        print("ERROR " + msg); errors += 1
+                    else:
+                        print("WARN  " + msg); warns += 1
 
     if errors:
         print(t["fail"].format(e=errors, f=resume.name))

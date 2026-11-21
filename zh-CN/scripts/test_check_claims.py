@@ -688,6 +688,247 @@ class WorkedExample(unittest.TestCase):
             self.assertNotIn("Protected claim C-001", r.stdout)
 
 
+DEP_CARD = """\
+---
+id: {id}
+status: Safe to draft
+evidence: can explain
+protected: {protected}
+keep-for: {keep}
+role: Partnerships Manager, Northwind Labs (fictional)
+period: 2022.03–2023.09
+---
+
+# {id} · Secured launch-stage sponsorships
+
+## What happened (raw, unpolished)
+{facts}
+
+## Numbers and what they mean
+| Number | Unit / currency | Time window | Basis | Verified |
+|---|---|---|---|---|
+| US$200,000 in sponsorships | USD | 2023 | Signed sponsorship packages | ✓ |
+
+## Attribution
+- **What I did**: {did}
+- **What the team or others did**: the events team ran the launch.
+
+## Approved wording
+> {wording}
+
+## Don't rephrase as
+- Banned words: revenue
+
+## Source
+Signed sponsorship agreements.
+
+## Notes
+{notes}
+"""
+
+DEP_RESUME = """\
+---
+id: {name}
+type: 01
+status: {status}
+base: {base}
+---
+## Experience
+### Partnerships Manager · Northwind · 2022–2023
+- {line} <!-- C-001 -->
+- Ran the partner newsletter. <!-- C-002 -->
+"""
+
+
+class DependencyHealth(unittest.TestCase):
+    """D-020: correct a fact once, and every file that cites the card knows."""
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.root = Path(self.tmp.name)
+        (self.root / "evidence/claims").mkdir(parents=True)
+        (self.root / "cv/resumes").mkdir(parents=True)
+        (self.root / "interview").mkdir()
+        self.card("C-001")
+        self.card("C-002", facts="Ran the partner newsletter.", did="wrote it", wording="Ran the partner newsletter.")
+        (self.root / "evidence/profile.md").write_text(PROFILE, encoding="utf-8")
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def card(self, cid, protected="false", keep="", facts="I designed and negotiated tailored sponsorship packages with partners.",
+             did="designed the packages and negotiated every deal.",
+             wording="Designed and negotiated sponsorship packages, securing US$200,000.", notes="Expect questions on pricing."):
+        (self.root / f"evidence/claims/{cid}.md").write_text(
+            DEP_CARD.format(id=cid, protected=protected, keep=keep, facts=facts, did=did, wording=wording, notes=notes),
+            encoding="utf-8")
+
+    def resume(self, name, status="Approved", base="", line="Secured US$200,000 in launch-stage sponsorships."):
+        (self.root / f"cv/resumes/{name}.md").write_text(
+            DEP_RESUME.format(name=name, status=status, base=base, line=line), encoding="utf-8")
+
+    def sh(self, script, *args):
+        r = subprocess.run([sys.executable, "-I", str(SCRIPT.with_name(script)), *args, "--lang", "en"],
+                           cwd=self.root, capture_output=True, text=True)
+        return r.returncode, r.stdout
+
+    def check(self, name, *args):
+        return self.sh("check_claims.py", f"cv/resumes/{name}.md", *args)
+
+    def approved(self, name="v1"):
+        self.resume(name)
+        code, out = self.check(name, "--record", "all")
+        self.assertEqual(code, 0, out)
+        self.assertIn("Recorded", out)
+
+    def test_normalizing_keeps_real_changes(self):
+        spec = importlib.util.spec_from_file_location("evidence_deps", SCRIPT.with_name("evidence_deps.py"))
+        deps = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(deps)
+        n = deps.normalize
+        self.assertEqual(n("$200,000"), n("$200000"))
+        self.assertEqual(n("2022–2023"), n("2022 — 2023"))
+        self.assertEqual(n("**Pipeline**, not   revenue"), n("Pipeline, not revenue"))
+        self.assertNotEqual(n("$2.1M"), n("$21M"))
+        self.assertNotEqual(n("30–50%"), n("30.50%"))
+        self.assertNotEqual(n("Led the launch."), n("Led the launch"))  # punctuation still counts
+
+    def test_recorded_version_is_current(self):
+        self.approved()
+        code, out = self.check("v1", "--finalize")
+        self.assertEqual(code, 0, out)
+        self.assertNotIn("changed after", out)
+        self.assertNotIn("not checked", out)
+
+    def test_attribution_change_needs_recheck_and_blocks_only_finalize(self):
+        self.approved()
+        self.card("C-001", did="designed the packages; my manager negotiated the deals.")
+        code, out = self.check("v1")
+        self.assertEqual(code, 0, out)  # a reminder until Finalize (D-017)
+        self.assertIn("C-001 changed after this version was approved (attribution · major)", out)
+        code, out = self.check("v1", "--finalize")
+        self.assertEqual(code, 1, out)
+        self.assertIn("unresolved major change", out)
+        self.assertIn("doesn't mean the resume is wrong", out)
+
+    def test_what_happened_correction_is_major(self):
+        self.approved()
+        self.card("C-001", facts="As project lead I worked with the design agency to deliver the sponsorship packages.")
+        code, out = self.check("v1", "--finalize")
+        self.assertEqual(code, 1, out)
+        self.assertIn("what happened · major", out)
+
+    def test_number_correction_is_major(self):
+        self.approved()
+        p = self.root / "evidence/claims/C-001.md"
+        p.write_text(p.read_text(encoding="utf-8").replace("US$200,000 in sponsorships", "US$20,000 in sponsorships"), encoding="utf-8")
+        code, out = self.check("v1", "--finalize")
+        self.assertIn("numbers · major", out)
+
+    def test_wording_change_is_minor_and_finalize_passes(self):
+        self.approved()
+        self.card("C-001", wording="Secured US$200,000 in launch-stage sponsorships.")
+        code, out = self.check("v1", "--finalize")
+        self.assertEqual(code, 0, out)
+        self.assertIn("approved wording · minor", out)
+
+    def test_notes_and_formatting_do_not_count(self):
+        self.approved()
+        self.card("C-001", notes="Completely different note.",
+                  did="designed  the packages and **negotiated** every deal.")
+        code, out = self.check("v1", "--finalize")
+        self.assertEqual(code, 0, out)
+        self.assertNotIn("changed after", out)
+
+    def test_recheck_one_card_only(self):
+        self.approved()
+        self.card("C-001", did="designed the packages; my manager negotiated the deals.")
+        self.card("C-002", facts="Wrote the partner newsletter every month.", did="wrote it", wording="Ran the partner newsletter.")
+        self.assertEqual(self.check("v1", "--record", "C-001")[0], 0)
+        code, out = self.check("v1")
+        self.assertNotIn("C-001 changed", out)
+        self.assertIn("C-002 changed", out)
+
+    def test_old_version_is_not_checked_in_one_line_and_finalize_asks(self):
+        self.resume("old")
+        code, out = self.check("old")
+        self.assertEqual(code, 0, out)
+        self.assertEqual(out.count("not checked against the current cards"), 1)
+        code, out = self.check("old", "--finalize")
+        self.assertEqual(code, 1, out)
+        self.assertIn("C-001, C-002 not checked", out)
+
+    def test_edited_after_record_is_not_checked(self):
+        self.approved()
+        self.resume("v1", line="Secured US$200,000 in sponsorships for the launch.")
+        code, out = self.check("v1", "--finalize")
+        self.assertEqual(code, 1, out)
+        self.assertIn("C-001 not checked", out)
+
+    def test_sent_version_is_history_not_an_error(self):
+        self.approved()
+        self.assertEqual(self.sh("freeze.py", "cv/resumes/v1.md")[0], 0)
+        self.card("C-001", did="designed the packages; my manager negotiated the deals.")
+        code, out = self.check("v1")
+        self.assertEqual(code, 0, out)
+        self.assertIn("NOTE  v1.md was sent before C-001 changed", out)
+        code, out = self.check("v1", "--record", "all")
+        self.assertEqual(code, 1, out)  # a sent version's record can't change
+        self.assertIn("is frozen", out)
+
+    def test_copied_line_from_out_of_date_baseline_warns(self):
+        self.approved("base")
+        self.card("C-001", did="designed the packages; my manager negotiated the deals.")
+        self.resume("v2", status="Draft", base="base")
+        code, out = self.check("v2")
+        self.assertEqual(code, 0, out)
+        self.assertIn("copied unchanged from base.md", out)
+        self.assertNotIn("C-002", out.split("copied unchanged")[0][-30:])
+        self.resume("v2", status="Draft", base="base", line="Designed sponsorship packages that secured US$200,000.")
+        code, out = self.check("v2")
+        self.assertNotIn("copied unchanged", out)
+
+    def test_keep_for_change_is_major_only_for_this_type(self):
+        self.card("C-001", protected="true", keep="01")
+        self.approved()
+        self.card("C-001", protected="true", keep="01, 03")
+        code, out = self.check("v1", "--finalize")
+        self.assertEqual(code, 0, out)
+        self.assertIn("protection · minor", out)
+        self.card("C-001", protected="true", keep="03")
+        code, out = self.check("v1", "--finalize")
+        self.assertEqual(code, 1, out)
+        self.assertIn("protection · major", out)
+
+    def test_record_says_nothing_about_card_text(self):
+        self.approved()
+        text = (self.root / "cv/reviewed.txt").read_text(encoding="utf-8")
+        self.assertNotIn("sponsorship", text.lower())
+        self.assertIn("cv/resumes/v1.md\tC-001", text)
+
+    def test_used_by_and_health(self):
+        self.approved()
+        self.resume("old")
+        (self.root / "interview/JOB-1.md").write_text(
+            "---\njob: JOB-1\n---\n# Follow-up cards\n\n## Sponsorships · C-001\n\nHow it was counted.\n\n## Template line · C-000\n", encoding="utf-8")
+        code, out = self.sh("check_claims.py", "interview/JOB-1.md", "--record", "all")
+        self.assertEqual(code, 0, out)
+        self.assertIn("C-001", out)
+        self.assertNotIn("C-000", out)
+        code, out = self.sh("list_claims.py", "--health")
+        self.assertIn("none needs a recheck", out)
+        self.assertIn("Not checked yet (1): old.md", out)
+        self.card("C-001", did="designed the packages; my manager negotiated the deals.")
+        code, out = self.sh("list_claims.py", "--health")
+        self.assertEqual(code, 0, out)
+        self.assertIn("| cv/resumes/v1.md | Approved | needs recheck | C-001: attribution · major |", out)
+        self.assertIn("| interview/JOB-1.md | - | needs recheck |", out)
+        code, out = self.sh("list_claims.py", "--used-by", "C-001")
+        self.assertIn("3 file(s) cite C-001", out)
+        code, out = self.sh("list_claims.py", "--used-by", "C-009")
+        self.assertIn("No resumes", out)
+
+
 class ReportScore(unittest.TestCase):
     """report_score.py must agree with the sample in report/template.html (38, as the page shows)."""
 

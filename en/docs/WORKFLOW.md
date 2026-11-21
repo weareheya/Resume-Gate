@@ -12,11 +12,11 @@ Not every request needs all seven steps. Pick the mode by what the user asked fo
 |---|---|---|---|
 | **Quick edit** | A few lines of an existing version change and there's **no new JD**: a reworded bullet, a typo, a shorter summary, contact details | Read the cards the changed lines cite. Edit in place in a Draft (a Sent version is frozen: copy it first, D-010). Run `check_claims.py` on it. Note the change in its Change Log | The changed lines before and after, and the check result. Problems only: no full Coverage Report |
 | **Tailor** | A new JD, a new direction, or more than a few lines | S0 to S7 below | Everything S7 asks for |
-| **Finalize** | The user is about to send a version | Export the file, check the layout (below), freeze it | Page images or the user's word on the layout, and the freeze result |
+| **Finalize** | The user is about to send a version | Run `check_claims.py cv/resumes/<id>.md --finalize`, export the file, check the layout (below), freeze it | Page images or the user's word on the layout, and the freeze result |
 
 A quick edit that turns out to touch a claim's meaning, a protected claim, or what the version is aimed at becomes a Tailor.
 
-**Finalize: layout check.** Export the PDF or DOCX. On macOS, run `swift scripts/pdf_fill.swift <file.pdf> <dir>` and look at the page images it writes. On any other computer, look at the PDF yourself if your tool can open it, **and** ask the user: "Please open the PDF: is it the expected number of pages, and does the last page have more than a few stray lines?" The layout step is done only once the user says it's fine. Then freeze: `python3 scripts/freeze.py cv/resumes/<id>.md <exported file>`.
+**Finalize: layout check.** Export the PDF or DOCX. On macOS, run `swift scripts/pdf_fill.swift <file.pdf> <dir>` and look at the page images it writes. On any other computer, look at the PDF yourself if your tool can open it, **and** ask the user: "Please open the PDF: is it the expected number of pages, and does the last page have more than a few stray lines?" The layout step is done only once the user says it's fine. `check_claims.py --finalize` must pass too: it fails while a card the version cites has an unresolved major change, or hasn't been checked against the current cards (see [When a fact changes](#when-a-fact-changes)). Then freeze: `python3 scripts/freeze.py cv/resumes/<id>.md <exported file>`.
 
 | Step | What to do | Output |
 |---|---|---|
@@ -24,10 +24,10 @@ A quick edit that turns out to touch a claim's meaning, a protected claim, or wh
 | S1 | **Positioning, then baseline.** Ask what the job is really for: the business goal behind it, which requirements are hard gates (D-016), and what an ideal hire looks like. If the job is a stretch from your existing types, write 2 or 3 one-line positioning options (the angle, its strongest evidence, its main gap) and recommend one. For a close match, one line is enough. Then pick the baseline by fit: how close its positioning is to the chosen one, how much of the JD its claims already cover, whether it's Approved, and how recent it is. The baseline gives you facts and approved wording, not the story: the chosen positioning can reorder or reframe it (D-018). Choose the byline and contact variant by type | "Positioning: …; type X, starting point = …" |
 | S2 | **Evidence Retrieval Gate.** Go through **every** Claim Card, not only the ones that sound related: a title alone can hide a skill the JD wants (check its capability facets, if it has them). With more than 15 cards, start from `python3 scripts/list_claims.py` (one line per card) and open in full every protected card and every card whose summary, role or facets touch the job; with fewer, read them all. Fill the evidence table in the Change Log: each used card on its own row, with where it went. Unused cards can share one line by reason ("Low: C-012, C-015, unrelated field"), so the table stays short; a protected card, or one that clearly fits the job, gets its own row and its reason. `check_claims.py` warns if a card is missing from the table. Then ask once: is any unused card stronger for this job than something already in the resume? If yes, swap it in or say why not. Stop when no swap clearly adds value (D-019) | Evidence table in the Change Log |
 | S3 | **Map to the JD.** For each requirement R1, R2…, sort it into one of five kinds: **Direct** · **Transferable or combined** (a skill from another setting, or several experiences that each prove part of it) · **Not found yet** (ask the [probing questions](#probing-questions) first, D-014; a number marked "to verify" belongs here too) · **Buildable** (a real gap you could close with a small project or course) · **Hard gap** (including an eligibility gate you don't meet). Only "Hard gap" means don't write it. If there's still no evidence after asking, don't stretch to cover the gap | Five-way mapping in the Coverage Report |
-| S4 | **Delta.** Copy the baseline file in `cv/resumes/` and change only what needs changing: headline, summary, bullet order, keywords. Don't rewrite approved text | New draft |
+| S4 | **Delta.** Copy the baseline file in `cv/resumes/` and change only what needs changing: headline, summary, bullet order, keywords. Don't rewrite approved text. If `check_claims.py` says a line was copied from a baseline approved before its card changed, write that line from the current card | New draft |
 | S5 | **Change Log.** For each change, write Before / After / Why. Attach a JD Coverage Report and what you checked | `cv/changelogs/<id>.md` |
 | S6 | **AI self-review.** Go through the [REVIEW-CHECKLIST](REVIEW-CHECKLIST.md) sections A and B item by item. Run `python3 scripts/validate_evidence.py` and `python3 scripts/check_claims.py cv/resumes/<id>.md` (both must pass). The PDF and layout check wait for Finalize | Table of self-review fixes, check results |
-| S7 | **Human review.** Give the user the full text and a diff against the baseline. Only when they say it's approved does the status become `Approved` | The user's approval on record |
+| S7 | **Human review.** Give the user the full text and a diff against the baseline. Only when they say it's approved does the status become `Approved`. Then run `python3 scripts/check_claims.py cv/resumes/<id>.md --record all` | The user's approval on record |
 
 Before you apply, **Finalize** (see [task modes](#task-modes)): export, check the layout, and freeze. `python3 scripts/freeze.py cv/resumes/<id>.md <exported.pdf>` records both files' SHA-256 in `cv/frozen.txt`, and `check_claims.py` fails if a frozen resume is edited later. Mark the version `Sent`, and in `cv/CV-INDEX.md` record which job used it.
 
@@ -89,6 +89,40 @@ Every bullet on a resume can draw a follow-up: "How was that counted?", "Which p
 - At most 3 follow-ups per bullet, the most likely ones. Same order as the resume, strongest first.
 - Risks go at the top: `vague`, `Needs review`, `to verify`, and anything that hits "What counts as risky".
 - `Interview only` cards go under "Worth bringing up": not on the resume, but a plus to mention in the room.
+- Write from the current cards, not from an older follow-up card or the chat. Then run `python3 scripts/check_claims.py interview/<job ID>.md --record all`. If the sent version predates a card change, the check says so: the sent file stays as it is, so put the difference under "Read this first: risks" and prepare from the current card.
+
+## When a fact changes
+
+The goal: the user corrects a fact once, and every later step knows. Nothing that used the old fact is reused without anyone noticing, and nothing unrelated has to be reviewed again (D-020).
+
+**1. Is it a correction or a wording change?** A correction changes what is true or claimable: what happened, a number or what it measures, who did which part, a status, what not to say. "The $200K wasn't marketing budget, it was sponsorship I negotiated" is a correction. "Make that bullet punchier" is wording: change the resume, not the card. If you can't tell, ask one question.
+
+**2. Correct the card first**, in the same turn, and say back what changed in one line. Keep the strongest true version of the result: a correction narrows a claim, it doesn't delete the accomplishment (D-015).
+
+**3. See what it touches**: `python3 scripts/list_claims.py --used-by C-xxx`. Tell the user which files cite the card and whether each needs a recheck. Don't edit approved or sent files on your own.
+
+**4. From then on the card wins.** Anything said earlier in this chat, in an old resume or in a follow-up card that disagrees with it is void. After many corrections, suggest a fresh session.
+
+**How the check knows.** `check_claims.py --record` stores fingerprints of each card's blocks, plus the lines that cite it, in `cv/reviewed.txt`. On every run the script works out each file's state from those; nothing is written into the resumes:
+
+| State | Means | What happens |
+|---|---|---|
+| Current | Every card it cites matches what was approved | Nothing |
+| Needs recheck | A cited card changed after approval | WARN, naming the card and the blocks that changed. At `--finalize`, a major change is an error |
+| Sent before the change | The version was sent, then a card changed | A note only. The sent file stays as it is; the follow-up cards get the warning |
+| Not checked | No record yet (versions made before 0.7.0), or the lines were edited after the record | One summary line. At `--finalize`, an error until the user confirms and you record |
+
+A draft copied from a baseline also gets a WARN on every line copied unchanged from a baseline that was approved before its card changed: that's how an old wording slips into a new version.
+
+| Major (can change what's true) | Minor (usually wording) |
+|---|---|
+| What happened (and the card's title), numbers and their Verified column, attribution, status / evidence / role / period, don't rephrase as, and protected / keep-for when it changes what this file's job type must keep | Approved wording, capability facets, source, any section the template doesn't have. Notes and To fill never count |
+
+Spacing, line breaks, bold, dash styles and thousands separators don't count as changes; every other character does, so `$2.1M` → `$21M` is a change and `$200,000` → `$200000` isn't.
+
+**Rechecking.** Show the user only the lines citing the changed card, next to the card's current text. If they still hold, run `--record C-xxx` for that card only; the rest of the version keeps its approval. If not, make a new version (an approved or sent file isn't edited in place).
+
+**A needs-recheck isn't a finding of error.** It means nobody has looked at those lines against the corrected card yet.
 
 ## Claim statuses
 
