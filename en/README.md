@@ -4,7 +4,20 @@
 
 A resume workflow for a long job search: **evidence bank → baseline resume → per-job delta → AI self-review → your sign-off → freeze**. It's docs, templates, and a few small scripts. It isn't tied to any AI or resume tool. Any AI that can read your files can follow it: Claude Code and Codex read `AGENTS.md` automatically, and with other tools you just point the AI at it.
 
-**Why not just ask an AI?** Any AI can make a resume read better. What it can't know is how each number was counted, which part was yours, and which line will get you stuck when an interviewer digs in. Only you know that. Resume-Gate writes it down once, as Claim Cards, and everything after grows from the same facts: every resume version, every checkup, and the follow-up cards you read before each interview. A fresh chat starts from zero every time; this folder keeps what you've confirmed.
+**Why not just ask an AI?** Any AI can make a resume read better. What it can't know is how each number was counted, which part was yours, and which line will get you stuck when an interviewer digs in. Only you know that. Resume-Gate writes it down once, as Claim Cards, and everything after grows from the same facts: every resume version, every checkup, and the follow-up cards you read before each interview. A fresh chat may not reliably carry over what you've confirmed; this folder keeps it in files.
+
+## Start here: pick your task
+
+You don't need to learn the files first. Open this folder in your AI tool and say one of these (setup is in [Quick start](#quick-start)).
+
+| You are… | Say something like | What happens |
+|---|---|---|
+| Starting for the first time | "Start: first look at my current resume." | A scored checkup, then a short interview on your 3 strongest results (about 30 minutes, you can stop any time) |
+| Looking at a new job | "Tailor my resume to this job post: …" | The AI picks a positioning, checks every card against the job, and proposes changes for you to accept or reject |
+| Changing a few lines | "Quick edit: only change this bullet." | Just those lines, no full pipeline |
+| Ready to send | "Finalize this resume." | Fact check, your approval, layout check, freeze |
+| Invited to interview | "I have an interview for this job: prepare me." | Follow-up cards from the version you sent, reusing answers you've approved |
+| Found an old fact was wrong | "Correct a fact I recorded earlier." | The card is fixed first, then everything that used it is flagged |
 
 ## What it fixes
 
@@ -46,7 +59,7 @@ Each step has an output you must be able to show before moving on. Details in [d
 | [AGENTS.md](AGENTS.md) · [CLAUDE.md](CLAUDE.md) · [.claude/commands/](.claude/commands/) | Instructions for any AI that picks this up | Your AI reads it first; skim it once yourself |
 | [docs/WORKFLOW.md](docs/WORKFLOW.md) | Step 0, the seven steps, probing questions, Coverage Report format | Before your first resume |
 | [docs/PROMPTS.md](docs/PROMPTS.md) | Copy-paste prompts for each moment | Every session |
-| [docs/DECISIONS.md](docs/DECISIONS.md) | 16 starter rules. Don't edit: it's replaced when you update | Once, to know the defaults |
+| [docs/DECISIONS.md](docs/DECISIONS.md) | 20 starter rules. Don't edit: it's replaced when you update | Once, to know the defaults |
 | [docs/MY-DECISIONS.md](docs/MY-DECISIONS.md) | Your own rules, including changes to starter rules. Yours alone | When you set or change a rule |
 | [docs/REPORT.md](docs/REPORT.md) · [report/template.html](report/template.html) | The scored, visual checkup and job-fit report: what's measured, and the template | Step 0, and whenever you want to see where a resume stands |
 | [evidence/INTAKE.md](evidence/INTAKE.md) | Step 0 interview plan and progress, so a new session picks up where you stopped | Step 0 |
@@ -152,7 +165,7 @@ Before you adopt one, check three things: can you export all your data, can you 
 
 The evidence bank holds your real work history: employers, numbers, and who you worked with. **Copy this kit into your own project; don't fork this repo and fill it in publicly.**
 
-By default the kit's `.gitignore` keeps your personal files out of Git: Claim Cards, `evidence/profile.md` and `INTAKE.md`, `cv/CV-INDEX.md`, resumes, Change Logs, jobs, interview notes and reports. So pushing to GitHub, even a public repo, doesn't upload them. The catch: Git doesn't back them up either. If your repository is **private** and you want Git to keep them, delete the marked block at the end of `.gitignore`. Updates never put it back without asking.
+By default the kit's `.gitignore` keeps your personal files out of Git: Claim Cards, `evidence/profile.md` and `INTAKE.md`, `cv/CV-INDEX.md`, resumes, Change Logs, jobs, interview notes, reports and `docs/MY-DECISIONS.md`. So pushing to GitHub, even a public repo, doesn't normally upload them. That's a safety net, not a guarantee, so look at what you commit. It also doesn't limit what the AI service you use sees. The catch: Git doesn't back them up either. If your repository is **private** and you want Git to keep them, delete the marked block at the end of `.gitignore`. Updates never put it back without asking.
 
 Already committed personal files before 0.6.0? The new `.gitignore` doesn't remove them from Git. Run `git rm -r --cached --ignore-unmatch evidence/claims evidence/profile.md evidence/INTAKE.md cv jobs interview reports` and then `git add .` (your files stay on disk; the templates come back), then commit. If the repo was ever public, treat what was pushed as already seen.
 

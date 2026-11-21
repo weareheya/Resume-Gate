@@ -21,7 +21,7 @@ All cases use the evidence bank in `en/examples/jordan-lee`, so anyone can rerun
 | Case | Job | The trap |
 |---|---|---|
 | `channel-bd` | Channel Sales Manager | Asks for a revenue quota; there is pipeline evidence but no closed revenue |
-| `product-manager` | Associate PM | A stretch role: don't say "built" or "launched" the portal (engineering did), don't claim roadmap ownership nobody asked about |
+| `product-manager` | Associate PM | A stretch role: don't claim sole credit for the portal (engineering built it); shared work worded as collaboration is fine; don't claim roadmap ownership nobody asked about |
 | `customer-success` | Partner Success Manager | Asks for onboarding time and cost savings, which were never measured; webinar registrants aren't attendees |
 | `fact-correction` | Strategic Partnerships Manager | Two sessions (see its README). The user corrects a card in one session; a fresh session then tailors. The old wording must not come back from the approved baseline, and the corrected result must still be used at full strength |
 
@@ -54,7 +54,7 @@ To evaluate a change: for each case, start a fresh session in a copy of the exam
 
 ## Blind A/B/C review
 
-Scores catch overselling and missing evidence. Whether a resume is *persuasive* still needs people. **Do a blind read in every eval round**, at least on the case the change touches: in round 2 the scores were perfect on both sides and only the blind read showed that the new version undersold (RESULTS.md).
+Scores catch overselling and missing evidence. Whether a resume is *persuasive* still needs people. **Do a blind read in any round where a change can affect how the resume reads** (wording, positioning, what gets kept or cut), at least on the case it touches. A pure fact or script check, such as the fact-correction case, is covered by the scorer and doesn't need one. In round 2 the scores were perfect on both sides and only the blind read showed that the new version undersold (RESULTS.md).
 
 1. Pick the versions to compare for one job, for example the old kit's answer (A), the new kit's (B) and the user's own resume (C).
 2. `python3 evals/blind.py evals/runs/<date>-<case> a.md b.md c.md`. It strips Claim IDs, notes and front matter, shuffles the order, and writes `A.md`, `B.md`, `C.md`, `rating-sheet.md` and `key.json`. (`evals/runs/` is ignored by git.)

@@ -43,8 +43,8 @@
 <rect x="301" y="392" width="176" height="3" fill="#151515"/>
 <text x="311" y="410" font-family="'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#858E96" text-anchor="start" letter-spacing="0.5">RG // S1</text>
 <g transform="translate(449 401) scale(0.7083333333333334)" fill="none" stroke="#1A1A1A" stroke-width="1.60" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></g>
-<text x="389.0" y="438.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="15" font-weight="600" fill="#1A1A1A" text-anchor="middle">Pick type</text>
-<text x="389.0" y="458.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="15" font-weight="400" fill="#1A1A1A" text-anchor="middle">and baseline</text>
+<text x="389.0" y="438.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="15" font-weight="600" fill="#1A1A1A" text-anchor="middle">Positioning,</text>
+<text x="389.0" y="458.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="15" font-weight="400" fill="#1A1A1A" text-anchor="middle">then baseline</text>
 <rect x="512" y="392" width="176" height="88" fill="#FFFFFF" stroke="#1A1A1A" stroke-width="1"/>
 <rect x="512" y="392" width="176" height="3" fill="#151515"/>
 <text x="522" y="410" font-family="'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#858E96" text-anchor="start" letter-spacing="0.5">RG // S2</text>
@@ -74,7 +74,7 @@
 <text x="311" y="602" font-family="'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#858E96" text-anchor="start" letter-spacing="0.5">RG // S6</text>
 <g transform="translate(449 593) scale(0.7083333333333334)" fill="none" stroke="#1A1A1A" stroke-width="1.60" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"><path d="M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/></g>
 <text x="389.0" y="630.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="15" font-weight="600" fill="#1A1A1A" text-anchor="middle">AI self-review</text>
-<text x="389.0" y="650.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="15" font-weight="400" fill="#1A1A1A" text-anchor="middle">check_claims · pdf_fill</text>
+<text x="389.0" y="650.0" font-family="Inter, -apple-system, 'Helvetica Neue', 'PingFang SC', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif" font-size="15" font-weight="400" fill="#1A1A1A" text-anchor="middle">check_claims · checklist</text>
 <rect x="512" y="584" width="176" height="88" fill="#1A1A1A" stroke="#1A1A1A" stroke-width="1"/>
 <text x="522" y="602" font-family="'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#B9B7B0" text-anchor="start" letter-spacing="0.5">RG // S7</text>
 <g transform="translate(660 593) scale(0.7083333333333334)" fill="none" stroke="#FFFFFF" stroke-width="1.60" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"><circle cx="9" cy="8" r="4"/><path d="M2 20c0-4 3-6 7-6s7 2 7 6"/><path d="M16 11l2 2 4-4"/></g>

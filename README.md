@@ -4,13 +4,19 @@
 
 > Use AI to build your resume, but make sure every line has a source, every version can be traced, and every change goes through you.
 
+**The aim is neither overstated nor understated.** The kit stops the AI from inflating a number or claiming credit that wasn't yours, and it pushes just as hard against writing your real strengths too weakly. Reasonable, modest packaging is fine: shared work can be worded as collaboration, and the result you can back can lead. Only a wrong number or credit you didn't earn is blocked.
+
+**It digs for what you'd miss.** Before it drops or weakens anything, the AI asks follow-up questions (scope, your share, the result, what the experience says about you), and every card is checked against every job, so a strength you described in a few words doesn't get left out. What it finds still depends on the model, your materials and your answers, and the scripts check sources and numbers, not whether the writing persuades.
+
 A resume workflow for a long job search, where you tailor many versions over weeks or months: **evidence bank → baseline resume → per-job delta → AI self-review → your sign-off → freeze → interview prep**. It's docs, templates, and a few small scripts, and it isn't tied to any AI or resume tool.
 
 **It's for you if** you use AI to tailor resumes and have seen it drop results you already confirmed, inflate a number, or quietly water down your strongest experience. **It's probably overkill if** you need one resume, once.
 
-**Why not just ask an AI?** Any AI can make a resume read better. What it can't know is how each number was counted, which part was yours, and which line will get you stuck when an interviewer digs in. Only you know that. Resume-Gate writes it down once, as Claim Cards, and everything after grows from the same facts: every resume version, every checkup, and the follow-up cards you read before each interview. A fresh chat starts from zero every time; this folder keeps what you've confirmed.
+**Why not just ask an AI?** Any AI can make a resume read better. What it can't know is how each number was counted, which part was yours, and which line will get you stuck when an interviewer digs in. Only you know that. Resume-Gate writes it down once, as Claim Cards, and everything after grows from the same facts: every resume version, every checkup, and the follow-up cards you read before each interview. A fresh chat may not reliably carry over what you've confirmed; this folder keeps it in files.
 
 ![Resume-Gate overview: one fact, one card; every version and every interview traces back](assets/overview-en.svg)
+
+**New in 0.7.0 (2026-11-21):** correct a fact once. When you fix a Claim Card, the scripts flag every resume, follow-up card and saved answer that used the old version, so a corrected error doesn't come back unnoticed. These are reminders for you to review, not a guarantee about what the AI will write; sent resumes stay unchanged. You can also accept or reject the AI's proposed changes one by one, and keep answers you've approved for reuse (`interview/answers/`). [Details](en/CHANGELOG.md)
 
 **New in 0.6.0 (2026-11-20):** your cards and resumes stay out of Git by default; quick edit / tailor / finalize modes, so a small fix doesn't run the whole pipeline; layout check works on Windows and Linux (you confirm the last page); a lighter evidence table that the script checks; hard requirements shown on the report. No hard rule was removed. [Details](en/CHANGELOG.md)
 
@@ -23,7 +29,7 @@ A resume workflow for a long job search, where you tailor many versions over wee
 | Claim Cards | One file per accomplishment: facts, what each number measures, your share vs the team's, wording you can't use | [template](en/evidence/claims/_TEMPLATE.md) · [example](en/examples/jordan-lee/evidence/claims/C-001.md) | [模板](zh-CN/evidence/claims/_TEMPLATE.md) · [示例](zh-CN/examples/jordan-lee/evidence/claims/C-001.md) |
 | Workflow | Step 0 (cold start) and seven steps per job, each with an output you must show | [WORKFLOW](en/docs/WORKFLOW.md) | [WORKFLOW](zh-CN/docs/WORKFLOW.md) |
 | Probing questions | Seven questions the AI asks before it drops or weakens anything | [WORKFLOW](en/docs/WORKFLOW.md#probing-questions) | [追问清单](zh-CN/docs/WORKFLOW.md#追问清单) |
-| Decision register | 16 starter rules, from "don't cut strong results" to "pick the strongest defensible wording" | [DECISIONS](en/docs/DECISIONS.md) | [DECISIONS](zh-CN/docs/DECISIONS.md) |
+| Decision register | 20 starter rules, from "don't cut strong results" to "pick the strongest defensible wording" | [DECISIONS](en/docs/DECISIONS.md) | [DECISIONS](zh-CN/docs/DECISIONS.md) |
 | AI self-review | Facts, writing, layout, and handoff checks the AI runs before you see anything | [REVIEW-CHECKLIST](en/docs/REVIEW-CHECKLIST.md) | [自审清单](zh-CN/docs/REVIEW-CHECKLIST.md) |
 | Lessons | Real process mistakes and the guardrail each one led to | [LESSONS](en/docs/LESSONS.md) | [LESSONS](zh-CN/docs/LESSONS.md) |
 | Follow-up cards | Before an interview: the questions each bullet is likely to draw, answers that hold up, and what not to say, all from your Claim Cards | [WORKFLOW](en/docs/WORKFLOW.md#after-you-get-an-interview-follow-up-cards) · [example](en/examples/jordan-lee/interview/ACME-01.md) | [WORKFLOW](zh-CN/docs/WORKFLOW.md#拿到面试之后追问卡) · [示例](zh-CN/examples/jordan-lee/interview/ACME-01.md) |
@@ -48,7 +54,7 @@ It works best with an AI that can open and edit files in a folder on your comput
 | already use an AI code editor | **Cursor** or similar | [Download Cursor](https://cursor.com/download) |
 | only use a chat AI | a **Claude Project** or ChatGPT Project | [Claude Projects](https://support.claude.com/en/articles/9517075-what-are-projects). Works, but the scripts won't run, so their checks are done by hand |
 
-These tools need a paid plan; each setup guide lists which. Claude Code and Codex read the kit's `AGENTS.md` on their own. In other tools, tell the AI to read it first.
+Most of these tools need a paid plan or limit what a free one can do; check each setup guide for current terms. Claude Code and Codex read the kit's `AGENTS.md` on their own. In other tools, tell the AI to read it first.
 
 **Using Codex?** It runs without network access by default and asks before any download ([why](https://developers.openai.com/codex/agent-approvals-security)). The easy way: download the zip in step 2 yourself, then open the unzipped folder in Codex as a local project. No GitHub connection needed.
 
@@ -92,9 +98,16 @@ Not sure about any of this? Ask the AI tool you picked in step 1. It can check w
 
 **Tools are your choice.** Evidence can live in Markdown files or a database such as Notion; layout can happen in [Reactive Resume](https://rxresu.me) (open source, with MCP), in Word, or in a PDF your AI generates. See [Tools: your choice](en/README.md#tools-your-choice).
 
-**Privacy:** your evidence bank will hold your real work history, so keep your working copy private. Copy a kit into your own folder or private repo; don't fork this repo and fill it in publicly.
+**Privacy:** your evidence bank will hold your real work history, so keep your working copy private. Copy a kit into your own folder or private repo; don't fork this repo and fill it in publicly. What is and isn't covered:
 
-**Changing the kits?** Edit both `en/` and `zh-CN/`, then run `python3 tools/check_sync.py` to catch files, IDs or headings that differ between them.
+| Where | What you get |
+|---|---|
+| Files on your computer | They stay in your folder |
+| Git | `.gitignore` keeps your cards, resumes, jobs, interview notes, reports and `docs/MY-DECISIONS.md` out by default. It's a safety net, not a guarantee: check what you commit |
+| The AI you use | Whatever you paste or let it read goes to that AI service, under its data policy. Resume-Gate doesn't run a model locally |
+| Outside resume tools | Only what you choose to upload, under their own policy |
+
+**Changing the kits?** Edit both `en/` and `zh-CN/`, then run `python3 tools/check_sync.py`. It catches files, IDs or headings that differ between them, and also checks that `VERSION`, the top CHANGELOG entry, the root README's "New in" line and the rule counts all agree, so a release can't ship with stale numbers.
 
 ---
 
@@ -102,13 +115,19 @@ Not sure about any of this? Ask the AI tool you picked in step 1. It can check w
 
 > 用 AI 改简历可以，前提是每句话都有出处。
 
+**目标是既不夸大，也不写低。** 工具包拦住 AI 把数字写大、把不是你的功劳算到你头上，同样用力地防止把你真实的强项写得太弱。合理、适度的包装是允许的：共同完成的事可以写成协作，你能站得住的成果可以放前面。只有写错的数字、你没有的功劳会被拦下。
+
+**它会帮你挖出你自己漏掉的东西。** 删掉或写弱任何内容之前，AI 先追问（范围、你的部分、结果、这段经历说明了你什么），而且每个岗位都会把每张卡过一遍，所以你随口一句带过的强项不会被漏掉。能挖出多少，仍取决于模型、你的材料和你的回答；脚本只检查出处和数字，不判断文字打不打动人。
+
 一套给长期求职用的简历工作流。几周、几个月、几十版改下来不乱：**证据库 → 基线 → 按岗位改 Delta → AI 自审 → 本人审核 → 冻结 → 面试准备**。文档 + 模板 + 几个小脚本，不绑定任何 AI 或简历工具。
 
 **适合**：用 AI 改过简历，遇到过它把确认过的成果弄丢、把数字写大，或者把最强的经历悄悄写弱。**用不上**：只要一份简历，投一次。
 
-**为什么不直接让 AI 改？** 随便一个 AI 都能把简历改得更好看。它不知道的是：这个数字当时怎么算的，哪部分是你做的，哪句话一被追问就会卡壳。这些只有你知道。Resume-Gate 把它们写进证据库，只写一次，之后的一切都从同一套事实里长出来：每一版简历、每一次体检，还有每场面试前的追问卡。新开一个对话，AI 每次都从零开始；这个文件夹会留下你确认过的每一件事。
+**为什么不直接让 AI 改？** 随便一个 AI 都能把简历改得更好看。它不知道的是：这个数字当时怎么算的，哪部分是你做的，哪句话一被追问就会卡壳。这些只有你知道。Resume-Gate 把它们写进证据库，只写一次，之后的一切都从同一套事实里长出来：每一版简历、每一次体检，还有每场面试前的追问卡。新开一个对话，AI 不一定可靠地记得你确认过的事；这个文件夹把它们存在文件里。
 
 ![Resume-Gate 总览：事实只写一次，简历和面试都从这里来](assets/overview-zh.svg)
+
+**0.7.0 新增（2026-11-21）：** 事实改一次就够。你纠正一张 Claim Card 后，脚本会标出用过旧版本的每份简历、追问卡和已存回答，纠正过的错误不会悄悄回来。这是提醒你去复核，不是保证 AI 以后一定不会写错；已投递的简历保持原样。AI 提出的修改还能逐条接受或拒绝，你批准过的回答可以留着复用（`interview/answers/`）。[详情](zh-CN/CHANGELOG.md)
 
 **0.6.0 新增（2026-11-20）：** 卡片和简历默认不进 Git；分快改 / 定制 / 定稿三种模式，小改动不再走整套流程；Windows 和 Linux 上也能做排版检查（由你确认最后一页）；证据表更轻，并由脚本把关；报告上标出硬性要求。没有删掉任何硬规则。[详情](zh-CN/CHANGELOG.md)
 
@@ -121,7 +140,7 @@ Not sure about any of this? Ask the AI tool you picked in step 1. It can check w
 | Claim Card | 一个成果一个文件：事实、每个数字量的是什么、你的部分和团队的部分、不能用的说法 | [模板](zh-CN/evidence/claims/_TEMPLATE.md) · [示例](zh-CN/examples/jordan-lee/evidence/claims/C-001.md) | [template](en/evidence/claims/_TEMPLATE.md) |
 | 工作流 | Step 0（冷启动）和每个岗位的七步，每步都有必须拿得出的产出 | [WORKFLOW](zh-CN/docs/WORKFLOW.md) | [WORKFLOW](en/docs/WORKFLOW.md) |
 | 追问清单 | AI 在删掉或写弱任何内容之前要问的 7 个问题 | [追问清单](zh-CN/docs/WORKFLOW.md#追问清单) | [Probing questions](en/docs/WORKFLOW.md#probing-questions) |
-| 决策登记簿 | 16 条起步规则，从「不随意删强成果」到「选最强又站得住的写法」 | [DECISIONS](zh-CN/docs/DECISIONS.md) | [DECISIONS](en/docs/DECISIONS.md) |
+| 决策登记簿 | 20 条起步规则，从「不随意删强成果」到「选最强又站得住的写法」 | [DECISIONS](zh-CN/docs/DECISIONS.md) | [DECISIONS](en/docs/DECISIONS.md) |
 | AI 自审 | 给你看之前，AI 先过一遍事实、写法、排版和交付格式 | [自审清单](zh-CN/docs/REVIEW-CHECKLIST.md) | [REVIEW-CHECKLIST](en/docs/REVIEW-CHECKLIST.md) |
 | 失误记录 | 真实踩过的过程性错误，以及每条带来的防线 | [LESSONS](zh-CN/docs/LESSONS.md) | [LESSONS](en/docs/LESSONS.md) |
 | 面试追问卡 | 面试前：每条经历最可能被问什么、怎么答站得住、哪些话别说，全部来自你的 Claim Card | [WORKFLOW](zh-CN/docs/WORKFLOW.md#拿到面试之后追问卡) · [示例](zh-CN/examples/jordan-lee/interview/ACME-01.md) | [WORKFLOW](en/docs/WORKFLOW.md#after-you-get-an-interview-follow-up-cards) · [example](en/examples/jordan-lee/interview/ACME-01.md) |
@@ -146,7 +165,7 @@ Resume-Gate 是一个文件夹，AI 读了照着做。上手三步：选 AI 工�
 | 平时用 AI 编辑器 | **Cursor** 这类 | [下载 Cursor](https://cursor.com/download) |
 | 只用网页版聊天 AI | **Claude Project** 或 ChatGPT Project | [Claude Projects 说明](https://support.claude.com/en/articles/9517075-what-are-projects)。能用，但脚本跑不了，检查要手动做 |
 
-这些工具都要付费方案，具体看各自的安装说明。Claude Code 和 Codex 会自己读 `AGENTS.md`；别的工具，先让 AI 读它。
+这些工具大多需要付费方案，或者免费版有限制，具体看各自安装说明里的最新说明。Claude Code 和 Codex 会自己读 `AGENTS.md`；别的工具，先让 AI 读它。
 
 **用 Codex？** 它默认不联网，下载前会先问你（[官方说明](https://developers.openai.com/codex/agent-approvals-security)）。最省事的做法：第 2 步的压缩包自己下载，解压后在 Codex 里把这个文件夹当本地项目打开。不用连 GitHub。
 
@@ -190,6 +209,13 @@ cd my-job-search && git init
 
 **工具自己选。** 证据库可以是 Markdown 文件，也可以放在 Notion 这类数据库里；排版可以用 [Reactive Resume](https://rxresu.me)（开源，支持 MCP）、Word，或让 AI 直接生成 PDF。详见[工具：自己选](zh-CN/README.md#工具自己选)。
 
-**隐私：** 证据库里会放真实的工作经历，所以工作副本要保持私有。把一套内容复制到自己的文件夹或私有仓库，不要 fork 本仓库后公开填写。
+**隐私：** 证据库里会放真实的工作经历，所以工作副本要保持私有。把一套内容复制到自己的文件夹或私有仓库，不要 fork 本仓库后公开填写。哪些有保障、哪些没有：
 
-**要改这两套内容？** `en/` 和 `zh-CN/` 都要改，然后跑 `python3 tools/check_sync.py`，检查两边的文件、编号和标题有没有对不上。
+| 位置 | 实际情况 |
+|---|---|
+| 电脑上的文件 | 留在你自己的文件夹里 |
+| Git | `.gitignore` 默认把卡片、简历、岗位、面试记录、报告和 `docs/MY-DECISIONS.md` 挡在外面。这只是保险，不是保证：提交前自己看一眼 |
+| 你用的 AI | 你贴给它或让它读的内容，会交给那家 AI 服务，按它的数据政策处理。Resume-Gate 不在本地运行模型 |
+| 外部简历工具 | 只有你主动上传的部分，按对方的政策处理 |
+
+**要改这两套内容？** `en/` 和 `zh-CN/` 都要改，然后跑 `python3 tools/check_sync.py`。它检查两边的文件、编号和标题有没有对不上，也检查 `VERSION`、CHANGELOG 最新一条、根 README 的「新增」和规则条数是不是一致，发版时数字不会过期。
