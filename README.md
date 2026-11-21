@@ -29,6 +29,8 @@ A resume workflow for a long job search, where you tailor many versions over wee
 
 ![Resume-Gate overview: one fact, one card; every version and every interview traces back](assets/overview-en.svg)
 
+**New in 0.8.0 (2026-11-21):** the AI looks in your own material before it says there's no evidence. Where a requirement matters and your Claim Cards leave it open, it checks `evidence/sources/`, your reviewed answers and your profile; what it finds becomes a `Needs review` card and a question to you, never a resume line. Files you mark as skipped are never opened. `list_claims.py --sources` lists your source files with fingerprints. Nothing is required of you. [Details](en/CHANGELOG.md)
+
 **New in 0.7.0 (2026-11-21):** correct a fact once. When you fix a Claim Card, the scripts flag every resume, follow-up card and saved answer that used the old version, so a corrected error doesn't come back unnoticed. These are reminders for you to review, not a guarantee about what the AI will write; sent resumes stay unchanged. You can also accept or reject the AI's proposed changes one by one, and keep answers you've approved for reuse (`interview/answers/`). [Details](en/CHANGELOG.md)
 
 **New in 0.6.0 (2026-11-20):** your cards and resumes stay out of Git by default; quick edit / tailor / finalize modes, so a small fix doesn't run the whole pipeline; layout check works on Windows and Linux (you confirm the last page); a lighter evidence table that the script checks; hard requirements shown on the report. No hard rule was removed. [Details](en/CHANGELOG.md)
@@ -42,7 +44,7 @@ A resume workflow for a long job search, where you tailor many versions over wee
 | Claim Cards | One file per accomplishment: facts, what each number measures, your share vs the team's, wording you can't use | [template](en/evidence/claims/_TEMPLATE.md) · [example](en/examples/jordan-lee/evidence/claims/C-001.md) | [模板](zh-CN/evidence/claims/_TEMPLATE.md) · [示例](zh-CN/examples/jordan-lee/evidence/claims/C-001.md) |
 | Workflow | Step 0 (cold start) and seven steps per job, each with an output you must show | [WORKFLOW](en/docs/WORKFLOW.md) | [WORKFLOW](zh-CN/docs/WORKFLOW.md) |
 | Probing questions | Seven questions the AI asks before it drops or weakens anything | [WORKFLOW](en/docs/WORKFLOW.md#probing-questions) | [追问清单](zh-CN/docs/WORKFLOW.md#追问清单) |
-| Decision register | 20 starter rules, from "don't cut strong results" to "pick the strongest defensible wording" | [DECISIONS](en/docs/DECISIONS.md) | [DECISIONS](zh-CN/docs/DECISIONS.md) |
+| Decision register | 21 starter rules, from "don't cut strong results" to "pick the strongest defensible wording" | [DECISIONS](en/docs/DECISIONS.md) | [DECISIONS](zh-CN/docs/DECISIONS.md) |
 | AI self-review | Facts, writing, layout, and handoff checks the AI runs before you see anything | [REVIEW-CHECKLIST](en/docs/REVIEW-CHECKLIST.md) | [自审清单](zh-CN/docs/REVIEW-CHECKLIST.md) |
 | Lessons | Real process mistakes and the guardrail each one led to | [LESSONS](en/docs/LESSONS.md) | [LESSONS](zh-CN/docs/LESSONS.md) |
 | Follow-up cards | Before an interview: the questions each bullet is likely to draw, answers that hold up, and what not to say, all from your Claim Cards | [WORKFLOW](en/docs/WORKFLOW.md#after-you-get-an-interview-follow-up-cards) · [example](en/examples/jordan-lee/interview/ACME-01.md) | [WORKFLOW](zh-CN/docs/WORKFLOW.md#拿到面试之后追问卡) · [示例](zh-CN/examples/jordan-lee/interview/ACME-01.md) |
@@ -155,6 +157,8 @@ Not sure about any of this? Ask the AI tool you picked in step 1. It can check w
 
 ![Resume-Gate 总览：事实只写一次，简历和面试都从这里来](assets/overview-zh.svg)
 
+**0.8.0 新增（2026-11-21）：** AI 在说「没有证据」之前，先翻你自己的资料。某条要求重要、而你的 Claim Card 没能覆盖时，它会查 `evidence/sources/`、你已审核的答案和档案；找到的东西变成一张 `需复核` 的卡和一个问你的问题，绝不直接变成简历里的一行。你标了跳过的文件绝不会被打开。`list_claims.py --sources` 列出你的资料文件和指纹。不需要你做任何事。[详情](zh-CN/CHANGELOG.md)
+
 **0.7.0 新增（2026-11-21）：** 事实改一次就够。你纠正一张 Claim Card 后，脚本会标出用过旧版本的每份简历、追问卡和已存回答，纠正过的错误不会悄悄回来。这是提醒你去复核，不是保证 AI 以后一定不会写错；已投递的简历保持原样。AI 提出的修改还能逐条接受或拒绝，你批准过的回答可以留着复用（`interview/answers/`）。[详情](zh-CN/CHANGELOG.md)
 
 **0.6.0 新增（2026-11-20）：** 卡片和简历默认不进 Git；分快改 / 定制 / 定稿三种模式，小改动不再走整套流程；Windows 和 Linux 上也能做排版检查（由你确认最后一页）；证据表更轻，并由脚本把关；报告上标出硬性要求。没有删掉任何硬规则。[详情](zh-CN/CHANGELOG.md)
@@ -168,7 +172,7 @@ Not sure about any of this? Ask the AI tool you picked in step 1. It can check w
 | Claim Card | 一个成果一个文件：事实、每个数字量的是什么、你的部分和团队的部分、不能用的说法 | [模板](zh-CN/evidence/claims/_TEMPLATE.md) · [示例](zh-CN/examples/jordan-lee/evidence/claims/C-001.md) | [template](en/evidence/claims/_TEMPLATE.md) |
 | 工作流 | Step 0（冷启动）和每个岗位的七步，每步都有必须拿得出的产出 | [WORKFLOW](zh-CN/docs/WORKFLOW.md) | [WORKFLOW](en/docs/WORKFLOW.md) |
 | 追问清单 | AI 在删掉或写弱任何内容之前要问的 7 个问题 | [追问清单](zh-CN/docs/WORKFLOW.md#追问清单) | [Probing questions](en/docs/WORKFLOW.md#probing-questions) |
-| 决策登记簿 | 20 条起步规则，从「不随意删强成果」到「选最强又站得住的写法」 | [DECISIONS](zh-CN/docs/DECISIONS.md) | [DECISIONS](en/docs/DECISIONS.md) |
+| 决策登记簿 | 21 条起步规则，从「不随意删强成果」到「选最强又站得住的写法」 | [DECISIONS](zh-CN/docs/DECISIONS.md) | [DECISIONS](en/docs/DECISIONS.md) |
 | AI 自审 | 给你看之前，AI 先过一遍事实、写法、排版和交付格式 | [自审清单](zh-CN/docs/REVIEW-CHECKLIST.md) | [REVIEW-CHECKLIST](en/docs/REVIEW-CHECKLIST.md) |
 | 失误记录 | 真实踩过的过程性错误，以及每条带来的防线 | [LESSONS](zh-CN/docs/LESSONS.md) | [LESSONS](en/docs/LESSONS.md) |
 | 面试追问卡 | 面试前：每条经历最可能被问什么、怎么答站得住、哪些话别说，全部来自你的 Claim Card | [WORKFLOW](zh-CN/docs/WORKFLOW.md#拿到面试之后追问卡) · [示例](zh-CN/examples/jordan-lee/interview/ACME-01.md) | [WORKFLOW](en/docs/WORKFLOW.md#after-you-get-an-interview-follow-up-cards) · [example](en/examples/jordan-lee/interview/ACME-01.md) |

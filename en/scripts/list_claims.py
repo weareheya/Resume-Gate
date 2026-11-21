@@ -13,12 +13,19 @@ Usage:  python3 scripts/list_claims.py [--claims evidence/claims] [--lang en|zh]
         python3 scripts/list_claims.py --used-by C-001   which resumes, follow-up cards and answers cite it, and whether each needs a recheck (D-020)
         python3 scripts/list_claims.py --health          only the files whose cited cards changed since they were checked
         python3 scripts/list_claims.py --answers ACME-01 reviewed answers that fit this job, and which can be reused as they are
+        python3 scripts/list_claims.py --sources         the files in evidence/sources/: new, read before, changed since read, renamed, skipped (D-021)
+        python3 scripts/list_claims.py --sources --no-hash   the same list, names and sizes only, opening no file
+        python3 scripts/list_claims.py --fingerprint FILE    one file's fingerprint, to check it hasn't changed before you write a card
 Exit code: 0 = listed, 2 = no cards found.
 """
 import argparse
+import hashlib
 import importlib.util
+import os
 import re
+import stat
 import sys
+import unicodedata
 from pathlib import Path
 
 DEFAULT_LANG = "en"
@@ -60,6 +67,39 @@ T = {
         "ans_none": "No reviewed answers fit {j}. Write new ones in interview/answers/ (copy _TEMPLATE.md).",
         "ans_skipped": "{n} other answer(s) are for another employer or job, so they're left out.",
         "no_job": "No job file jobs/{j}.md: employer-specific answers can't be matched, so only reusable ones are listed.",
+        "src_head": "| File | Fingerprint | Size | State | Note |",
+        "st_new": "new",
+        "st_read": "read before",
+        "st_changed": "changed since read",
+        "st_renamed": "renamed",
+        "st_skipped": "skipped",
+        "st_cloud": "not downloaded",
+        "st_unreadable": "unreadable",
+        "st_nonreg": "not a regular file (not read)",
+        "st_gone": "gone",
+        "st_listed": "listed only",
+        "n_renamed": "was {p}",
+        "n_dup": "same content as {p}",
+        "n_ambig": "same content as {p}; not matched automatically",
+        "n_gone": "recorded, but the file is no longer here",
+        "n_cloud": "a cloud-sync placeholder; not opened",
+        "n_listed_rec": "has a record",
+        "st_link": "a link (not followed)",
+        "n_pipe": "the name contains \"|\", which can't be written in the INTAKE table: rename it, or skip its folder",
+        "src_link_root": "{d} is, or sits inside, a link: not scanned. Links are never followed; use a real folder.",
+        "src_intake_bad": "The skip list in evidence/INTAKE.md can't be read ({e}), so the skip rules can't be verified. No file was listed, opened or fingerprinted. Do not read any raw source until this is fixed.",
+        "fp_link": "{p} is, or sits behind, a link: links are never followed, so it wasn't opened.",
+        "src_none": "No {d} folder: nothing to list.",
+        "src_empty": "{d} has no files.",
+        "src_counts": "{n} file(s): {a} new, {b} read before, {c} changed since read, {s} skipped, {o} not fingerprinted.",
+        "src_remind": "A record only says a file was looked at, for one job. It never means the file has no other usable evidence: look again when a requirement needs it. This list fingerprints files on this computer only; it reads no text and sends nothing to a model. Skipped files are never opened.",
+        "src_cloud": "Cloud placeholders are recognised only for iCloud (.icloud files and the macOS dataless flag). With any other sync tool, fingerprinting a file may download it: use --no-hash to list names and sizes only.",
+        "fp_ok": "{p}  {f}",
+        "fp_skipped": "{p} is skipped: not opened.",
+        "fp_outside": "{p} is outside this folder: not read.",
+        "fp_cloud": "{p} is a cloud placeholder (not downloaded): not opened.",
+        "fp_err": "{p}: can't read it ({e}).",
+        "fp_missing": "{p} not found.",
         "many": "{n} cards. Read in full: every protected card ({k}), and every card whose summary, role or facets touch the job. Every card still goes in the evidence table; unused ones can share a line.",
     },
     "zh": {
@@ -92,6 +132,39 @@ T = {
         "ans_none": "没有适用于 {j} 的已审核答案。新答案写在 interview/answers/（复制 _TEMPLATE.md）。",
         "ans_skipped": "另有 {n} 个答案是给别的公司或岗位的，没有列出。",
         "no_job": "找不到岗位文件 jobs/{j}.md：针对某家公司的答案没法匹配，只列出通用的。",
+        "src_head": "| 文件 | 指纹 | 大小 | 状态 | 说明 |",
+        "st_new": "新文件",
+        "st_read": "读过",
+        "st_changed": "读过之后变了",
+        "st_renamed": "改名",
+        "st_skipped": "已跳过",
+        "st_cloud": "未下载",
+        "st_unreadable": "读不了",
+        "st_nonreg": "不是普通文件（没有读）",
+        "st_gone": "已不在",
+        "st_listed": "只列出",
+        "n_renamed": "原来是 {p}",
+        "n_dup": "内容和 {p} 相同",
+        "n_ambig": "内容和 {p} 相同；不自动对应",
+        "n_gone": "有记录，但文件已经不在这里",
+        "n_cloud": "云同步占位文件；没有打开",
+        "n_listed_rec": "有记录",
+        "st_link": "链接（没有跟随）",
+        "n_pipe": "文件名里有「|」，没法写进 INTAKE 的表格：请改名，或者跳过它所在的文件夹",
+        "src_link_root": "{d} 本身或它的上级是链接：没有扫描。链接一律不跟随，请改成真正的文件夹。",
+        "src_intake_bad": "evidence/INTAKE.md 里的跳过规则读不了（{e}），没法验证跳过规则。没有列出、打开或计算任何文件。修好之前，不要读任何原始资料。",
+        "fp_link": "{p} 本身或它的上级是链接：链接一律不跟随，所以没有打开。",
+        "src_none": "没有 {d} 文件夹：没有可列的。",
+        "src_empty": "{d} 里没有文件。",
+        "src_counts": "共 {n} 个文件：新文件 {a} 个，读过 {b} 个，读过之后变了 {c} 个，已跳过 {s} 个，没算指纹 {o} 个。",
+        "src_remind": "记录只说明某个文件曾为某一个岗位看过，绝不表示这个文件里没有别的可用证据：有要求需要时再看。这个列表只在本机给文件算指纹，不读文字，也不把任何内容交给模型。已跳过的文件从不打开。",
+        "src_cloud": "云占位文件只能识别 iCloud 的（.icloud 文件和 macOS 的 dataless 标记）。用其他同步工具时，算指纹可能会触发下载：用 --no-hash 只列文件名和大小。",
+        "fp_ok": "{p}  {f}",
+        "fp_skipped": "{p} 已跳过：没有打开。",
+        "fp_outside": "{p} 在这个文件夹之外：没有读。",
+        "fp_cloud": "{p} 是云占位文件（还没下载）：没有打开。",
+        "fp_err": "{p}：读不了（{e}）。",
+        "fp_missing": "找不到 {p}。",
         "many": "共 {n} 张卡。要读全文的：所有受保护的卡（{k}），以及一句话、职位或能力切面和这个岗位沾边的卡。每张卡仍要写进证据表；没用的可以合成一行。",
     },
 }
@@ -248,6 +321,298 @@ def answers_for(root, cards, job_id, t):
         print(t["ans_skipped"].format(n=skipped))
     return 0
 
+SOURCES_DIR = "evidence/sources"
+FP_LEN = 16
+DATALESS = 0x40000000  # macOS SF_DATALESS: the file's content isn't on this disk yet
+RECORD_HEADINGS = ("source records", "来源记录")
+SKIP_HEADINGS = ("skipped sources", "跳过的资料")
+HEADER_CELLS = ("file", "文件")
+
+
+class IntakeUnreadable(Exception):
+    """evidence/INTAKE.md exists but can't be read, so the skip list can't be checked."""
+
+
+def fingerprint(path):
+    """First 16 hex digits of the file's SHA-256, computed in chunks on this computer."""
+    h = hashlib.sha256()
+    with open(path, "rb") as f:
+        for chunk in iter(lambda: f.read(1 << 20), b""):
+            h.update(chunk)
+    return h.hexdigest()[:FP_LEN]
+
+
+def norm(rel):
+    """How two paths are compared: Unicode-normalised and without regard to case, because macOS
+    stores names in a different Unicode form and is usually case-insensitive. Over-matching is
+    the safe direction for a skip list."""
+    parts = [x for x in rel.replace("\\", "/").split("/") if x not in ("", ".")]
+    return unicodedata.normalize("NFC", "/".join(parts)).casefold()
+
+
+def one_cell(raw):
+    """A table cell without its padding, and without one pair of wrapping backticks."""
+    c = raw.strip()
+    if c.count("`") % 2:
+        raise IntakeUnreadable(row_error(c))  # an unpaired backtick: can't tell where the name ends
+    if len(c) > 1 and c.startswith("`") and c.endswith("`"):
+        c = c[1:-1]
+        if c != c.strip():
+            raise IntakeUnreadable(row_error(c.strip()))
+    return c
+
+
+def row_error(first):
+    return f"a row in the INTAKE tables can't be read reliably (a | in a name or a reason, spaces just inside backticks, an unpaired backtick, or a path that isn't relative to the kit or has '..'). The row starts: {first}"
+
+
+def intake_tables(root):
+    """(records {path: fingerprint}, skipped {path: reason}) from evidence/INTAKE.md.
+    A missing INTAKE, or one without the sections, gives empty results, so an INTAKE from before 0.8.0
+    works as it is. An INTAKE that exists but can't be read raises IntakeUnreadable: the skip list can't
+    be checked, and that must never look the same as "nothing is skipped". The same goes for a skipped
+    row with more cells than the table has columns: a "|" in a name or a reason makes it impossible to
+    tell what the row says, so the list fails closed instead of guessing."""
+    records, skipped, section = {}, {}, None
+    try:
+        text = (root / "evidence/INTAKE.md").read_text(encoding="utf-8")
+    except FileNotFoundError:
+        if (root / "evidence/INTAKE.md").is_symlink():
+            raise IntakeUnreadable("evidence/INTAKE.md is a link that leads nowhere")
+        return records, skipped
+    except (OSError, UnicodeDecodeError) as e:
+        raise IntakeUnreadable(str(getattr(e, "strerror", None) or e))
+    for line in text.splitlines():
+        if line.startswith("## "):
+            title = line[3:].strip().lower()
+            section = "records" if title.startswith(RECORD_HEADINGS) else "skipped" if title.startswith(SKIP_HEADINGS) else None
+            continue
+        if section and line.strip().startswith("|"):
+            cells = [one_cell(c) for c in line.strip().strip("|").split("|")]
+            first = cells[0].replace("\\", "/")
+            if first.startswith("./"):
+                first = first[2:]
+            if section == "skipped":
+                if ".." in first.split("/") or first.startswith(("/", "~")) or re.match(r"[A-Za-z]:", first):
+                    raise IntakeUnreadable(row_error(first))  # only paths relative to the kit are understood
+                for k in range(1, len(cells)):  # a name with a "|" in it, cut in two, with no reason column
+                    try:
+                        cut = os.path.lexists(root / "|".join(cells[:k + 1]))
+                    except ValueError:
+                        cut = False
+                    if cut:
+                        raise IntakeUnreadable(row_error(first))
+            if not first or set(first) <= set("-: ") or first.lower() in HEADER_CELLS:
+                continue
+            if section == "records":
+                if len(cells) > 1 and cells[1]:
+                    records[first] = cells[1].lower()
+            else:
+                if len(cells) > 2:
+                    raise IntakeUnreadable(row_error(first))
+                skipped[first] = cells[1] if len(cells) > 1 else ""
+    return records, skipped
+
+
+def is_skipped(rel, skipped):
+    """A skipped entry covers a file, or a folder (with or without a trailing "/") and everything in it."""
+    r = norm(rel).rstrip("/")
+    for s in skipped:
+        n = norm(s).rstrip("/")
+        if r == n or r.startswith(n + "/"):
+            return True
+    return False
+
+
+def has_link(root, path):
+    """True if path, or any folder between root and it, is a symbolic link, or the path can't be checked
+    as written (outside root, or with a ".." that the system would resolve through a link). The path is
+    checked exactly as it will be opened; nothing is normalised first and nothing is followed."""
+    try:
+        parts = Path(path).relative_to(root).parts
+    except ValueError:
+        return True
+    if ".." in parts:
+        return True
+    cur = Path(root)
+    for part in parts:
+        cur = cur / part
+        if cur.is_symlink():
+            return True
+    return False
+
+
+def size_text(n):
+    return f"{n} B" if n < 1024 else f"{n / 1024:.0f} KB" if n < 1024 * 1024 else f"{n / 1024 / 1024:.1f} MB"
+
+
+def inspect_file(full):
+    """Look at one file without following links. Returns (state, size, note)."""
+    try:
+        if full.is_symlink():
+            return "link", None, ""
+        st = os.stat(full)
+    except OSError as e:
+        return "unreadable", None, str(e.strerror or e)
+    if not stat.S_ISREG(st.st_mode):
+        return "nonreg", None, ""
+    if getattr(st, "st_flags", 0) & DATALESS:
+        return "cloud", st.st_size, ""
+    return "ok", st.st_size, ""
+
+
+def scan_sources(root, records, skipped, hash_files=True):
+    """One row per file in evidence/sources/: (path, fingerprint, size, state, note-key, note-arg).
+    Skipped files and anything behind a link are never opened. Nothing is written. Returns None when
+    there is no folder, and the string "link" when the folder itself (or its parent) is a link."""
+    base = root / SOURCES_DIR
+    if is_skipped(SOURCES_DIR, skipped):
+        return [[SOURCES_DIR + "/", None, None, "skipped", "", ""]]  # the whole folder: not entered
+    if has_link(root, base):
+        return "link"
+    if not base.is_dir():
+        return None
+    found, blocked = [], []  # found: [rel, fp, size, state, note_key, note_arg]
+    recorded = {norm(p): p for p in records}
+
+    def on_error(e):
+        rel = Path(os.path.abspath(e.filename)).relative_to(root).as_posix() + "/"
+        blocked.append(norm(rel))
+        found.append([rel, None, None, "unreadable", "", str(e.strerror or e)])
+
+    for dirpath, dirnames, filenames in os.walk(base, onerror=on_error):
+        dirnames.sort()
+        keep = []
+        for d in dirnames:
+            full = Path(dirpath) / d
+            rel = full.relative_to(root).as_posix()
+            if is_skipped(rel, skipped):
+                found.append([rel + "/", None, None, "skipped", "", ""]); continue
+            if full.is_symlink():
+                found.append([rel + "/", None, None, "link", "", ""]); continue
+            keep.append(d)
+        dirnames[:] = keep
+        for name in sorted(filenames):
+            if name == ".DS_Store":
+                continue
+            full = Path(dirpath) / name
+            stub = name.startswith(".") and name.endswith(".icloud") and len(name) > 8
+            shown = name[1:-len(".icloud")] if stub else name
+            rel = (Path(dirpath) / shown).relative_to(root).as_posix()
+            if is_skipped(rel, skipped):
+                found.append([rel, None, None, "skipped", "", ""]); continue
+            if stub:
+                found.append([rel, None, None, "cloud", "n_cloud", ""]); continue
+            state, size, note = inspect_file(full)
+            fp = None
+            if state == "ok":
+                if hash_files:
+                    try:
+                        fp = fingerprint(full)
+                    except OSError as e:
+                        state, note = "unreadable", str(e.strerror or e)
+                else:
+                    state = "listed"
+            found.append([rel, fp, size, state, "", note])
+    present = {norm(r[0]) for r in found}
+    unrecorded = [r for r in found if r[3] == "ok" and norm(r[0]) not in recorded]
+    missing = [p for p in records if norm(p) not in present and not is_skipped(p, skipped)
+               and not any(norm(p) == b or norm(p).startswith(b + "/") for b in blocked)]
+    if hash_files:
+        for r in found:
+            if r[3] == "ok" and norm(r[0]) in recorded:
+                r[3] = "read" if records[recorded[norm(r[0])]] == r[1] else "changed"
+        for m in sorted(missing):
+            fp = records[m]
+            gone_same = [x for x in missing if records[x] == fp]
+            cands = [r for r in unrecorded if r[1] == fp]
+            on_disk = [r for r in found if r[1] == fp]
+            # A rename needs exactly one vanished path and exactly one file with that content. Any other
+            # file with the same content (a copy, or the original still there) makes it ambiguous.
+            if len(gone_same) == 1 and len(cands) == 1 and len(on_disk) == 1:
+                cands[0][3], cands[0][4], cands[0][5] = "renamed", "n_renamed", m
+                missing = [x for x in missing if x != m]
+        for r in unrecorded:
+            if r[3] == "ok":
+                same = sorted(p for p, f in records.items() if f == r[1] and norm(p) in present and norm(p) != norm(r[0]))
+                gone = sorted(p for p in missing if records[p] == r[1])
+                if same:
+                    r[4], r[5] = "n_dup", same[0]
+                elif gone:
+                    r[4], r[5] = "n_ambig", gone[0]
+                r[3] = "new"
+    else:
+        for r in found:
+            if r[3] == "listed":
+                r[4] = "n_listed_rec" if norm(r[0]) in recorded else ""
+    for r in found:
+        if "|" in r[0] and r[3] not in ("skipped",) and not r[4]:
+            r[4] = "n_pipe"
+    rows = [tuple(r) for r in found]
+    rows += [(m, records[m], None, "gone", "n_gone", "") for m in sorted(missing)]
+    return rows
+
+
+def show_sources(root, t, hash_files):
+    try:
+        records, skipped = intake_tables(root)
+    except IntakeUnreadable as e:
+        print(t["src_intake_bad"].format(e=e)); return 1
+    rows = scan_sources(root, records, skipped, hash_files)
+    if rows == "link":
+        print(t["src_link_root"].format(d=SOURCES_DIR)); return 1
+    if rows is None:
+        print(t["src_none"].format(d=SOURCES_DIR)); return 0
+    if not rows:
+        print(t["src_empty"].format(d=SOURCES_DIR)); return 0
+    print(t["src_head"])
+    print("|---|---|---|---|---|")
+    for rel, fp, size, state, key, arg in rows:
+        note = t[key].format(p=arg) if key else arg
+        print(f"| {cell(rel)} | {fp or ''} | {size_text(size) if size is not None else ''} | {t['st_' + state] if 'st_' + state in t else state} | {cell(note)} |")
+    count = lambda s: sum(1 for r in rows if r[3] == s)
+    other = sum(1 for r in rows if r[3] in ("cloud", "unreadable", "link", "nonreg", "listed"))
+    print()
+    print(t["src_counts"].format(n=len(rows), a=count("new"), b=count("read"), c=count("changed"), s=count("skipped"), o=other))
+    print(t["src_remind"])
+    if hash_files:
+        print(t["src_cloud"])
+    return 0
+
+
+def show_fingerprint(root, t, arg):
+    """The fingerprint of one file, for checking that it hasn't changed between reading it and writing a card."""
+    path = Path(arg)
+    full = path if path.is_absolute() else Path.cwd() / path
+    if not os.path.lexists(full):
+        print(t["fp_missing"].format(p=arg)); return 1
+    try:
+        rel = full.relative_to(root).as_posix()
+    except ValueError:
+        print(t["fp_outside"].format(p=arg)); return 1
+    if has_link(root, full):
+        print(t["fp_link"].format(p=arg)); return 1
+    try:
+        _, skipped = intake_tables(root)
+    except IntakeUnreadable as e:
+        print(t["src_intake_bad"].format(e=e)); return 1
+    if is_skipped(rel, skipped):
+        print(t["fp_skipped"].format(p=rel)); return 1
+    name = full.name
+    if name.startswith(".") and name.endswith(".icloud") and len(name) > 8:
+        print(t["fp_cloud"].format(p=rel)); return 1
+    state, _, note = inspect_file(full)
+    if state == "cloud":
+        print(t["fp_cloud"].format(p=rel)); return 1
+    if state != "ok":
+        print(t["fp_err"].format(p=rel, e=note or t["st_nonreg"])); return 1
+    try:
+        fp = fingerprint(full)
+    except OSError as e:
+        print(t["fp_err"].format(p=rel, e=e.strerror or e)); return 1
+    print(t["fp_ok"].format(p=rel, f=fp))
+    return 0
+
 
 def main():
     ap = argparse.ArgumentParser(description="List every Claim Card on one line each.")
@@ -255,9 +620,16 @@ def main():
     ap.add_argument("--used-by", metavar="ID", help="list the resumes, follow-up cards and answers that cite this card, and whether each needs a recheck (D-020)")
     ap.add_argument("--health", action="store_true", help="only the files whose cited cards changed since they were checked (D-020)")
     ap.add_argument("--answers", metavar="JOB", help="reviewed answers in interview/answers/ whose scope fits this job, and whether each can be reused as it is")
+    ap.add_argument("--sources", action="store_true", help='list the files in evidence/sources/ with their fingerprints, and which are new, changed since they were read, renamed or skipped (reads no text)')
+    ap.add_argument("--no-hash", action="store_true", help='with --sources: list names and sizes only, without opening any file (use this where cloud sync could download files)')
+    ap.add_argument("--fingerprint", metavar="FILE", help="print one file's fingerprint, to check it hasn't changed between reading it and writing a card (a skipped file is never opened)")
     ap.add_argument("--lang", choices=["en", "zh"], default=DEFAULT_LANG)
     a = ap.parse_args()
     t = T[a.lang]
+    if a.fingerprint:
+        return show_fingerprint(deps.kit_root(a.claims), t, a.fingerprint)
+    if a.sources:
+        return show_sources(deps.kit_root(a.claims), t, not a.no_hash)
     if a.answers:
         return answers_for(deps.kit_root(a.claims), deps.load_cards(a.claims), a.answers, t)
     if a.used_by or a.health:

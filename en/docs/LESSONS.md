@@ -4,6 +4,13 @@
 > Rules about facts and numbers belong in DECISIONS or a Claim Card. This file is for **process** mistakes.
 > Before adding a guardrail, ask what it costs: who it slows down, which honest case it could block, and whether a later step already catches the mistake. Several guardrails below were revised in 0.6.0 because they did more harm than the mistake they fixed (L-01, L-04, L-07, L-10, L-12).
 
+## L-16 · A fact in the user's own material was called "no evidence"
+- **What happened**: A requirement was marked "no evidence" because no Claim Card covered it. The support was in a project review the user had added to `evidence/sources/`.
+- **Why**: The Evidence Retrieval Gate went through Claim Cards only, and nothing said to look further before saying no.
+- **Guardrail**: Before a requirement is called "no evidence", look beyond the cards where the gap matters (WORKFLOW, "Looking beyond the cards", D-021). What turns up becomes a `Needs review` card and a question, never a line on a resume. Reading is local-first and never touches what the user marked as skipped. `list_claims.py --sources` lists the files with fingerprints: it reminds the AI what exists and what changed, and proves nothing about what was read.
+- **Side effects to watch**: more reading on jobs with many gaps (effort follows importance, not a fixed count), and more `Needs review` cards to confirm. A record in INTAKE says a file was read for one job, so the next job still looks. "Skipped" protects paths, not content: a renamed file escapes it.
+- **Test**: `SourceScan` and the dispute tests in `DependencyHealth`, in `test_check_claims.py`. Whether the AI actually looks, picks the right part and asks instead of using it needs an eval, and none has been run.
+
 ## L-15 · A corrected fact came back in the next version
 - **What happened**: The user explained that an amount was sponsorship they negotiated, not a marketing budget. The chat moved on, but the card and the approved baseline still said budget, so the next tailored version copied the old wording from the baseline.
 - **Why**: The correction lived only in the chat. Nothing linked the baseline's lines to the version of the card they were approved against, so nothing could say they were out of date.

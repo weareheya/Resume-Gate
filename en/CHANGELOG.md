@@ -2,6 +2,21 @@
 
 What changed in each version, and whether you need to do anything. Your version is in `VERSION`. To update, paste prompt 5 from `docs/PROMPTS.md`.
 
+## 0.8.0 · 2026-11-21
+
+**Look before saying "no evidence".** The AI used to check only your Claim Cards, so something you had really done, sitting in your own material but without a card, could be written off as "no evidence". Now, where a requirement matters and the cards leave it open, it looks further before it says no (D-021, LESSONS L-16).
+
+- Where and when: it starts from the cards, and looks further only for gate requirements, core skills, weak or transferable evidence, or a card missing the result, scale or attribution the job needs. Strong, direct evidence ends the search. Details: WORKFLOW, "Looking beyond the cards".
+- What it finds becomes a `Needs review` card and a question to you, never a line on a resume. A fact you state yourself in the chat is still confirmed, as before (D-017).
+- `list_claims.py --sources` lists the files in `evidence/sources/` with fingerprints and says which are new, changed since they were read, renamed or skipped. `--fingerprint FILE` prints one file's fingerprint, to check that it hasn't changed between reading it and writing a card. `--sources --no-hash` lists names and sizes only. The script works on your computer: it reads no text, sends nothing to a model, and never opens a file you skipped.
+- `evidence/INTAKE.md` has three optional sections: Source records, Skipped sources, Declined facts (so the AI doesn't ask twice). An INTAKE from an older kit works as it is, and updating never touches it.
+- The Coverage Report has a "Checked" column (how far the AI looked). When the AI writes positioning options for a job that's a stretch, it now stops for your pick before going on (S1).
+- A disputed fact is marked with what already exists: `to verify` on a number, or `Needs review` on a card. `check_claims.py` and `--finalize` stop only a version that uses it, and `protected-ok` never overrides it (tests added).
+
+**Limits.** The script knows only whether a file changed and whether it's recorded; it can't show that the AI read all of it. Skipped is a rule about paths, not a lock on the content: a skipped file that is renamed or moved out of its folder looks new. Links are never followed. If the skip list in INTAKE can't be read (or a row has a `|`, spaces just inside backticks, or a `..` in it, an absolute path, an unpaired backtick, or INTAKE is a link that leads nowhere), `--sources` lists nothing and the AI must not read any raw source. Paths with `..` are refused. Fingerprints are the first 16 hex digits of a SHA-256. Cloud placeholders are recognised for iCloud only; with other sync tools, fingerprinting may download a file (use `--no-hash`). Whether the AI actually looks, picks the right part and asks instead of using what it finds has not been run as an eval.
+
+**What you need to do**: nothing.
+
 ## 0.7.0 · 2026-11-21
 
 **Correct a fact once.** When you correct something, the AI updates the Claim Card first, and every resume, follow-up card and answer that used the old version is flagged, so it can't come back by accident (D-020, LESSONS L-15).

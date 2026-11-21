@@ -38,9 +38,9 @@ Each row is one proposal the user can accept or reject on its own ("accept 1 and
 
 ## JD Coverage Report
 
-| # | JD requirement | Gate | Kind | Evidence | Next step |
-|---|---|---|---|---|---|
-| R1 | | | Direct / Transferable or combined / Not found yet / Buildable / Hard gap | | |
+| # | JD requirement | Gate | Kind | Evidence | Checked | Next step |
+|---|---|---|---|---|---|---|
+| R1 | | | Direct / Transferable or combined / Not found yet / Buildable / Hard gap | | Cards / Cards and sources / Partly / Not accessible / Not examined further / Waiting for the user | |
 
 **Main gaps**:
 
