@@ -86,7 +86,6 @@ T = {
         "n_pipe": "the name contains \"|\", which can't be written in the INTAKE table: rename it, or skip its folder",
         "src_link_root": "{d} is, or sits inside, a link: not scanned. Links are never followed; use a real folder.",
         "src_intake_bad": "The skip list in evidence/INTAKE.md can't be read ({e}), so the skip rules can't be verified. No file was listed, opened or fingerprinted. Do not read any raw source until this is fixed.",
-        "src_unreliable": "These skipped rows can't be read reliably (a \"|\" in a name?), so each covers everything whose path starts the same way: {rows}",
         "fp_link": "{p} is, or sits behind, a link: links are never followed, so it wasn't opened.",
         "src_none": "No {d} folder: nothing to list.",
         "src_empty": "{d} has no files.",
@@ -152,7 +151,6 @@ T = {
         "n_pipe": "文件名里有「|」，没法写进 INTAKE 的表格：请改名，或者跳过它所在的文件夹",
         "src_link_root": "{d} 本身或它的上级是链接：没有扫描。链接一律不跟随，请改成真正的文件夹。",
         "src_intake_bad": "evidence/INTAKE.md 里的跳过规则读不了（{e}），没法验证跳过规则。没有列出、打开或计算任何文件。修好之前，不要读任何原始资料。",
-        "src_unreliable": "这些跳过的行没法可靠解析（文件名里有「|」？），所以每一行都覆盖路径以它开头的所有文件：{rows}",
         "fp_link": "{p} 本身或它的上级是链接：链接一律不跟随，所以没有打开。",
         "src_none": "没有 {d} 文件夹：没有可列的。",
         "src_empty": "{d} 里没有文件。",
@@ -357,18 +355,22 @@ def one_cell(raw):
     return c
 
 
+def row_error(first):
+    return f"有一行跳过记录的格子比表格的列数多：文件名或原因里是不是有 |？这一行以此开头：{first}"
+
+
 def intake_tables(root):
-    """(records {path: fingerprint}, skipped {path: reason}, unreliable [lines]) from evidence/INTAKE.md.
+    """(records {path: fingerprint}, skipped {path: reason}) from evidence/INTAKE.md.
     A missing INTAKE, or one without the sections, gives empty results, so an INTAKE from before 0.8.0
     works as it is. An INTAKE that exists but can't be read raises IntakeUnreadable: the skip list can't
-    be checked, and that must never look the same as "nothing is skipped". A skipped row with more
-    cells than the table has columns can't be read reliably (a "|" in a name); it is kept as a
-    prefix, so it covers more rather than less, and it is reported."""
-    records, skipped, unreliable, section = {}, {}, [], None
+    be checked, and that must never look the same as "nothing is skipped". The same goes for a skipped
+    row with more cells than the table has columns: a "|" in a name or a reason makes it impossible to
+    tell what the row says, so the list fails closed instead of guessing."""
+    records, skipped, section = {}, {}, None
     try:
         text = (root / "evidence/INTAKE.md").read_text(encoding="utf-8")
     except FileNotFoundError:
-        return records, skipped, unreliable
+        return records, skipped
     except (OSError, UnicodeDecodeError) as e:
         raise IntakeUnreadable(str(getattr(e, "strerror", None) or e))
     for line in text.splitlines():
@@ -387,28 +389,31 @@ def intake_tables(root):
                 if len(cells) > 1 and cells[1]:
                     records[first] = cells[1].lower()
             else:
-                skipped[first] = cells[1] if len(cells) > 1 else ""
                 if len(cells) > 2:
-                    unreliable.append(first)
-    return records, skipped, unreliable
+                    raise IntakeUnreadable(row_error(first))
+                skipped[first] = cells[1] if len(cells) > 1 else ""
+    return records, skipped
 
 
-def is_skipped(rel, skipped, unreliable=()):
-    """A skipped entry covers a file, a folder (with or without a trailing "/") and everything in it;
-    an unreliable entry covers everything whose path starts with it."""
+def is_skipped(rel, skipped):
+    """A skipped entry covers a file, or a folder (with or without a trailing "/") and everything in it."""
     r = norm(rel).rstrip("/")
     for s in skipped:
         n = norm(s).rstrip("/")
-        if r == n or r.startswith(n + "/") or (s in unreliable and r.startswith(n)):
+        if r == n or r.startswith(n + "/"):
             return True
     return False
 
 
 def has_link(root, path):
-    """True if path, or any folder between root and it, is a symbolic link. Nothing is followed."""
+    """True if path, or any folder between root and it, is a symbolic link, or the path can't be checked
+    as written (outside root, or with a ".." that the system would resolve through a link). The path is
+    checked exactly as it will be opened; nothing is normalised first and nothing is followed."""
     try:
-        parts = Path(os.path.abspath(path)).relative_to(root).parts
+        parts = Path(path).relative_to(root).parts
     except ValueError:
+        return True
+    if ".." in parts:
         return True
     cur = Path(root)
     for part in parts:
@@ -437,7 +442,7 @@ def inspect_file(full):
     return "ok", st.st_size, ""
 
 
-def scan_sources(root, records, skipped, hash_files=True, unreliable=()):
+def scan_sources(root, records, skipped, hash_files=True):
     """One row per file in evidence/sources/: (path, fingerprint, size, state, note-key, note-arg).
     Skipped files and anything behind a link are never opened. Nothing is written. Returns None when
     there is no folder, and the string "link" when the folder itself (or its parent) is a link."""
@@ -460,7 +465,7 @@ def scan_sources(root, records, skipped, hash_files=True, unreliable=()):
         for d in dirnames:
             full = Path(dirpath) / d
             rel = full.relative_to(root).as_posix()
-            if is_skipped(rel, skipped, unreliable):
+            if is_skipped(rel, skipped):
                 found.append([rel + "/", None, None, "skipped", "", ""]); continue
             if full.is_symlink():
                 found.append([rel + "/", None, None, "link", "", ""]); continue
@@ -473,7 +478,7 @@ def scan_sources(root, records, skipped, hash_files=True, unreliable=()):
             stub = name.startswith(".") and name.endswith(".icloud") and len(name) > 8
             shown = name[1:-len(".icloud")] if stub else name
             rel = (Path(dirpath) / shown).relative_to(root).as_posix()
-            if is_skipped(rel, skipped, unreliable):
+            if is_skipped(rel, skipped):
                 found.append([rel, None, None, "skipped", "", ""]); continue
             if stub:
                 found.append([rel, None, None, "cloud", "n_cloud", ""]); continue
@@ -490,7 +495,7 @@ def scan_sources(root, records, skipped, hash_files=True, unreliable=()):
             found.append([rel, fp, size, state, "", note])
     present = {norm(r[0]) for r in found}
     unrecorded = [r for r in found if r[3] == "ok" and norm(r[0]) not in recorded]
-    missing = [p for p in records if norm(p) not in present and not is_skipped(p, skipped, unreliable)
+    missing = [p for p in records if norm(p) not in present and not is_skipped(p, skipped)
                and not any(norm(p).startswith(b) for b in blocked)]
     if hash_files:
         for r in found:
@@ -529,10 +534,10 @@ def scan_sources(root, records, skipped, hash_files=True, unreliable=()):
 
 def show_sources(root, t, hash_files):
     try:
-        records, skipped, unreliable = intake_tables(root)
+        records, skipped = intake_tables(root)
     except IntakeUnreadable as e:
         print(t["src_intake_bad"].format(e=e)); return 1
-    rows = scan_sources(root, records, skipped, hash_files, unreliable)
+    rows = scan_sources(root, records, skipped, hash_files)
     if rows == "link":
         print(t["src_link_root"].format(d=SOURCES_DIR)); return 1
     if rows is None:
@@ -548,8 +553,6 @@ def show_sources(root, t, hash_files):
     other = sum(1 for r in rows if r[3] in ("cloud", "unreadable", "link", "nonreg", "listed"))
     print()
     print(t["src_counts"].format(n=len(rows), a=count("new"), b=count("read"), c=count("changed"), s=count("skipped"), o=other))
-    if unreliable:
-        print(t["src_unreliable"].format(rows=", ".join(unreliable)))
     print(t["src_remind"])
     if hash_files:
         print(t["src_cloud"])
@@ -563,16 +566,16 @@ def show_fingerprint(root, t, arg):
     if not os.path.lexists(full):
         print(t["fp_missing"].format(p=arg)); return 1
     try:
-        rel = Path(os.path.abspath(full)).relative_to(root).as_posix()
+        rel = full.relative_to(root).as_posix()
     except ValueError:
         print(t["fp_outside"].format(p=arg)); return 1
     if has_link(root, full):
         print(t["fp_link"].format(p=arg)); return 1
     try:
-        _, skipped, unreliable = intake_tables(root)
+        _, skipped = intake_tables(root)
     except IntakeUnreadable as e:
         print(t["src_intake_bad"].format(e=e)); return 1
-    if is_skipped(rel, skipped, unreliable):
+    if is_skipped(rel, skipped):
         print(t["fp_skipped"].format(p=rel)); return 1
     name = full.name
     if name.startswith(".") and name.endswith(".icloud") and len(name) > 8:

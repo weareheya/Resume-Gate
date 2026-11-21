@@ -1362,8 +1362,8 @@ class SourceScan(unittest.TestCase):
         return r.returncode, r.stdout
 
     def states(self):
-        records, skipped, unreliable = self.lc.intake_tables(self.root)
-        return {r[0]: r for r in self.lc.scan_sources(self.root, records, skipped, True, unreliable)}
+        records, skipped = self.lc.intake_tables(self.root)
+        return {r[0]: r for r in self.lc.scan_sources(self.root, records, skipped)}
 
     def test_no_sources_folder_is_fine(self):
         (self.root / "evidence/sources").rmdir()
@@ -1678,20 +1678,47 @@ class SourceScan(unittest.TestCase):
             self.assertEqual(self.states()["evidence/sources/private/"][3], "skipped")
             self.assertEqual(opened, [])
 
-    def test_a_skip_row_that_cannot_be_read_reliably_covers_more_not_less(self):
+    def test_a_skip_row_that_cannot_be_read_reliably_fails_closed(self):
         self.src("a|b.txt")
-        self.src("a.txt")
         self.src("other.txt")
-        self.intake(skipped=["evidence/sources/a|b.txt"])  # splits into extra cells
         opened = self.watch_fingerprints()
-        st = self.states()
-        self.assertEqual(st["evidence/sources/a|b.txt"][3], "skipped")
-        self.assertEqual(st["evidence/sources/a.txt"][3], "skipped")
-        self.assertEqual(st["evidence/sources/other.txt"][3], "new")
-        self.assertEqual(opened, ["other.txt"])
+        # plain, or wrapped in backticks: split on "|" first, so the row has an extra cell either way
+        for row in ("evidence/sources/a|b.txt", "`evidence/sources/a|b.txt`"):
+            self.intake(skipped=[row])
+            code, out = self.run_cli("--sources")
+            self.assertEqual(code, 1, out)
+            self.assertIn("skip rules can't be verified", out)
+            self.assertIn("evidence/sources/a", out)
+            self.assertNotIn("other.txt", out)
+            code, out = self.run_cli("--fingerprint", "evidence/sources/a|b.txt")
+            self.assertEqual(code, 1, out)
+            self.assertIn("skip rules can't be verified", out)
+            with self.assertRaises(self.lc.IntakeUnreadable):
+                self.lc.intake_tables(self.root)
+        self.assertEqual(opened, [])
+
+    def test_a_pipe_in_the_reason_also_fails_closed(self):
+        self.src("a.txt")
+        (self.root / "evidence/INTAKE.md").write_text(
+            "## Skipped sources\n| File | Reason |\n|---|---|\n| evidence/sources/a.txt | contract | draft |\n", encoding="utf-8")
         code, out = self.run_cli("--sources")
-        self.assertIn("can't be read reliably", out)
-        self.assertEqual(self.run_cli("--fingerprint", "evidence/sources/a.txt")[0], 1)
+        self.assertEqual(code, 1, out)
+        self.assertIn("skip rules can't be verified", out)
+
+    def test_fingerprint_checks_the_path_it_will_open(self):
+        with tempfile.TemporaryDirectory() as other:
+            outside = Path(other).resolve()
+            (outside / "sub").mkdir()
+            (outside / "secret.txt").write_text("EXTERNAL", encoding="utf-8")
+            self.link(self.root / "evidence/sources/link", outside / "sub", directory=True)
+            # "link/.." is the folder above the link's target, so this reaches the outside file
+            code, out = self.run_cli("--fingerprint", "evidence/sources/link/../secret.txt")
+            self.assertEqual(code, 1, out)
+            self.assertNotRegex(out, r"[0-9a-f]{16}")
+        self.src("fine.txt")
+        code, out = self.run_cli("--fingerprint", "evidence/sources/../sources/fine.txt")
+        self.assertEqual(code, 1, out)  # a ".." is refused outright, even when it would be harmless
+        self.assertEqual(self.run_cli("--fingerprint", "evidence/sources/fine.txt")[0], 0)
 
     def test_a_name_with_a_pipe_is_flagged_when_it_cannot_be_recorded(self):
         self.src("a|b.txt")

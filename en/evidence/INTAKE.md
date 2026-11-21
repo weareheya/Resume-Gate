@@ -25,7 +25,7 @@ Status: `To do` · `In progress` · `Done` · `Skipped`
 
 ## Skipped sources
 
-> Files, or a folder written with a trailing `/`, that the AI must never open, search or quote, and never give to a model. This is a rule about paths, not a lock on the content: a skipped file that is renamed or moved out of its folder looks like a new file, so skip a folder if files may move. A `|` in a name can't be written in this table.
+> Files, or a folder written with a trailing `/`, that the AI must never open, search or quote, and never give to a model. This is a rule about paths, not a lock on the content: a skipped file that is renamed or moved out of its folder looks like a new file, so skip a folder if files may move. A `|` in a name or a reason can't be written in this table, and a row that contains one stops `--sources`.
 
 | File | Reason |
 |---|---|
