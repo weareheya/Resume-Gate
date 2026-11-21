@@ -21,6 +21,7 @@ __pycache__/
 /cv/CV-INDEX.md
 /cv/frozen.txt
 /cv/reviewed.txt
+/docs/MY-DECISIONS.md
 /cv/resumes/*
 !/cv/resumes/_TEMPLATE.md
 /cv/changelogs/*

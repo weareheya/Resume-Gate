@@ -12,4 +12,7 @@ Fill this in if the PR adds or tightens a check, a rule, or a default. Otherwise
 - [ ] Tests cover both directions: the fake fails, and `HonestResume` (an honest resume with ordinary gaps) still passes.
 - [ ] en and zh-CN were changed together (`python3 tools/check_sync.py`).
 
+## Documentation impact
+Does this change what users see or do: a feature, the workflow, a product claim, privacy, or a limit? If yes, update only the READMEs, examples, flow chart or privacy notes it touches (en and zh-CN together). If not, write "Documentation impact: none". `python3 tools/check_sync.py` already checks version numbers and the rule count; whether the descriptions are still true is for this check.
+
 ## Test plan

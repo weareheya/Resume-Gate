@@ -10,6 +10,8 @@ catches the common slips:
      module docstring): fix the logic in one kit, then make the same change in the other.
   5. A kit file is matched by that kit's own .gitignore, so a user's Git would never pick it up.
      Templates need a `!` line; evidence/profile.md, INTAKE.md and CV-INDEX.md are meant to match.
+  6. Release numbers agree: VERSION, the top CHANGELOG entry, the root README's "New in" line
+     and every "N starter rules" mention (against the D-IDs in docs/DECISIONS.md).
 
 Usage (from the repo root; on Windows use `python`):
   python3 tools/check_sync.py
@@ -55,7 +57,7 @@ def shape(path):
     return ids, headings, fences // 2
 
 
-IGNORED_ON_PURPOSE = {"evidence/profile.md", "evidence/INTAKE.md", "cv/CV-INDEX.md"}
+IGNORED_ON_PURPOSE = {"evidence/profile.md", "evidence/INTAKE.md", "cv/CV-INDEX.md", "docs/MY-DECISIONS.md"}
 
 
 def code_shape(path):
@@ -85,8 +87,34 @@ def ignored(kit, names):
     return set(p.stdout.split("\n")) - {""}
 
 
+def release_problems():
+    """Stale release numbers in the docs: version and starter-rule count."""
+    out = []
+    versions = {k: (ROOT / k / "VERSION").read_text(encoding="utf-8").strip() for k in KITS}
+    if len(set(versions.values())) != 1:
+        out.append(f"VERSION differs: {versions}")
+    version = versions[KITS[0]]
+    for k in KITS:
+        m = re.search(r"^## (\d+\.\d+\.\d+)", (ROOT / k / "CHANGELOG.md").read_text(encoding="utf-8"), re.M)
+        if not m or m.group(1) != version:
+            out.append(f"{k}/CHANGELOG.md: top entry is {m and m.group(1)}, VERSION is {version}")
+    root = (ROOT / "README.md").read_text(encoding="utf-8")
+    for label, pat in (("English", r"\*\*New in (\d+\.\d+\.\d+)"), ("Chinese", r"\*\*(\d+\.\d+\.\d+) 新增")):
+        m = re.search(pat, root)
+        if not m or m.group(1) != version:
+            out.append(f"README.md: first {label} 'New in' line is {m and m.group(1)}, VERSION is {version}")
+    for k in KITS:
+        rules = len(re.findall(r"^## D-\d+", (ROOT / k / "docs/DECISIONS.md").read_text(encoding="utf-8"), re.M))
+        for f in ("README.md", f"{k}/README.md"):
+            text = (ROOT / f).read_text(encoding="utf-8")
+            for n in re.findall(r"(\d+) (?:starter rules|条起步规则)", text):
+                if int(n) != rules:
+                    out.append(f"{f}: says {n} starter rules, {k}/docs/DECISIONS.md has {rules}")
+    return out
+
+
 def main():
-    problems = []
+    problems = release_problems()
     a, b = (files(k) for k in KITS)
     for f in sorted(a - b):
         problems.append(f"only in {KITS[0]}/: {f}")
