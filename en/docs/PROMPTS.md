@@ -2,6 +2,8 @@
 
 Paste these into your AI at the matching moment. Replace anything in [brackets].
 
+**Saving cost.** If your tool lets you pick a model, a faster, cheaper one is fine for saving a JD, running the scripts and small edits. Use the strongest one for positioning (S1–S3), interviewing you for evidence, and self-review: those are where a weak model overclaims or misses a gap. After many corrections in one chat, start a fresh session: the cards hold what's true, so nothing is lost.
+
 ## 0. First session
 
 ```text
@@ -63,4 +65,10 @@ Rerun the checkup on [cv/resumes/file.md] the same way as the first one, then ma
 
 ```text
 I've got an interview for [job ID]. Following "After you get an interview: follow-up cards" in docs/WORKFLOW.md and the format of interview/_TEMPLATE.md, make follow-up cards for [cv/resumes/file.md] and save them to interview/[job ID].md. First read every Claim Card this version uses and the Coverage Report in cv/changelogs/, and list the Claim IDs you read. Answers use only facts on the cards; anything they don't cover goes under "Fill before the interview" as a question for me. Don't make anything up.
+```
+
+## 8. Reuse a reviewed answer
+
+```text
+For [job ID], run python3 scripts/list_claims.py --answers [job ID]. Use the answers marked current as they are. For any marked recheck, rewrite it from the current Claim Cards and show me before saving. Don't use an answer outside its scope.
 ```

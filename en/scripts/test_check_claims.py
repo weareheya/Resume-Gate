@@ -1024,6 +1024,224 @@ class DependencyHealth(unittest.TestCase):
         self.assertNotEqual(n("2022,2023"), n("20222023"))       # nor a list of numbers
         self.assertEqual(len(deps.short_hash("x")), 64)
 
+    # Proposals in the Change Log's Delta table, and reviewed answers (v0.7.0 part 2)
+    def changelog(self, status, before='"Secured US$200,000 in launch-stage sponsorships."',
+                  after='"Secured US$200,000 in sponsorships I negotiated."'):
+        (self.root / "cv/changelogs").mkdir(exist_ok=True)
+        (self.root / "cv/changelogs/v2.md").write_text(
+            "---\nresume: v2\nstatus: Draft\n---\n# Log\n\n## Delta (against the baseline)\n\n"
+            "| # | Location | Change (Before → After) | Basis | Status |\n|---|---|---|---|---|\n"
+            f"| 1 | Role A | {before} → {after} | C-001 | {status} |\n", encoding="utf-8")
+
+    def check_v2(self, *args):
+        return self.check("v2", "--changelog", "cv/changelogs/v2.md", *args)
+
+    def test_rejected_proposal_still_in_resume_warns(self):
+        self.approved("base")
+        self.changelog("Rejected")
+        self.resume("v2", status="Draft", base="base", line="Secured US$200,000 in sponsorships I negotiated.")
+        code, out = self.check_v2()
+        self.assertEqual(code, 0, out)
+        self.assertIn("proposal #1 was rejected", out)
+        self.changelog("Accepted")
+        self.assertNotIn("proposal #1", self.check_v2()[1])
+
+    def test_approved_resume_with_pending_proposal_warns(self):
+        self.approved("base")
+        self.changelog("Pending")
+        self.resume("v2", status="Approved", base="base", line="Secured US$200,000 in sponsorships I negotiated.")
+        code, out = self.check_v2()
+        self.assertEqual(code, 0, out)
+        self.assertIn("proposal(s) 1 are still Pending", out)
+
+    def test_pending_proposal_goes_stale_when_its_target_text_changes(self):
+        self.approved("base")
+        self.changelog("Pending")
+        self.resume("v2", status="Draft", base="base")
+        self.assertNotIn("stale", self.check_v2()[1])
+        self.resume("base", line="Secured US$200,000 in sponsorships across the launch.")
+        code, out = self.check_v2()
+        self.assertIn("proposal #1 is stale (its Before text is no longer in base.md)", out)
+
+    def test_pending_proposal_goes_stale_when_its_card_changes(self):
+        self.approved("base")
+        self.changelog("Pending")
+        self.resume("v2", status="Draft", base="base")
+        code, out = self.sh("check_claims.py", "cv/changelogs/v2.md", "--record", "all")
+        self.assertEqual(code, 0, out)
+        self.card("C-001", wording="Secured US$200,000 in launch-stage sponsorships.")
+        self.assertNotIn("is stale", self.check_v2()[1])  # wording only: not stale
+        self.card("C-001", did="designed the packages; my manager negotiated the deals.")
+        code, out = self.check_v2()
+        self.assertIn("C-001 changed after it was proposed: attribution · major", out)
+
+    def answer(self, aid, scope, status="Approved", text="I designed the packages and negotiated each deal."):
+        (self.root / "interview/answers").mkdir(exist_ok=True)
+        (self.root / f"interview/answers/{aid}.md").write_text(
+            f"---\nid: {aid}\nquestion: Biggest win?\nscope: {scope}\nstatus: {status}\n---\n# {aid}\n\n"
+            f"## Answer (reviewed)\n\n{text} <!-- C-001 -->\n", encoding="utf-8")
+
+    def test_answers_by_scope_and_health(self):
+        (self.root / "jobs").mkdir()
+        (self.root / "jobs/JOB-1.md").write_text("---\nid: JOB-1\ncompany: Harbor Analytics\n---\n", encoding="utf-8")
+        self.answer("A-001", "reusable")
+        self.answer("A-002", "employer: Harbor Analytics")
+        self.answer("A-003", "employer: Northwind")
+        self.answer("A-004", "job: JOB-2")
+        for aid in ("A-001", "A-002"):
+            self.assertEqual(self.sh("check_claims.py", f"interview/answers/{aid}.md", "--record", "all")[0], 0)
+        code, out = self.sh("list_claims.py", "--answers", "JOB-1")
+        self.assertEqual(code, 0, out)
+        self.assertIn("| A-001 | Biggest win? | reusable | Approved | current | yes |", out)
+        self.assertIn("| A-002 |", out)
+        self.assertNotIn("A-003", out)
+        self.assertNotIn("A-004", out)
+        self.assertIn("2 other answer(s)", out)
+        self.card("C-001", did="designed the packages; my manager negotiated the deals.")
+        code, out = self.sh("list_claims.py", "--answers", "JOB-1")
+        self.assertIn("| A-001 | Biggest win? | reusable | Approved | needs recheck | recheck first |", out)
+
+    # Review of part 2: answers authorize reuse only on a clear yes; proposals are checked per row and per Location
+    def answers_out(self, job="JOB-1"):
+        (self.root / "jobs").mkdir(exist_ok=True)
+        (self.root / f"jobs/{job}.md").write_text("---\nid: JOB-1\ncompany: Harbor Analytics\n---\n", encoding="utf-8")
+        return self.sh("list_claims.py", "--answers", job)[1]
+
+    def test_answer_reuse_needs_a_clear_yes(self):
+        self.answer("A-001", "reusable")                                  # approved, never recorded
+        (self.root / "interview/answers").mkdir(exist_ok=True)
+        (self.root / "interview/answers/A-002.md").write_text(          # approved, cites a card that doesn't exist
+            "---\nid: A-002\nquestion: Q\nscope: reusable\nstatus: Approved\n---\n## Answer\n\nSomething. <!-- C-009 -->\n", encoding="utf-8")
+        (self.root / "interview/answers/A-003.md").write_text(          # approved, cites nothing
+            "---\nid: A-003\nquestion: Q\nscope: reusable\nstatus: Approved\n---\n## Answer\n\nSomething.\n", encoding="utf-8")
+        out = self.answers_out()
+        self.assertNotIn("| yes |", out)
+        self.assertIn("| A-001 | Biggest win? | reusable | Approved | not checked | check against the cards first |", out)
+        self.assertIn("| A-002 | Q | reusable | Approved | card missing | a card it cites doesn't exist", out)
+        self.assertIn("| A-003 | Q | reusable | Approved | not checked | cites no card", out)
+
+    def test_removing_every_card_tag_does_not_bypass_the_recheck(self):
+        self.answer("A-001", "reusable")
+        self.assertEqual(self.sh("check_claims.py", "interview/answers/A-001.md", "--record", "all")[0], 0)
+        self.assertIn("| yes |", self.answers_out())
+        (self.root / "interview/answers/A-001.md").write_text(
+            "---\nid: A-001\nquestion: Biggest win?\nscope: reusable\nstatus: Approved\n---\n## Answer\n\nI did it all. \n", encoding="utf-8")
+        out = self.answers_out()
+        self.assertNotIn("| yes |", out)
+        self.assertIn("cites no card", out)
+
+    def test_employer_scope_is_an_exact_company_name(self):
+        for aid, scope in (("A-001", "employer: Harbor Analytics"), ("A-002", "employer: Harbor"),
+                           ("A-003", "employer: Harbor Analytics Group"), ("A-004", "employer:"),
+                           ("A-005", "employer: harbor  analytics.")):
+            self.answer(aid, scope)
+        out = self.answers_out()
+        self.assertIn("| A-001 |", out)
+        self.assertIn("| A-005 |", out)        # case, spacing and punctuation don't matter
+        for aid in ("A-002", "A-003", "A-004"):  # no substring either way, and an empty employer matches nothing
+            self.assertNotIn(f"| {aid} |", out)
+
+    def test_changing_an_answers_scope_needs_a_new_confirmation(self):
+        self.answer("A-001", "job: JOB-1")
+        self.assertEqual(self.sh("check_claims.py", "interview/answers/A-001.md", "--record", "all")[0], 0)
+        self.assertIn("| yes |", self.answers_out())
+        self.answer("A-001", "reusable")
+        out = self.answers_out()
+        self.assertNotIn("| yes |", out)
+        self.assertIn("edited", self.sh("list_claims.py", "--used-by", "C-001")[1])
+
+    def test_answer_text_is_bound_even_when_the_tag_is_only_in_the_cards_table(self):
+        (self.root / "interview/answers").mkdir(exist_ok=True)
+        f = self.root / "interview/answers/A-001.md"
+        def write(answer, notes):
+            f.write_text(
+                "---\nid: A-001\nquestion: Biggest win?\nscope: reusable\nstatus: Approved\n---\n# A-001\n\n"
+                f"## Answer (reviewed)\n\n{answer}\n\n## Cards it uses\n\n| Card | Part |\n|---|---|\n| C-001 | the packages |\n\n"
+                f"## Notes\n\n{notes}\n", encoding="utf-8")
+        write("I designed the packages and negotiated each deal.", "Used for ACME-01.")
+        self.assertEqual(self.sh("check_claims.py", "interview/answers/A-001.md", "--record", "all")[0], 0)
+        self.assertIn("| yes |", self.answers_out())
+        write("I designed the packages and negotiated each deal.", "Used for ACME-01 and HARBOR-01, went well.")
+        self.assertIn("| yes |", self.answers_out())          # a use record in Notes isn't a new approval
+        write("I designed the packages and closed every deal myself.", "Used for ACME-01.")
+        out = self.answers_out()
+        self.assertNotIn("| yes |", out)                       # the answer text changed: confirm again
+        self.assertIn("edited after it was recorded", self.sh("list_claims.py", "--used-by", "C-001")[1])
+
+    def changelog_rows(self, rows):
+        (self.root / "cv/changelogs").mkdir(exist_ok=True)
+        body = "".join(f"| {i} | {loc} | {b} → {a} | {basis} | {st} |\n" for i, (loc, b, a, basis, st) in enumerate(rows, 1))
+        (self.root / "cv/changelogs/v2.md").write_text(
+            "---\nresume: v2\nstatus: Draft\n---\n# Log\n\n## Delta (against the baseline)\n\n"
+            "| # | Location | Change (Before → After) | Basis | Status |\n|---|---|---|---|---|\n" + body, encoding="utf-8")
+
+    def two_section_base(self):
+        (self.root / "cv/resumes/base2.md").write_text(
+            "---\nid: base2\ntype: 01\nstatus: Approved\n---\n## Summary\nPartnerships lead. <!-- C-002 -->\n\n## Experience\n"
+            "### Partnerships Manager · Northwind · 2022–2023\n- Secured US$200,000 in launch-stage sponsorships. <!-- C-001 -->\n", encoding="utf-8")
+        self.resume("v2", status="Draft", base="base2")
+
+    def test_proposal_target_is_looked_for_under_its_location(self):
+        self.two_section_base()
+        line = '"Secured US$200,000 in launch-stage sponsorships."'
+        self.changelog_rows([("Experience", line, '"Brought in US$200,000."', "C-001", "Pending"),
+                             ("Summary", line, '"Brought in US$200,000."', "C-001", "Pending")])
+        self.sh("check_claims.py", "cv/changelogs/v2.md", "--record", "all")
+        out = self.check_v2()[1]
+        self.assertNotIn("proposal #1 is stale", out)
+        self.assertIn('proposal #2 is stale (its Before text is no longer in base2.md, under "Summary")', out)
+
+    def test_two_proposals_for_the_same_text_conflict(self):
+        self.two_section_base()
+        line = '"Secured US$200,000 in launch-stage sponsorships."'
+        self.changelog_rows([("Experience", line, '"Brought in US$200,000."', "C-001", "Pending"),
+                             ("Experience", line, '"Won US$200,000."', "C-001", "Accepted")])
+        out = self.check_v2()[1]
+        self.assertIn("proposals #1, #2 change the same text", out)
+
+    def test_recording_one_proposal_does_not_refresh_the_others(self):
+        self.two_section_base()
+        line = '"Secured US$200,000 in launch-stage sponsorships."'
+        self.changelog_rows([("Experience", line, '"Brought in US$200,000."', "C-001", "Pending"),
+                             ("Summary", '"Partnerships lead."', '"Partnership lead."', "C-002", "Pending")])
+        self.sh("check_claims.py", "cv/changelogs/v2.md", "--record", "all")
+        self.card("C-001", did="designed the packages; my manager negotiated the deals.")
+        self.card("C-002", facts="Edited the partner newsletter.", did="edited it", wording="Ran the partner newsletter.")
+        out = self.check_v2()[1]
+        self.assertIn("proposal #1 is stale (C-001 changed", out)
+        self.assertIn("proposal #2 is stale (C-002 changed", out)
+        code, out = self.sh("check_claims.py", "cv/changelogs/v2.md", "--record", "P1")
+        self.assertEqual(code, 0, out)
+        out = self.check_v2()[1]
+        self.assertNotIn("proposal #1 is stale", out)
+        self.assertIn("proposal #2 is stale", out)
+
+    def test_unchecked_or_missing_proposals_are_not_valid(self):
+        self.two_section_base()
+        line = '"Secured US$200,000 in launch-stage sponsorships."'
+        self.changelog_rows([("Experience", line, '"Brought in US$200,000."', "C-001", "Pending"),
+                             ("Summary", '"Partnerships lead."', '"Partnership lead."', "C-404", "Pending")])
+        out = self.check_v2()[1]
+        self.assertIn("proposal #1 hasn't been checked against C-001", out)
+        self.assertIn("proposal #2 hasn't been checked against C-404", out)
+        self.sh("check_claims.py", "cv/changelogs/v2.md", "--record", "P1")
+        out = self.check_v2()[1]
+        self.assertNotIn("proposal #1 hasn't", out)
+        self.assertIn("proposal #2 hasn't", out)
+        # editing a recorded row after the record makes it unchecked again
+        self.changelog_rows([("Experience", line, '"Brought in US$200,000 for the launch."', "C-001", "Pending"),
+                             ("Summary", '"Partnerships lead."', '"Partnership lead."', "C-404", "Pending")])
+        self.assertIn("proposal #1 hasn't been checked against C-001", self.check_v2()[1])
+
+    def test_short_rejected_text_is_checked_where_the_location_points(self):
+        self.two_section_base()
+        self.changelog_rows([("Experience", '"Secured"', '"Led"', "C-001", "Rejected"),
+                             ("Headline", '"Partnerships lead."', '"Led"', "C-002", "Rejected")])
+        self.resume("v2", status="Draft", base="base2", line="Led the launch sponsorships.")
+        out = self.check_v2()[1]
+        self.assertIn('proposal #1 was rejected, and its short new text appears in v2.md under "Experience"', out)
+        self.assertIn("proposal #2 was rejected, but its new text is too short", out)
+
 
 class ReportScore(unittest.TestCase):
     """report_score.py must agree with the sample in report/template.html (38, as the page shows)."""

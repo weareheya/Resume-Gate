@@ -19,12 +19,13 @@ The hard rules below always apply. Beyond them, read what the task needs; every 
 |---|---|
 | Any resume work | `docs/MY-DECISIONS.md` (the user's own rules; they win over the starter rules) |
 | **Tailor** for a job (a new JD, or a new direction) | `docs/DECISIONS.md` (every **Active** rule is binding) · `docs/WORKFLOW.md` · `cv/CV-INDEX.md` · `docs/LESSONS.md` (skim) · the Claim Cards (with more than 15, start from `python3 scripts/list_claims.py`) · `docs/REVIEW-CHECKLIST.md` |
-| The user corrects a fact | The card it belongs to, then [When a fact changes](docs/WORKFLOW.md#when-a-fact-changes) |
+| The user corrects a fact | The card it belongs to, then [When a fact changes](docs/WORKFLOW.md#when-a-fact-changes). That's all: `list_claims.py --used-by` finds the files that cite it, so don't search or read other cards, the card template or whole resumes for this |
 | **Quick edit** (a few lines of an existing version, no new JD) | The cards those lines cite, and the "Quick edit" row in [task modes](docs/WORKFLOW.md#task-modes) |
 | **Finalize** (about to send) | `docs/WORKFLOW.md` (Finalize) · `docs/REVIEW-CHECKLIST.md` C and D |
 | Step 0, first setup | `docs/WORKFLOW.md` (Step 0) · `evidence/INTAKE.md` |
 | Checkup report, share card, poster | `docs/REPORT.md` |
 | Got an interview | `docs/WORKFLOW.md` (follow-up cards) |
+| Reuse an interview or application answer | `python3 scripts/list_claims.py --answers <job ID>`, then [Reviewed answers](docs/WORKFLOW.md#reviewed-answers) |
 | Pick up a job where it stopped | the "Progress" section of `jobs/<job-id>.md`, then check it against the files |
 | Check for updates | `docs/UPDATING.md` |
 
@@ -52,7 +53,7 @@ The hard rules below always apply. Beyond them, read what the task needs; every 
 - Reports follow `docs/REPORT.md`. Never send or upload a full report: it holds all the user's details. For sharing, make a copy with `scripts/report_share.py`.
 - Before showing a resume to the user, run `python3 scripts/validate_evidence.py` and `python3 scripts/check_claims.py cv/resumes/<id>.md`, fix every error, and report the result.
 - Once `evidence/profile.md` is filled in, roles, employers, dates and education on a resume must match it. Add or change a row only after the user confirms it, the same as any card.
-- **Record what the user approved.** Right after the user approves a version, run `python3 scripts/check_claims.py cv/resumes/<id>.md --record all`; after writing follow-up cards, run it with `--record all` on them. When a card changes later, the check marks every file that cites it as needing a recheck. Show the user the lines citing that card; once they confirm, run `--record C-xxx`. Never record just to clear a warning: a record means the user looked (D-020).
+- **Record what the user approved.** Right after the user approves a version, run `python3 scripts/check_claims.py cv/resumes/<id>.md --record all`; after writing follow-up cards, or once the user approves an answer in `interview/answers/`, run it with `--record all` on that file. When a card changes later, the check marks every file that cites it as needing a recheck. Show the user the lines citing that card; once they confirm, run `--record C-xxx`. Never record just to clear a warning: a record means the user looked (D-020).
 - **Human review gate**: until the user says "approved", a version stays `Draft`. Before it's sent, `check_claims.py cv/resumes/<id>.md --finalize` must pass. Don't edit a version marked `Sent`: when the user sends one, freeze it with `python3 scripts/freeze.py cv/resumes/<id>.md <exported file>`.
 
 **Permissions**

@@ -58,6 +58,7 @@ Each step has an output you must be able to show before moving on. Details in [d
 | [cv/resumes/](cv/resumes/_TEMPLATE.md) | The resumes themselves, one Markdown file per version | Every new job |
 | [cv/changelogs/](cv/changelogs/_TEMPLATE.md) | What changed in each version and why | Every new job |
 | [interview/](interview/_TEMPLATE.md) | Follow-up cards for each interview | Once you're invited to interview |
+| [interview/answers/](interview/answers/_TEMPLATE.md) | Answers you've approved, with the cards they use and where they can be reused | When an answer is worth keeping |
 | [scripts/validate_evidence.py](scripts/validate_evidence.py) | Checks the evidence bank: unique IDs, valid statuses, every number marked ✓ or to verify (Python 3) | Before checking a resume |
 | [scripts/freeze.py](scripts/freeze.py) | Freezes a sent resume: records its SHA-256 in `cv/frozen.txt`; `--check` confirms nothing frozen changed (Python 3) | When you send a version |
 | [scripts/check_claims.py](scripts/check_claims.py) | Checks every line has a source, numbers keep their value and currency, roles match your profile, protected claims stay; reminds you if the Change Log's evidence table skips a card, or if a card changed after the version was approved. `--record` notes what you approved; `--finalize` is the last check before sending (Python 3) | Before you review a version |

@@ -97,6 +97,42 @@ class Catches(unittest.TestCase):
         self.assertFalse(r["pass"])
         self.assertIn("C-006", r["missing_critical"])
 
+    def test_keeping_the_id_but_weakening_the_result_is_caught(self):
+        # value fidelity: C-006 still cited, but the $200K, the design and the negotiation are gone
+        case = HERE / "cases" / "fact-correction"
+        text = ref(case, "resume.md")
+        for line in [l for l in text.splitlines() if "C-006" in l]:
+            text = text.replace(line, "- Supported partner sponsorships for the 2023 launch. <!-- C-006 -->")
+        r = score.score(case, text)
+        self.assertFalse(r["pass"])
+        self.assertIn("C-006", " ".join(r["value_missing"]))
+        self.assertEqual(r["critical_recall"], 1.0)
+
+    def _c006(self, line):
+        case = HERE / "cases" / "fact-correction"
+        text = ref(case, "resume.md")
+        for old in [l for l in text.splitlines() if "C-006" in l]:
+            text = text.replace(old, line + " <!-- C-006 -->")
+        return score.score(case, text)
+
+    def test_value_recall_is_not_attribution_fidelity(self):
+        # every keyword is still there (value recall passes), but the personal contribution is shrunk
+        r = self._c006("- Helped negotiate and design the sponsorship packages behind US$200K for the 2023 launch.")
+        self.assertEqual(r["value_missing"], [])
+        self.assertTrue(r["weakened"])
+        self.assertFalse(r["pass"])
+        # keywords kept, but the negotiation is handed to someone else
+        r = self._c006("- Designed sponsorship packages for six partners; the deals, worth US$200K, were negotiated by my manager.")
+        self.assertEqual(r["value_missing"], [])
+        self.assertTrue(r["weakened"])
+        self.assertFalse(r["pass"])
+
+    def test_legitimate_ways_to_write_the_amount_pass(self):
+        for amount in ("US$200K", "US$200,000", "US$200000", "$200 K"):
+            r = self._c006(f"- Designed a sponsorship package for each of six partners and negotiated all six deals, securing {amount}.")
+            self.assertEqual(r["value_missing"], [], amount)
+            self.assertEqual(r["weakened"], [], amount)
+
     def test_crashed_check_is_not_a_pass(self):
         real = score.subprocess.run
         def crash(*a, **k):

@@ -11,10 +11,17 @@ cv/resumes/_eval.md, runs the kit's check_claims.py there, and then measures:
   should recall    share of should_use cards cited (reported, not required)
   must-not-use     cards the resume must not cite (e.g. Needs review)
   forbidden        phrases that would oversell (regex, case-insensitive, comments stripped)
+  value kept       must_keep: {card: [regex, ...]}; each regex must match a visible line tagged with that card.
+                   Catches a "safe" version that keeps the Claim ID but drops the result (D-015). This is
+                   value recall: the facts are still there.
+  attribution      weakens: {card: [regex, ...]}; none may match a visible line tagged with that card. Catches
+                   a version that keeps the keywords but shrinks who did it ("helped negotiate") or hands the
+                   credit to someone else ("negotiated by my manager"). A regex list for the known ways to
+                   weaken a claim, not a semantic judge; anything subtler is the user's review and the blind read.
   gap kinds        with --changelog: share of requirements whose Coverage Report kind is one gold accepts
   evidence table   with --changelog: share of the bank's cards listed in the evidence table (D-019)
 
-PASS needs: no integrity errors, full critical recall, no must-not-use card, no forbidden phrase,
+PASS needs: no integrity errors, full critical recall, no must-not-use card, no forbidden phrase, every value kept, no weakened attribution,
 and (with --changelog) every card in the evidence table. Gap-kind accuracy and should recall
 are scores to compare runs, not gates: a reasonable reviewer can sort a gap differently.
 
@@ -79,6 +86,18 @@ def cited(text):
             ids |= set(ID.findall(" ".join(tags)))
         waiting = bool(visible) and not tags and bool(re.match(r"\s*[-*] |\s{2,}\S", line))
     return ids
+
+
+def card_text(text, cid):
+    """Visible text of the lines tagged with this card (a tag on the line under a wrapped bullet counts)."""
+    text = re.sub(r"\A---\n.*?\n---\n", "", text, flags=re.S)
+    out, prev = [], ""
+    for line in text.splitlines():
+        visible = re.sub(r"<!--.*?-->", "", line).strip()
+        if cid in " ".join(re.findall(r"<!--(.*?)-->", line)):
+            out.append(visible or prev)
+        prev = visible
+    return "\n".join(out)
 
 
 class CheckFailed(RuntimeError):
@@ -164,6 +183,10 @@ def score(case, resume_text, changelog_text=None, bank=None):
         "should_recall": sum(c in ids for c in should) / len(should) if should else None,
         "must_not_used": [c for c in gold.get("must_not_use", []) if c in ids],
         "forbidden_hits": [p for p in gold.get("forbidden", []) if re.search(p, body, re.I)],
+        "value_missing": [f"{c}: {p}" for c, ps in gold.get("must_keep", {}).items() for p in ps
+                          if not re.search(p, card_text(resume_text, c), re.I)],
+        "weakened": [f"{c}: {p}" for c, ps in gold.get("weakens", {}).items() for p in ps
+                     if re.search(p, card_text(resume_text, c), re.I)],
     }
     if changelog_text is not None:
         kinds, listed = read_changelog(changelog_text)
@@ -174,7 +197,7 @@ def score(case, resume_text, changelog_text=None, bank=None):
                        | ({p.stem for p in (overlay / "evidence" / "claims").glob("C-*.md")} if overlay else set()))
         r["evidence_table_missing"] = [c for c in cards if c not in listed]
     r["pass"] = (not errors and r["critical_recall"] == 1.0 and not r["must_not_used"]
-                 and not r["forbidden_hits"] and not r.get("evidence_table_missing"))
+                 and not r["forbidden_hits"] and not r["value_missing"] and not r["weakened"] and not r.get("evidence_table_missing"))
     return r
 
 
@@ -191,6 +214,8 @@ def report(r):
     out.append(f"  should recall    {pct(r['should_recall'])}")
     out.append(f"  must-not-use     {', '.join(r['must_not_used']) or 'none'}")
     out.append(f"  forbidden        {', '.join(r['forbidden_hits']) or 'none'}")
+    out.append(f"  value kept       {'yes' if not r['value_missing'] else 'missing ' + '; '.join(r['value_missing'])}")
+    out.append(f"  attribution      {'kept' if not r['weakened'] else 'weakened: ' + '; '.join(r['weakened'])}")
     if "gap_accuracy" in r:
         out.append(f"  gap kinds        {pct(r['gap_accuracy'])}")
         for k, v in r["gap_kinds"].items():

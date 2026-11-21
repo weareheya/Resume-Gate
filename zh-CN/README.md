@@ -66,6 +66,7 @@
 | [cv/resumes/](cv/resumes/_TEMPLATE.md) | 简历正文，一个版本一个 Markdown 文件 | 每个新岗位 |
 | [cv/changelogs/](cv/changelogs/_TEMPLATE.md) | 每一版改了什么、为什么 | 每个新岗位 |
 | [interview/](interview/_TEMPLATE.md) | 每场面试的追问卡 | 拿到面试邀约之后 |
+| [interview/answers/](interview/answers/_TEMPLATE.md) | 你批准过的回答，写明用到哪些卡、能在哪里复用 | 有值得留下来的回答时 |
 | [scripts/validate_evidence.py](scripts/validate_evidence.py) | 检查证据库：ID 不重复、状态合法、每个数字都标了 ✓ 或待核实（Python 3） | 检查一份简历之前 |
 | [scripts/freeze.py](scripts/freeze.py) | 冻结已投递的简历：把 SHA-256 记进 `cv/frozen.txt`；`--check` 确认冻结的文件都没变（Python 3） | 投递一个版本时 |
 | [scripts/check_claims.py](scripts/check_claims.py) | 检查每一行有出处、数字的数值和币种不变、职位与档案一致、受保护的没丢；Change Log 的证据表漏了卡、或者某张卡在这一版批准后改过，会提醒。`--record` 记下你批准了什么；`--finalize` 是投递前最后一道检查（Python 3） | 你审一版之前 |

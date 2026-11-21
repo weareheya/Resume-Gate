@@ -28,11 +28,13 @@ Every card appears once: used cards on their own row, unused ones grouped by rea
 
 ## Delta (against the baseline)
 
-| Location | Change (Before → After) | Basis |
-|---|---|---|
-| Headline | | |
-| Summary | | |
-| Role A | | |
+| # | Location | Change (Before → After) | Basis | Status |
+|---|---|---|---|---|
+| 1 | Headline | | | Pending |
+| 2 | Summary | | | Pending |
+| 3 | Role A | | | Pending |
+
+Each row is one proposal the user can accept or reject on its own ("accept 1 and 3, reject 2"). Status is Pending, Accepted or Rejected. Put the exact old and new text in quotes ("…" → "…") so `check_claims.py` can find it, and the Claim IDs it rests on under Basis. It warns when a rejected change is still in the resume, when an Approved version still has a Pending row, and when a Pending row is **stale**: its quoted Before text is gone from the baseline, or a card it cites had a major change after the Change Log was recorded. Re-propose a stale row instead of applying it. Each row is recorded on its own once the user has looked at it (`check_claims.py cv/changelogs/<id>.md --record P2`, or `--record all`); a row that was never recorded, or was edited after, isn't treated as valid.
 
 ## JD Coverage Report
 
