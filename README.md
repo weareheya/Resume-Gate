@@ -39,6 +39,8 @@ A resume workflow for a long job search, where you tailor many versions over wee
 | Updates | Your rules live in their own file, so updating never overwrites them; one prompt checks for a new version | [CHANGELOG](en/CHANGELOG.md) | [更新记录](zh-CN/CHANGELOG.md) |
 | Cases | Ten made-up before-and-after cases, one or two rules each | [cases](en/examples/cases.md) | [案例](zh-CN/examples/cases.md) |
 
+**It builds up as you use it.** The more you use it, the more your evidence bank knows about your experience. The follow-up questions and capability facets on each card can surface strengths you hadn't fully put into words, and each new job can draw on a different part of the same facts. Everything you've confirmed is kept, and when you correct something, what depended on it is flagged. How much it surfaces still depends on your answers and the AI you use.
+
 ## Get started
 
 Resume-Gate is a folder of files that an AI reads and follows. Setup is three steps: pick an AI tool, get the files, start the first session.
@@ -149,6 +151,8 @@ Not sure about any of this? Ask the AI tool you picked in step 1. It can check w
 | 脚本 | `check_claims.py`（每条 bullet 有出处）、`report_score.py`（报告分数）、`report_png.py`（报告存成图片）和 `pdf_fill.swift`（页面填满） | [scripts](zh-CN/scripts/) | [scripts](en/scripts/) |
 | 更新 | 你的规则单独放一个文件，更新永远不会冲掉；一句提示词就能检查新版本 | [更新记录](zh-CN/CHANGELOG.md) | [CHANGELOG](en/CHANGELOG.md) |
 | 案例 | 10 个虚构的改前改后案例，每个演示一两条规则 | [案例](zh-CN/examples/cases.md) | [cases](en/examples/cases.md) |
+
+**用得越久，它越了解你的经历。** 每张卡上的追问和能力切面，可以帮你把没想清楚的强项说出来；换一个岗位，可以从同一套事实里调出不同的部分。你确认过的一切都会保留，你纠正某件事时，依赖它的文件会被标出来。能挖出多少，仍取决于你的回答和所用的 AI。
 
 ## 开始使用
 
