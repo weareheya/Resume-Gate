@@ -2,7 +2,7 @@
 
 What changed in each version, and whether you need to do anything. Your version is in `VERSION`. To update, paste prompt 5 from `docs/PROMPTS.md`.
 
-## 0.7.0 · unreleased
+## 0.7.0 · 2026-11-21
 
 **Correct a fact once.** When you correct something, the AI updates the Claim Card first, and every resume, follow-up card and answer that used the old version is flagged, so it can't come back by accident (D-020, LESSONS L-15).
 
