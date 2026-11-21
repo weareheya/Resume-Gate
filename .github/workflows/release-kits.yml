@@ -1,4 +1,7 @@
-# On every version tag (v*), build one zip per kit and attach both to the GitHub Release.
+# Releases itself. When en/VERSION changes on main, this builds one zip per kit and creates the GitHub
+# Release for v<VERSION> (which also creates the tag, on that commit). Nobody has to push a tag.
+# A tag that already exists is never touched, and only the highest version becomes "Latest".
+# Pushing a v* tag by hand, or running this workflow by hand, still works.
 # Users then download a single kit without Git or a GitHub account:
 #   https://github.com/weareheya/Resume-Gate/releases/latest/download/resume-gate-en.zip
 #   https://github.com/weareheya/Resume-Gate/releases/latest/download/resume-gate-zh-CN.zip
@@ -6,12 +9,18 @@ name: Release kit zips
 
 on:
   push:
+    branches: [main]
+    paths: ["en/VERSION"]
     tags: ["v*"]
   workflow_dispatch:
     inputs:
       tag:
-        description: "Existing tag to build zips for"
-        required: true
+        description: "Existing tag to rebuild zips for. Leave empty to release v<VERSION> from the branch you run it on."
+        required: false
+
+concurrency:
+  group: release-kits
+  cancel-in-progress: false
 
 permissions:
   contents: write
@@ -20,19 +29,39 @@ jobs:
   zips:
     runs-on: ubuntu-latest
     env:
-      TAG: ${{ github.event.inputs.tag || github.ref_name }}
       GH_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.inputs.tag || github.ref }}
+          ref: ${{ github.event.inputs.tag || (github.ref_type == 'tag' && github.ref) || github.sha }}
+
+      # Which tag is this run about? A pushed tag or a typed tag, or else v<VERSION> of this commit.
+      - name: Work out the tag
+        id: tag
+        run: |
+          set -euo pipefail
+          if [ "${{ github.ref_type }}" = "tag" ]; then TAG="${{ github.ref_name }}"; MODE=tag
+          elif [ -n "${{ github.event.inputs.tag }}" ]; then TAG="${{ github.event.inputs.tag }}"; MODE=tag
+          else
+            v=$(cat en/VERSION); z=$(cat zh-CN/VERSION)
+            [ "$v" = "$z" ] || { echo "en/VERSION ($v) and zh-CN/VERSION ($z) differ"; exit 1; }
+            echo "$v" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$' || { echo "VERSION '$v' is not x.y.z"; exit 1; }
+            TAG="v$v"; MODE=auto
+          fi
+          skip=false
+          if [ "$MODE" = auto ] && git ls-remote --exit-code --tags origin "refs/tags/$TAG" >/dev/null 2>&1; then
+            echo "$TAG already exists: nothing to do (an existing tag is never moved)."; skip=true
+          fi
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"; echo "mode=$MODE" >> "$GITHUB_OUTPUT"; echo "skip=$skip" >> "$GITHUB_OUTPUT"
 
       - uses: actions/setup-python@v5
+        if: steps.tag.outputs.skip != 'true'
         with:
           python-version: "3.12"
 
       # Release gate: the zips are built only if every check that runs on pull requests passes here too.
       - name: Tests, evals and language sync
+        if: steps.tag.outputs.skip != 'true'
         run: |
           for kit in en zh-CN; do
             python3 "$kit/scripts/test_check_claims.py"
@@ -43,6 +72,7 @@ jobs:
 
       # A kit ships templates only: no one's real cards, resumes, jobs, interview notes or reports.
       - name: No personal files in the kits
+        if: steps.tag.outputs.skip != 'true'
         run: |
           bad=$(for kit in en zh-CN; do
             for d in evidence/claims evidence/sources cv/resumes cv/changelogs jobs interview reports; do
@@ -52,6 +82,7 @@ jobs:
           if [ -n "$bad" ]; then echo "Personal files found:"; echo "$bad"; exit 1; fi
 
       - name: Build one zip per kit
+        if: steps.tag.outputs.skip != 'true'
         run: |
           mkdir -p dist
           for kit in en zh-CN; do
@@ -64,10 +95,20 @@ jobs:
           ls -l dist/*.zip
 
       - name: Create or update the release
+        if: steps.tag.outputs.skip != 'true'
+        env:
+          TAG: ${{ steps.tag.outputs.tag }}
+          MODE: ${{ steps.tag.outputs.mode }}
         run: |
+          set -euo pipefail
           if gh release view "$TAG" >/dev/null 2>&1; then
             gh release upload "$TAG" dist/resume-gate-en.zip dist/resume-gate-zh-CN.zip --clobber
-          else
-            gh release create "$TAG" dist/resume-gate-en.zip dist/resume-gate-zh-CN.zip \
-              --title "$TAG" --generate-notes
+            exit 0
           fi
+          # Only the highest version becomes "Latest", so an older tag can't displace it.
+          top=$( (git ls-remote --tags origin 'refs/tags/v*' | sed 's|.*refs/tags/||; s|\^{}$||'; echo "$TAG") | sort -V | tail -1)
+          if [ "$top" = "$TAG" ]; then LATEST=true; else LATEST=false; fi
+          target=()
+          [ "$MODE" = auto ] && target=(--target "${{ github.sha }}")  # creates the tag on this commit
+          gh release create "$TAG" dist/resume-gate-en.zip dist/resume-gate-zh-CN.zip \
+            --title "$TAG" --generate-notes --latest="$LATEST" "${target[@]}"
