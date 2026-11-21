@@ -19,7 +19,7 @@ The hard rules below always apply. Beyond them, read what the task needs; every 
 |---|---|
 | Any resume work | `docs/MY-DECISIONS.md` (the user's own rules; they win over the starter rules) |
 | **Tailor** for a job (a new JD, or a new direction) | `docs/DECISIONS.md` (every **Active** rule is binding) · `docs/WORKFLOW.md` · `cv/CV-INDEX.md` · `docs/LESSONS.md` (skim) · the Claim Cards (with more than 15, start from `python3 scripts/list_claims.py`) · `docs/REVIEW-CHECKLIST.md` |
-| The user corrects a fact | The card it belongs to, then [When a fact changes](docs/WORKFLOW.md#when-a-fact-changes) |
+| The user corrects a fact | The card it belongs to, then [When a fact changes](docs/WORKFLOW.md#when-a-fact-changes). That's all: `list_claims.py --used-by` finds the files that cite it, so don't search or read other cards, the card template or whole resumes for this |
 | **Quick edit** (a few lines of an existing version, no new JD) | The cards those lines cite, and the "Quick edit" row in [task modes](docs/WORKFLOW.md#task-modes) |
 | **Finalize** (about to send) | `docs/WORKFLOW.md` (Finalize) · `docs/REVIEW-CHECKLIST.md` C and D |
 | Step 0, first setup | `docs/WORKFLOW.md` (Step 0) · `evidence/INTAKE.md` |

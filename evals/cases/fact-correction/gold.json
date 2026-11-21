@@ -3,20 +3,39 @@
   "about": "Two sessions. In session A the user corrects C-006: the US$200K was sponsorship they designed and negotiated, not a marketing budget they managed. In session B, a fresh session tailors for a partnerships job. Traps: the old 'marketing budget' wording coming back from the approved baseline, and dropping the US$200K result out of caution instead of using the true, stronger story.",
   "bank": "en/examples/jordan-lee",
   "overlay": "evals/cases/fact-correction/start",
-  "must_use": ["C-006", "C-001"],
-  "should_use": ["C-003", "C-004"],
-  "must_not_use": ["C-005"],
+  "must_use": [
+    "C-006",
+    "C-001"
+  ],
+  "should_use": [
+    "C-003",
+    "C-004"
+  ],
+  "must_not_use": [
+    "C-005"
+  ],
   "forbidden": [
     "budget",
     "\\bmanaged (a |the )?(us)?\\$200",
     "revenue",
     "keynote"
   ],
+  "must_keep": {
+    "C-006": [
+      "\\$?200\\s?(k|,000)",
+      "sponsor",
+      "design|package",
+      "negotiat"
+    ]
+  },
   "gaps": {
     "R1": "Direct",
     "R2": "Direct",
     "R3": "Direct",
     "R4": "Direct",
-    "R5": ["Hard gap", "Not found yet"]
+    "R5": [
+      "Hard gap",
+      "Not found yet"
+    ]
   }
 }

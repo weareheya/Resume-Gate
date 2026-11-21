@@ -97,6 +97,17 @@ class Catches(unittest.TestCase):
         self.assertFalse(r["pass"])
         self.assertIn("C-006", r["missing_critical"])
 
+    def test_keeping_the_id_but_weakening_the_result_is_caught(self):
+        # value fidelity: C-006 still cited, but the $200K, the design and the negotiation are gone
+        case = HERE / "cases" / "fact-correction"
+        text = ref(case, "resume.md")
+        for line in [l for l in text.splitlines() if "C-006" in l]:
+            text = text.replace(line, "- Supported partner sponsorships for the 2023 launch. <!-- C-006 -->")
+        r = score.score(case, text)
+        self.assertFalse(r["pass"])
+        self.assertIn("C-006", " ".join(r["value_missing"]))
+        self.assertEqual(r["critical_recall"], 1.0)
+
     def test_crashed_check_is_not_a_pass(self):
         real = score.subprocess.run
         def crash(*a, **k):

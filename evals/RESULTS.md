@@ -4,6 +4,33 @@ One section per run, newest first. Record the kit versions compared, how many ru
 
 **Scorer change in 0.6.0**: critical recall now counts a card only when its ID is tagged on a visible resume line, and a crashed `check_claims.py` is "could not run" instead of zero errors. Runs before 0.6.0 used the looser count, so their recall figures may read slightly high; compare new rounds with new rounds. The saved outputs of the rounds below weren't kept (`evals/runs/` is local), so they weren't re-scored. The reference answers pass under the new rules.
 
+## 2026-11-21 · v0.6.0 vs v0.7.0 · correction signals, one session per run
+
+**Setup**: the state right after the fact-correction case's session A (C-006 corrected, the approved `channel-baseline` still saying "marketing budget" and recorded against the old card, a `harbor-spm` Draft from session B). One fresh session per run, an AI assistant playing the kit's AI, no user answering questions. Two messages:
+- **Implicit correction**, hidden inside a wording request: "make the sponsorship bullet punchier? Oh, and to be precise: I only negotiated four of the six deals. My manager Sam closed the other two. I still designed all six packages."
+- **Wording preference**: "I don't like 'Secured' … Use 'Brought in' instead."
+
+Checked by script against a copy of the starting files: which C-006 blocks changed (D-020 fingerprints), whether the approved resumes and `cv/reviewed.txt` were left alone, and whether the C-006 bullet still has the US$200K, sponsorship, the package design and the negotiation.
+
+| Kit | Message | Card | Approved files and records untouched | Bullet | Value kept | Tool output read | Tokens |
+|---|---|---|---|---|---|---|---|
+| v0.7.0 | implicit correction | corrected: four of six negotiated, Sam closed two, all six designed; "negotiated all six" added to Don't rephrase as | yes | "Designed all six partner sponsorship packages behind US$200K … and negotiated four of the six deals." | yes (all 4) | ~6k | ~72k |
+| v0.6.0 | implicit correction | corrected the same way | yes | "Turned six partners into US$200K in sponsorship … negotiated four of the six deals." | yes (all 4) | ~11k | ~80k |
+| v0.7.0 | wording preference | **unchanged** (no block changed) | yes | "Brought in US$200K …", rest of the line as it was | yes (all 4) | ~6k | ~69k |
+
+The earlier session-B outputs were also scored with the new value-kept gate: both v0.7.0 runs pass, and the v0.6.0 run fails it (C-006 left out).
+
+**What it says**
+- Both kits caught the correction inside a wording request and corrected the card first, so on this message the old kit was already fine. The difference is in how they found the affected files: v0.7.0 ran `--used-by` and named the approved baseline as "needs recheck (major)"; v0.6.0 grepped and read more files (about 40% more tool output).
+- The wording request stayed a wording change: the card was left alone, no status went back to Needs review, and nothing was recorded without the user's OK.
+- No run weakened the result to play it safe. The new `must_keep` check in `score.py` now fails a version that keeps the C-006 tag but drops the US$200K, the design or the negotiation.
+
+**Where the ~74k tokens in a correction go**: about 54k is already in context before the first command: the assistant tool's own instructions and tool list, not the kit (the message itself is ~0.3k). The kit's share is the files read (~6k–11k) and the reply (~6k–15k). In the first fact-correction round the avoidable part was about 3k–4k: reading the card template, another card, `.gitignore`, the CV index and a Change Log, and searching resumes by hand. AGENTS.md now says a correction needs only the card, the "When a fact changes" section, and `--used-by`. With that change the v0.7.0 runs here read ~6k of files. No agent or audit step was added.
+
+**Changed because of this run**: AGENTS.md read-by-task row for corrections (read less). `score.py` gets `must_keep`.
+
+**Limits**: one run per message per kit, one AI playing the assistant. The 54k baseline depends on the tool the user runs the kit in, so the total will differ in Codex, Cursor or a chat app; the kit's own share is what this measures.
+
 ## 2026-11-21 · v0.6.0 vs v0.7.0 · fact-correction, two sessions per run
 
 **Setup**: the new `fact-correction` case (see its README). Each run is two fresh sessions in its own workspace: session A gets the user's correction of C-006 (US$200K was sponsorship they designed and negotiated, not a marketing budget), session B tailors for a Strategic Partnerships Manager job with prompt 3. An AI assistant played the kit's AI, with no user answering questions. Two runs on v0.7.0, one on v0.6.0 as a control (the old kit has no way to know a card changed, so more runs wouldn't tell us much). Session B scored with `score.py --bank <workspace>`.
@@ -20,7 +47,7 @@ One section per run, newest first. Record the kit versions compared, how many ru
 - Neither v0.7.0 run copied from the out-of-date baseline, so the copied-line warning wasn't exercised here; the unit tests cover it.
 - Cost: session B is about the same as before (~118k). Session A is a light task (~74k, mostly reading AGENTS and WORKFLOW).
 
-**Changed because of this run**: nothing yet. Implicit corrections and wording-only requests are tested with PR 2.
+**Changed because of this run**: nothing yet. Implicit corrections and wording-only requests are tested in the round above.
 
 **Limits**: two runs on the new kit, one on the old, one AI playing the assistant, no blind read (the change is about facts, and score.py catches the failure). Gap-kind accuracy isn't comparable: the posting was pasted without numbered requirements, so each run numbered them its own way.
 

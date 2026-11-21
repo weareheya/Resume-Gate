@@ -19,7 +19,7 @@
 |---|---|
 | 任何简历相关工作 | `docs/MY-DECISIONS.md`（本人自己的规则，和起步规则冲突时以它为准） |
 | **定制**（新 JD，或换方向） | `docs/DECISIONS.md`（状态为 **Active** 的必须遵守）· `docs/WORKFLOW.md` · `cv/CV-INDEX.md` · `docs/LESSONS.md`（扫一眼）· Claim Card（超过 15 张时先跑 `python3 scripts/list_claims.py`）· `docs/REVIEW-CHECKLIST.md` |
-| 本人纠正一个事实 | 这个事实所在的卡，然后看[事实改了怎么办](docs/WORKFLOW.md#事实改了怎么办) |
+| 本人纠正一个事实 | 这个事实所在的卡，然后看[事实改了怎么办](docs/WORKFLOW.md#事实改了怎么办)。只读这些：引用它的文件由 `list_claims.py --used-by` 找，不用自己搜索，也不用读其他卡、卡片模板或整份简历 |
 | **快改**（改已有版本的几行，没有新 JD） | 这几行引用的卡，以及[任务模式](docs/WORKFLOW.md#任务模式)里「快改」那一行 |
 | **定稿**（马上要投） | `docs/WORKFLOW.md`（定稿）· `docs/REVIEW-CHECKLIST.md` 的 C 和 D |
 | Step 0，第一次上手 | `docs/WORKFLOW.md`（Step 0）· `evidence/INTAKE.md` |
