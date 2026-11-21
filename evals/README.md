@@ -34,6 +34,7 @@ All cases use the evidence bank in `en/examples/jordan-lee`, so anyone can rerun
 | `should_use` | Cards that usually help. Reported as a score | no |
 | `must_not_use` | Cards that can't go in a resume (e.g. `Needs review`) | yes |
 | `forbidden` | Regexes for overselling, matched case-insensitively against what a reader sees (no front matter, no comments) | yes |
+| `weakens` | Optional. `{card: [regex, ...]}`: none may match a visible line tagged with that card. Catches shrunken or re-assigned credit ("helped negotiate", "negotiated by my manager"). A list of known ways to weaken a claim, not a semantic judge | yes |
 | `must_keep` | Optional. `{card: [regex, ...]}`: each regex must match a visible line tagged with that card, so a version that keeps the ID but drops the result fails (D-015) | yes |
 | `gaps` | Expected kind for each requirement: Direct, Transferable or combined, Not found yet, Buildable, Hard gap. Give a list when more than one is defensible (e.g. `["Hard gap", "Not found yet"]`: Not found yet is right if the user hasn't been asked yet) | no: reported as accuracy, since reviewers can reasonably differ |
 

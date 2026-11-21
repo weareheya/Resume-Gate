@@ -112,6 +112,12 @@ T = {
         "delta_stale": "{cl}: proposal #{k} is stale ({why}). Don't apply it as it is: propose it again against the current text and card",
         "stale_target": "its Before text is no longer in {b}",
         "stale_card": "{c} changed after it was proposed: {x}",
+        "delta_rejected_short": "{cl}: proposal #{k} was rejected, and its short new text appears in {f} under \"{loc}\". A short phrase can change who did what: check that line",
+        "delta_short_unsure": "{cl}: proposal #{k} was rejected, but its new text is too short to look for without a clear Location. Check by eye that it isn't in {f}",
+        "delta_unquoted": "{cl}: proposal #{k} was rejected but has no quoted After text, so the script can't look for it. Check by eye that it isn't in {f}",
+        "delta_conflict": "{cl}: proposals {ks} change the same text. Accept one; the others are stale once it's applied",
+        "delta_unverified": "{cl}: proposal #{k} hasn't been checked against {cs}. Show the user the row next to the card; once they confirm, run --record P{k}",
+        "in_section": "{b}, under \"{loc}\"",
         "how_approved": "approved",
         "how_recorded": "recorded",
         "major": "major",
@@ -169,6 +175,12 @@ T = {
         "delta_stale": "{cl}：第 {k} 条提案已过期（{why}）。不要照原样采用：请对照现在的文本和卡重新提",
         "stale_target": "它的 Before 原文已经不在 {b} 里",
         "stale_card": "{c} 在提案之后改过：{x}",
+        "delta_rejected_short": "{cl}：第 {k} 条提案已被拒绝，它很短的新文本出现在 {f} 的「{loc}」里。一个短词也可能改变谁做了什么：请看一下那一行",
+        "delta_short_unsure": "{cl}：第 {k} 条提案已被拒绝，但新文本太短，位置又不明确，脚本没法查。请自己看一下 {f} 里有没有",
+        "delta_unquoted": "{cl}：第 {k} 条提案已被拒绝，但没有引号里的 After 文本，脚本没法查。请自己看一下 {f} 里有没有",
+        "delta_conflict": "{cl}：第 {ks} 条提案改的是同一段文字。只接受一条；采用之后其余的就过期了",
+        "delta_unverified": "{cl}：第 {k} 条提案还没有对照 {cs} 检查过。请把这一行和卡一起给本人看，确认后运行 --record P{k}",
+        "in_section": "{b} 的「{loc}」里",
         "how_approved": "批准",
         "how_recorded": "记录",
         "major": "重大",
@@ -598,8 +610,28 @@ def quoted(cell):
 QUOTED_LONG_RE = re.compile(r'"([^"\n]+)"|“([^”\n]+)”|「([^」\n]+)」')
 
 
+def sections_of(text):
+    """[(normalized heading, normalized text under it)] for every ##-or-deeper heading; a section holds
+    its sub-sections too. Used to look for a proposal's text where its Location says."""
+    lines = text.split("\n")
+    heads = [(i, len(m.group(1)), deps.normalize(m.group(2)).lower())
+             for i, l in enumerate(lines) if (m := re.match(r"^(#{2,6})\s+(.*?)\s*$", l))]
+    out = []
+    for n, (i, level, title) in enumerate(heads):
+        end = next((j for j, lv, _ in heads[n + 1:] if lv <= level), len(lines))
+        out.append((title, deps.normalize("\n".join(lines[i + 1:end]))))
+    return out
+
+
+def section_for(loc, secs):
+    """The one section whose heading contains the Location, or None when it can't be told which."""
+    key = deps.normalize(loc).lower()
+    hits = [body for title, body in secs if key and key in title]
+    return hits[0] if len(hits) == 1 else None
+
+
 def delta_rows(path):
-    """Proposals in a Change Log's Delta table: [(number, before, after, ids, status)]. Only a table with a
+    """Proposals in a Change Log's Delta table: [{n, loc, before, after, ids, status, text}]. Only a table with a
     Status column counts; an older Change Log without one returns []. Before/After are the quoted text on each
     side of the arrow, so they can be looked up in a file; unquoted descriptions are left empty."""
     lines, inside = [], False
@@ -614,6 +646,7 @@ def delta_rows(path):
         if scol is None:
             continue
         ncol = next((i for i, c in enumerate(header) if c in ("#", "no.", "编号")), None)
+        lcol = next((i for i, c in enumerate(header) if "location" in c or "位置" in c), None)
         ccol = next((i for i, c in enumerate(header) if "change" in c or "改动" in c), None)
         bcol = next((i for i, c in enumerate(header) if "basis" in c or "依据" in c), None)
         for k, cells in enumerate(rows, 1):
@@ -621,7 +654,9 @@ def delta_rows(path):
             status = PROPOSAL_STATUS.get(get(scol).strip("* ").lower(), "")
             change = get(ccol)
             before, _, after = change.partition("→")
-            out.append((get(ncol) or str(k), quoted(before), quoted(after), ID_RE.findall(get(bcol) + " " + change), status))
+            out.append({"n": get(ncol) or str(k), "loc": get(lcol), "before": quoted(before), "after": quoted(after),
+                        "ids": ID_RE.findall(get(bcol) + " " + change), "status": status,
+                        "text": "\n".join([get(lcol), change, get(bcol)])})
     return out
 
 
@@ -685,7 +720,7 @@ def main():
     if is_resume:
         cites = {c: lines_for(needs, c) for c in sorted({c for _, _, ids in needs for c in ids}) if deps.is_cited(c, fps, mine, tagged=True)}
     else:  # a follow-up card or an answer: the sections that name each card
-        cites = deps.generic_citations(resume.read_text(encoding="utf-8"), set(fps), mine)
+        cites = deps.asset_citations(me, resume.read_text(encoding="utf-8"), set(fps), ())
 
     def record():
         # A record says "the user has looked at these lines against this version of the card".
@@ -699,13 +734,35 @@ def main():
             print(t["rec_skipped"].format(f=resume.name, cs=", ".join(sorted(want - set(cited)))))
         return 0
 
+    def record_rows(rows):
+        # one record per proposal row, so confirming one never refreshes another: --record P2, --record all
+        every = a.record.strip().lower() in ("all", "全部")
+        sel = {m for m in re.findall(r"(?<![A-Za-z])[Pp]?(\d+)\b", a.record)}
+        done, skipped = [], []
+        for r_ in rows:
+            if not every and r_["n"] not in sel:
+                continue
+            cards_ = sorted({c for c in r_["ids"] if c in fps})
+            if not cards_:
+                skipped.append("P" + r_["n"]); continue
+            lh = deps.lines_hash(r_["text"].split("\n"))
+            deps.write_records(root, f"{me}#{r_['n']}", {c: dict(fps[c], lines=lh) for c in cards_})
+            done.append("P" + r_["n"])
+        if not done:
+            print(t["rec_none"].format(f=resume.name, cs=", ".join(skipped) or a.record)); return 1
+        print(t["rec_done"].format(f=resume.name, cs=", ".join(done)))
+        if skipped:
+            print(t["rec_skipped"].format(f=resume.name, cs=", ".join(skipped)))
+        return 0
+
     if a.record:
         if frozen_entry(resume) is not None or r["fm"].get("status", "").strip().lower() == "sent":
             print(t["rec_frozen"].format(f=resume.name)); return 1
         if not is_resume:
             if errors:  # e.g. a duplicate card ID: which card the file means is unknowable
                 print(t["rec_blocked"].format(f=resume.name, e=errors)); return 1
-            return record()
+            rows_ = delta_rows(resume)
+            return record_rows(rows_) if rows_ else record()
         # a resume is recorded only if it passes the check below
     if not r["recognized"]:
         print("ERROR " + t["no_sections"].format(f=resume.name, h=", ".join(r["headings"]) or "-")); errors += 1
@@ -894,31 +951,64 @@ def main():
                     else:
                         print("WARN  " + msg); warns += 1
 
-    # Proposals (the Change Log's Delta table, when it has a Status column): a rejected change must not be in
-    # the resume, an Approved version has no undecided proposal, and a pending one is stale once its Before text
-    # or a card it cites has changed. Stale is worked out here, never written into the Change Log.
+    # Proposals (the Change Log's Delta table, when it has a Status column). A rejected change must not be in
+    # the resume, an Approved version has no undecided proposal, and a pending one is only valid while its
+    # Before text (looked for under its Location when that names one section) is still in the baseline and
+    # each card it rests on was checked for that row and hasn't had a major change since. Each row is recorded
+    # on its own in cv/reviewed.txt as <change log>#<row>, so confirming one row never refreshes another.
+    # All of this is worked out here, never written into the Change Log.
     if cl and cl.is_file() and not frozen:
         rows = delta_rows(cl)
         clme = deps.rel(cl, root)
         resume_lines = [(n, deps.normalize(text)) for n, text, _ in needs]
-        base_text = deps.normalize(base.read_text(encoding="utf-8")) if base is not None and base.is_file() else None
-        for k, before, after, ids, st in rows:
-            if st == "rejected" and len(deps.normalize(after)) >= 10:
-                hit = next((n for n, text in resume_lines if deps.normalize(after) in text), None)
-                if hit:
-                    print("WARN  " + t["delta_rejected"].format(cl=cl.name, k=k, f=resume.name, n=hit)); warns += 1
+        resume_secs = sections_of(resume.read_text(encoding="utf-8"))
+        base_ok = base is not None and base.is_file()
+        base_text = deps.normalize(base.read_text(encoding="utf-8")) if base_ok else None
+        base_secs = sections_of(base.read_text(encoding="utf-8")) if base_ok else []
+        for r_ in rows:
+            k, st = r_["n"], r_["status"]
+            after = deps.normalize(r_["after"])
+            if st == "rejected":
+                if not after:
+                    print("NOTE  " + t["delta_unquoted"].format(cl=cl.name, k=k, f=resume.name))
+                elif len(after) >= 10:
+                    hit = next((n for n, text in resume_lines if after in text), None)
+                    if hit:
+                        print("WARN  " + t["delta_rejected"].format(cl=cl.name, k=k, f=resume.name, n=hit)); warns += 1
+                else:
+                    where = section_for(r_["loc"], resume_secs)
+                    if where is None:
+                        print("NOTE  " + t["delta_short_unsure"].format(cl=cl.name, k=k, f=resume.name))
+                    elif after in where:
+                        print("WARN  " + t["delta_rejected_short"].format(cl=cl.name, k=k, f=resume.name, loc=r_["loc"])); warns += 1
             if st != "pending":
                 continue
-            whys = []
-            if before and base_text is not None and deps.normalize(before) not in base_text:
-                whys.append(t["stale_target"].format(b=base.name))
-            for c in ids:
-                cst, d = deps.card_state(records.get((clme, c)), fps.get(c), None, fm.get("type", ""))
+            whys, unchecked_cards = [], []
+            before = deps.normalize(r_["before"])
+            if before and base_text is not None:
+                where = section_for(r_["loc"], base_secs)
+                if before not in (base_text if where is None else where):
+                    whys.append(t["stale_target"].format(b=base.name if where is None else t["in_section"].format(b=base.name, loc=r_["loc"])))
+            key = f"{clme}#{r_['n']}"
+            mine_row = {c for p_, c in records if p_ == key}
+            for c in sorted({c for c in r_["ids"] if deps.is_cited(c, fps, mine_row)}):
+                cst, d = deps.card_state(records.get((key, c)), fps.get(c), r_["text"].split("\n"), fm.get("type", ""))
                 if cst == "changed" and d["major"]:  # a wording-only change to the card doesn't void the proposal
                     whys.append(t["stale_card"].format(c=c, x=what(d)))
+                elif cst in ("missing", "not_checked") or (cst == "changed" and d["edited"]):
+                    unchecked_cards.append(c)
             if whys:
                 print("WARN  " + t["delta_stale"].format(cl=cl.name, k=k, why="; ".join(whys))); warns += 1
-        pending = [k for k, _, _, _, st in rows if st == "pending"]
+            elif unchecked_cards:  # not checked or no such card: not a valid proposal yet
+                print("WARN  " + t["delta_unverified"].format(cl=cl.name, k=k, cs=", ".join(unchecked_cards))); warns += 1
+        live = {}
+        for r_ in rows:
+            if r_["status"] in ("pending", "accepted") and r_["before"]:
+                live.setdefault((deps.normalize(r_["loc"]).lower(), deps.normalize(r_["before"])), []).append(r_["n"])
+        for ns in live.values():
+            if len(ns) > 1:
+                print("WARN  " + t["delta_conflict"].format(cl=cl.name, ks=", ".join("#" + n for n in ns))); warns += 1
+        pending = [r_["n"] for r_ in rows if r_["status"] == "pending"]
         if pending and status == "approved":
             print("WARN  " + t["delta_pending"].format(cl=cl.name, f=resume.name, ks=", ".join(pending))); warns += 1
 

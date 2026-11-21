@@ -25,7 +25,7 @@
 | S2 | **Evidence Retrieval Gate**：过一遍**每一张** Claim Card，不只是听起来相关的那些：一个标题可能藏着 JD 想要的能力（有能力切面的话看切面）。卡片超过 15 张时，先跑 `python3 scripts/list_claims.py`（每张卡一行），再打开所有受保护的卡，以及一句话、职位或能力切面和岗位沾边的卡读全文；不超过 15 张就全读。在 Change Log 里填证据表：用上的卡每张一行，写明用在哪。没用的卡可以按原因合成一行（「低：C-012、C-015，领域无关」），表格不会太长；受保护的卡、明显和岗位相关的卡，即使没用也单独一行写原因。证据表漏了哪张卡，`check_claims.py` 会提醒。然后问一次：有没有哪张没用上的卡，比简历里已有的某条更适合这个岗位？有就换进来，或者写明为什么不换。换不出明显的提升就停（D-019） | Change Log 里的证据表 |
 | S3 | **JD 映射**：要求 R1、R2… 每条归入五类之一：**直接** · **可迁移或组合**（另一个场景里的同类能力，或几段经历各证明一部分）· **还没找到**（先过[追问清单](#追问清单)，D-014；标着「待核实」的数字也归这里）· **可补足**（真实缺口，但一个小项目或课程就能补上）· **硬缺口**（包括不满足的资格门槛）。只有「硬缺口」意味着不写。追问后仍然没有证据的，不硬写。公司名、职位名、工作地点、薪资福利不是要求，永远不算缺口。简历有没有用上 JD 的关键词，和它有没有证明 JD 要的价值，是两回事，分开看（D-011） | Coverage Report 里的五类映射 |
 | S4 | **Delta**：复制 `cv/resumes/` 里的基线文件，只改需要改的：定位句、Summary、bullet 顺序、关键词。不重写已批准的部分。如果 `check_claims.py` 提示某一行复制自一个在卡片改动之前批准的基线，就按现在的卡重写这一行 | 新版本草稿 |
-| S5 | **Change Log**：每处改动编号写成一条提案：Before / After 加引号、依据（卡片编号）、状态 `待定`。附 JD Coverage Report 和检查范围。写完跑 `python3 scripts/check_claims.py cv/changelogs/<id>.md --record all`，之后卡片再改，基于旧卡的提案会显示过期 | `cv/changelogs/<id>.md` |
+| S5 | **Change Log**：每处改动编号写成一条提案：Before / After 加引号、依据（卡片编号）、状态 `待定`。附 JD Coverage Report 和检查范围。本人看过各行之后，跑 `python3 scripts/check_claims.py cv/changelogs/<id>.md --record all`。每一行单独记录（只记第 2 行用 `--record P2`），所以之后卡片再改，基于旧卡的提案会显示过期，从没检查过的也不会被当作有效提案。「位置」栏写清楚是哪一节或哪段经历（「Summary」「Experience」）：脚本会到那里去找 Before 原文 | `cv/changelogs/<id>.md` |
 | S6 | **AI 自审**：按 [REVIEW-CHECKLIST](REVIEW-CHECKLIST.md) 的 A、B 两节逐项过；跑 `python3 scripts/validate_evidence.py` 和 `python3 scripts/check_claims.py cv/resumes/<id>.md`（都必须通过）。导出 PDF 和排版检查留到定稿 | 自审改动表、检查结果 |
 | S7 | **人工审核**：把全文 + 改动对照交给本人，本人可以逐条接受或拒绝：每行标 `接受` 或 `拒绝`，被拒绝的文字要从简历里删掉。拒绝一种措辞是措辞偏好，不是事实改了：除非本人说事实错了，否则不动卡。本人说通过才改状态为 `Approved`。然后跑 `python3 scripts/check_claims.py cv/resumes/<id>.md --record all` | 本人批准记录 |
 
@@ -96,9 +96,9 @@
 本人批准过的回答（「为什么离职？」「讲一次没做成的上线」）可以复用，但只在适用的范围里用，而且只在它引用的卡没改过的时候用。
 
 - **放哪里**：`interview/answers/<A-编号>.md`，照 [`interview/answers/_TEMPLATE.md`](../interview/answers/_TEMPLATE.md) 的格式。每个事实标上卡片编号。
-- **适用范围**：`reusable`（任何岗位都能用）、`employer: <公司名>`（提到了这家公司）、`job: <岗位编号>`（为某一次投递写的）。超出范围的答案不复用。
+- **适用范围**：`reusable`（任何岗位都能用）、`employer: <公司名>`（要和岗位文件里 `company:` 写的公司名完全一致；大小写和标点不计，但「Harbor」匹配不了「Harbor Analytics」）、`job: <岗位编号>`（为某一次投递写的）。超出范围的答案不复用。本人的批准同时覆盖问题、适用范围和答案内容，所以改了适用范围就要重新确认。
 - **本人批准后记录**：`python3 scripts/check_claims.py interview/answers/<A-编号>.md --record all`。
-- **复用之前**：`python3 scripts/list_claims.py --answers <岗位编号>` 会列出适用的答案，以及每条是否还和卡一致。「当前」的可以照用；「需复核」的按现在的卡重写，再问一次本人。
+- **复用之前**：`python3 scripts/list_claims.py --answers <岗位编号>` 会列出适用的答案，以及每条能否复用。只有「能」才是照用：它引用了卡，没有卡不存在或改过，对照过卡，本人也批准了。其他情况（没批准、没检查、没引用卡、卡不存在、卡改过）都按现在的卡重写，再确认一次。
 
 ## 事实改了怎么办
 

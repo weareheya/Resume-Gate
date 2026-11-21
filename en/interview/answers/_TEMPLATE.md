@@ -1,7 +1,7 @@
 ---
 id: A-000
 question:                # the question as an interviewer or a form asks it
-scope: reusable          # reusable | employer: <company> | job: <job ID>. Who this answer may be used for
+scope: reusable          # reusable | employer: <company> | job: <job ID>. Who this answer may be used for. The company must read exactly as `company:` in the job file
 status: Draft            # Draft | Approved. Approved = the user has read it and said it's right
 ---
 

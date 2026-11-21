@@ -1,7 +1,7 @@
 ---
 id: A-000
 question:                # 面试官或申请表上的原问题
-scope: reusable          # reusable | employer: <公司> | job: <岗位编号>。这个答案可以给谁用
+scope: reusable          # reusable | employer: <公司> | job: <岗位编号>。这个答案可以给谁用。公司名要和岗位文件里的 `company:` 写得完全一致
 status: Draft            # Draft | Approved。Approved = 本人读过、说对
 ---
 

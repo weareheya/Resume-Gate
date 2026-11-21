@@ -16,6 +16,7 @@ What changed in each version, and whether you need to do anything. Your version 
 
 **Reviewed answers.** `interview/answers/` keeps answers you've approved, each with a scope (any job, one employer, or one application). `list_claims.py --answers <job ID>` lists the ones that fit and whether each still matches its cards (D-020).
 
+- Review fixes: an answer is reused as it is only when it cites cards, none is missing or changed, it was checked and approved, and its scope matches; an employer scope needs the exact company name; the approval covers question and scope as well as the text. Proposals are recorded row by row (`--record P2`), looked for under their Location, and a row that was never checked isn't valid. A short rejected phrase is checked under its Location, or flagged for a look by eye. The eval gate also catches shrunken or re-assigned credit, and accepts `US$200000`.
 - WORKFLOW S3: the employer's name, title, location and pay are never counted as gaps.
 - PROMPTS: when to use a cheaper model, and a prompt for reusing answers.
 

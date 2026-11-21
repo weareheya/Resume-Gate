@@ -22,10 +22,17 @@
   ],
   "must_keep": {
     "C-006": [
-      "\\$?200\\s?(k|,000)",
+      "200\\s?(k\\b|,?000\\b)",
       "sponsor",
       "design|package",
       "negotiat"
+    ]
+  },
+  "weakens": {
+    "C-006": [
+      "\\b(helped|assisted|supported|contributed to|participated in|part of the team|involved in|worked on)\\b[^.;]{0,40}\\b(negotiat|design|packag|secur|bring|brought)",
+      "\\b(manager|sam|team|colleague\\w*)\\b[^.;]{0,30}\\b(negotiat|closed|secured|designed)",
+      "\\b(negotiat\\w*|closed|secured|designed)\\b[^.;]{0,20}\\bby (my |the |our )?(manager|sam|team|colleague)"
     ]
   },
   "gaps": {

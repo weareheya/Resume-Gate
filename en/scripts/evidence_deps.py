@@ -258,6 +258,23 @@ def is_cited(cid, known, recorded, tagged=False):
     return tagged or cid in known or cid in recorded or bool(CARD_ID_RE.fullmatch(cid))
 
 
+def binding_lines(text):
+    """What an answer's approval is bound to besides its text: the question and the scope. Changing
+    who an answer may be used for is a change to what the user approved."""
+    fm = _front_matter(text)[0]
+    return [f"question: {fm.get('question', '')}", f"scope: {fm.get('scope', '')}"]
+
+
+def asset_citations(asset_rel, text, known, recorded=()):
+    """{card: [lines]} for a follow-up card or an answer. For an answer the lines include its question
+    and scope, so editing either needs a new confirmation."""
+    cites = generic_citations(text, known, recorded)
+    if asset_rel.startswith("interview/answers/"):
+        bind = binding_lines(text)
+        cites = {c: lines + bind for c, lines in cites.items()}
+    return cites
+
+
 def generic_citations(text, known, recorded=()):
     """Claim IDs a follow-up card or answer cites: {id: [lines]}. A card counts as cited by every
     level-2 section that names it, and those whole sections are its lines. See is_cited for which

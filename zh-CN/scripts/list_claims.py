@@ -50,6 +50,8 @@ T = {
         "minor": "minor",
         "ans_head": "| Answer | Question | Scope | Status | Check | Reuse? |",
         "ans_yes": "yes",
+        "ans_missing": "a card it cites doesn't exist: fix that first",
+        "ans_nocite": "cites no card: tag the cards it uses, then record it",
         "ans_recheck": "recheck first",
         "ans_unchecked": "check against the cards first",
         "ans_draft": "not approved yet",
@@ -80,6 +82,8 @@ T = {
         "minor": "一般",
         "ans_head": "| 答案 | 问题 | 适用范围 | 状态 | 检查 | 能复用吗 |",
         "ans_yes": "能",
+        "ans_missing": "它引用的卡不存在：先处理这个",
+        "ans_nocite": "没有引用任何卡：先标上它用到的卡，再记录",
         "ans_recheck": "先复核",
         "ans_unchecked": "先对照卡片检查",
         "ans_draft": "还没批准",
@@ -142,7 +146,8 @@ def assets(root, known, records):
             continue
         text = p.read_text(encoding="utf-8")
         fm = cc.front_matter(text)[0]
-        out.append((p, fm.get("status", "") or "-", False, fm.get("type", ""), deps.generic_citations(text, known, recorded.get(deps.rel(p, root), set()))))
+        me = deps.rel(p, root)
+        out.append((p, fm.get("status", "") or "-", False, fm.get("type", ""), deps.asset_citations(me, text, known, recorded.get(me, set()))))
     return out
 
 
@@ -178,16 +183,22 @@ def describe(states, t, names):
     return "; ".join(parts)
 
 
+def norm_name(s):
+    """Company names compared whole: case, spacing and punctuation are ignored, nothing else."""
+    return " ".join(re.sub(r"[^\w]+", " ", s.casefold()).split())
+
+
 def scope_fits(scope, job_id, company):
-    """reusable | employer: <name> | job: <id>. An empty scope counts as reusable."""
+    """reusable | employer: <name> | job: <id>. An empty scope counts as reusable. An employer scope
+    matches only the exact company name on the job (no substring, and an empty name matches nothing)."""
     kind, _, value = (scope or "reusable").partition(":")
-    kind, value = kind.strip().lower(), value.strip().lower()
+    kind, value = kind.strip().lower(), value.strip()
     if kind in ("reusable", "通用", ""):
         return True
     if kind in ("employer", "公司"):
-        return bool(company) and (value in company.lower() or company.lower() in value)
+        return bool(norm_name(value)) and norm_name(value) == norm_name(company)
     if kind in ("job", "岗位"):
-        return value == job_id.lower()
+        return bool(value) and value.lower() == job_id.lower()
     return False
 
 
@@ -207,10 +218,16 @@ def answers_for(root, cards, job_id, t):
             skipped += 1
             continue
         me = deps.rel(p, root)
-        life, health = rows.get(me, (fm.get("status", "") or "-", "current"))
+        # Reuse as it is only when everything says yes: it cites cards, none is missing or changed, it was
+        # checked against them, and the user approved it. No record or no citation never counts as current.
+        life, health = rows.get(me, (fm.get("status", "") or "-", "no_cite"))
         if health in ("changed", "historical"):
             reuse = t["ans_recheck"]
-        elif health == "not_checked":
+        elif health == "missing":
+            reuse = t["ans_missing"]
+        elif health == "no_cite":
+            reuse, health = t["ans_nocite"], "not_checked"
+        elif health != "current":
             reuse = t["ans_unchecked"]
         elif life.strip().lower() != "approved":
             reuse = t["ans_draft"]
