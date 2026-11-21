@@ -107,6 +107,9 @@ T = {
         "dep_edited": "edited after it was recorded",
         "rec_frozen": "{f} is frozen (sent). Its record can't change; make a new version instead",
         "rec_none": "{f}: none of {cs} is cited here, nothing recorded",
+        "rec_skipped": "{f}: not recorded: {cs} (not cited here, or no longer a card)",
+        "rec_blocked": "{f} has {e} error(s), so nothing was recorded. A record means the user approved these lines; fix the errors first",
+        "dep_edited_final": "{f}: {c} changed since this version was approved ({b}), and the lines citing it were edited after that. Show the user those lines next to the card; once they confirm, run --record {c}",
         "rec_done": "Recorded {f} against the current version of {cs} (cv/reviewed.txt). Record only what the user has looked at",
         "how_approved": "approved",
         "how_recorded": "recorded",
@@ -156,6 +159,9 @@ T = {
         "dep_edited": "记录之后被改过",
         "rec_frozen": "{f} 已冻结（已投递），它的记录不能再改；要改请复制成新版本",
         "rec_none": "{f}：这里没有引用 {cs}，没有记录任何内容",
+        "rec_skipped": "{f}：没有记录 {cs}（这里没有引用，或者已经不是一张卡）",
+        "rec_blocked": "{f} 有 {e} 个错误，所以没有记录。记录的意思是本人批准了这些行；请先改掉错误",
+        "dep_edited_final": "{f}：这一版批准之后 {c} 改过（{b}），而且引用它的行在那之后也改过。请把这些行和卡一起给本人看，确认后运行 --record {c}",
         "rec_done": "已记录：{f} 对照的是 {cs} 的当前版本（cv/reviewed.txt）。只记录本人看过的内容",
         "how_approved": "批准",
         "how_recorded": "记录",
@@ -624,20 +630,34 @@ def main():
     fps, root = deps.load_cards(a.claims), deps.kit_root(a.claims)
     me = deps.rel(resume, root)
 
-    if a.record:
-        # D-020: a record says "the user has looked at these lines against this version of the card".
-        if frozen_entry(resume) is not None or r["fm"].get("status", "").strip().lower() == "sent":
-            print(t["rec_frozen"].format(f=resume.name)); return 1
-        if resume.parent.name == "resumes":
-            cites = {c: lines_for(needs, c) for c in used}
-        else:  # a follow-up card or an answer: the sections that name each card
-            cites = deps.generic_citations(resume.read_text(encoding="utf-8"), set(fps))
+    # D-020: which cards this file cites. Every tagged line counts (Summary, Experience and any other
+    # section), and so does a card that was deleted after this file was recorded.
+    records = deps.read_records(root)
+    mine = {c for p, c in records if p == me}
+    is_resume = resume.parent.name == "resumes"
+    if is_resume:
+        cites = {c: lines_for(needs, c) for c in sorted({c for _, _, ids in needs for c in ids}) if deps.is_cited(c, fps, mine)}
+    else:  # a follow-up card or an answer: the sections that name each card
+        cites = deps.generic_citations(resume.read_text(encoding="utf-8"), set(fps), mine)
+
+    def record():
+        # A record says "the user has looked at these lines against this version of the card".
         want = set(cites) if a.record.strip().lower() in ("all", "全部") else set(ID_RE.findall(a.record))
         cited = sorted(want & set(cites) & set(fps))
         if not cited:
             print(t["rec_none"].format(f=resume.name, cs=", ".join(sorted(want)) or "-")); return 1
         deps.write_records(root, me, {c: dict(fps[c], lines=deps.lines_hash(cites[c])) for c in cited})
-        print(t["rec_done"].format(f=resume.name, cs=", ".join(cited))); return 0
+        print(t["rec_done"].format(f=resume.name, cs=", ".join(cited)))
+        if want - set(cited):
+            print(t["rec_skipped"].format(f=resume.name, cs=", ".join(sorted(want - set(cited)))))
+        return 0
+
+    if a.record:
+        if frozen_entry(resume) is not None or r["fm"].get("status", "").strip().lower() == "sent":
+            print(t["rec_frozen"].format(f=resume.name)); return 1
+        if not is_resume:
+            return record()
+        # a resume is recorded only if it passes the check below
     if not r["recognized"]:
         print("ERROR " + t["no_sections"].format(f=resume.name, h=", ".join(r["headings"]) or "-")); errors += 1
     for n, text, ids in needs:
@@ -769,20 +789,25 @@ def main():
             if missing:
                 print("WARN  " + t["table_gap"].format(f=resume.name, cl=cl.name, cs=", ".join(missing))); warns += 1
 
+    if a.record:
+        if errors:
+            print(t["rec_blocked"].format(f=resume.name, e=errors)); return 1
+        return record()
+
     # D-020: did a card this version cites change after it was approved? Worked out fresh each run;
     # nothing is written to the resume. A sent version is history: it's only noted.
-    records = deps.read_records(root)
     status = fm.get("status", "").strip().lower()
     frozen = frozen_entry(resume) is not None or status == "sent"
     names = BLOCK_NAMES[a.lang]
     how = t["how_approved"] if status in ("approved", "sent") else t["how_recorded"]
 
     def what(d):
-        return ", ".join(names.get(x, x) for x in d["blocks"]) + " · " + (t["major"] if d["major"] else t["minor"])
+        return ", ".join(names.get(x, x) for x in d["blocks"]) + " · " + (t["major"] if d["major"] else t["minor"]) + \
+            (" · " + t["dep_edited"] if d.get("edited") else "")
 
     unchecked, settled = [], set()
-    for c in sorted(used & set(claims) & set(fps)):
-        st, d = deps.card_state(records.get((me, c)), fps[c], lines_for(needs, c), fm.get("type", ""))
+    for c in sorted(set(cites) & set(claims) & set(fps)):  # an unknown or deleted card is already an error above
+        st, d = deps.card_state(records.get((me, c)), fps[c], cites[c], fm.get("type", ""))
         if st != "not_checked":
             settled.add(c)  # current, or already reported above: the copied-lines check below would repeat it
         if st == "current":
@@ -792,6 +817,8 @@ def main():
                 print("NOTE  " + t["dep_historical"].format(f=resume.name, c=c, b=what(d)))
             elif a.finalize and d["major"]:
                 print("ERROR " + t["dep_changed_final"].format(f=resume.name, c=c, b=what(d))); errors += 1
+            elif a.finalize and d["edited"]:
+                print("ERROR " + t["dep_edited_final"].format(f=resume.name, c=c, b=what(d))); errors += 1
             else:
                 print("WARN  " + t["dep_changed"].format(f=resume.name, c=c, how=how, b=what(d))); warns += 1
         else:
@@ -805,7 +832,7 @@ def main():
     # approved before a card changed, the copied lines still say what the old card said.
     if b is not None and not frozen:
         bme = deps.rel(base, root)
-        for c in sorted((used & set(fps)) - settled):
+        for c in sorted((set(cites) & set(fps)) - settled):
             st, d = deps.card_state(records.get((bme, c)), fps[c], None, fm.get("type", ""))
             if st != "changed":
                 continue

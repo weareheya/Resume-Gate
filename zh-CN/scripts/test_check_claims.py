@@ -928,6 +928,72 @@ class DependencyHealth(unittest.TestCase):
         code, out = self.sh("list_claims.py", "--used-by", "C-009")
         self.assertIn("No resumes", out)
 
+    def test_deleted_card_still_shows_where_it_was_used(self):
+        self.approved()
+        (self.root / "evidence/claims/C-001.md").unlink()
+        code, out = self.sh("list_claims.py", "--used-by", "C-001")
+        self.assertIn("1 file(s) cite C-001", out)
+        self.assertIn("removed", out)
+        code, out = self.sh("list_claims.py", "--health")
+        self.assertIn("| cv/resumes/v1.md | Approved | needs recheck |", out)
+
+    def test_minor_change_does_not_hide_edited_lines(self):
+        self.approved()
+        self.card("C-001", wording="Secured US$200,000 in launch-stage sponsorships.")
+        self.resume("v1", line="Secured US$200,000 in sponsorships for the launch.")
+        code, out = self.check("v1")
+        self.assertEqual(code, 0, out)
+        self.assertIn("approved wording · minor · edited after it was recorded", out)
+        code, out = self.check("v1", "--finalize")
+        self.assertEqual(code, 1, out)
+        self.assertIn("lines citing it were edited", out)
+
+    def test_record_refused_when_the_check_fails(self):
+        self.resume("v1", line="Secured US$200,000 in sponsorships. <!-- C-404 -->")
+        code, out = self.check("v1", "--record", "all")
+        self.assertEqual(code, 1, out)
+        self.assertIn("nothing was recorded", out)
+        self.assertFalse((self.root / "cv/reviewed.txt").exists())
+
+    def test_record_names_the_ids_it_skipped(self):
+        self.approved()
+        code, out = self.check("v1", "--record", "C-001, C-404")
+        self.assertEqual(code, 0, out)
+        self.assertIn("not recorded: C-404", out)
+
+    def test_incomplete_record_is_never_current(self):
+        self.approved()
+        f = self.root / "cv/reviewed.txt"
+        f.write_text("\n".join("\t".join(x for x in l.split("\t") if not x.startswith("lines="))
+                               for l in f.read_text(encoding="utf-8").splitlines()) + "\n", encoding="utf-8")
+        code, out = self.check("v1", "--finalize")
+        self.assertEqual(code, 1, out)
+        self.assertIn("not checked", out)
+
+    def test_tagged_line_in_another_section_is_tracked(self):
+        (self.root / "cv/resumes/v1.md").write_text(
+            DEP_RESUME.format(name="v1", status="Approved", base="", line="Secured US$200,000 in sponsorships.")
+            .replace("- Ran the partner newsletter. <!-- C-002 -->\n", "")
+            + "\n## Awards\n- Newsletter award for the partner newsletter. <!-- C-002 -->\n", encoding="utf-8")
+        self.assertEqual(self.check("v1", "--record", "all")[0], 0)
+        self.card("C-002", facts="Edited the partner newsletter.", did="edited it", wording="Ran the partner newsletter.")
+        code, out = self.check("v1")
+        self.assertIn("C-002 changed after this version was approved", out)
+
+    def test_normalizing_boundaries(self):
+        spec = importlib.util.spec_from_file_location("evidence_deps", SCRIPT.with_name("evidence_deps.py"))
+        deps = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(deps)
+        n = deps.normalize
+        self.assertEqual(n("Led the launch\nwith two partners."), n("Led the launch with two partners."))
+        self.assertNotEqual(n("- Led the launch\n- with two partners."), n("- Led the launch with two partners."))
+        self.assertEqual(n("$1,200.50"), n("$1200.50"))
+        self.assertEqual(n("1,234,567 users"), n("1234567 users"))
+        self.assertNotEqual(n("1.234 users"), n("1234 users"))   # a European thousands dot is not removed
+        self.assertNotEqual(n("2,5 FTE"), n("25 FTE"))           # nor a decimal comma
+        self.assertNotEqual(n("2022,2023"), n("20222023"))       # nor a list of numbers
+        self.assertEqual(len(deps.short_hash("x")), 64)
+
 
 class ReportScore(unittest.TestCase):
     """report_score.py must agree with the sample in report/template.html (38, as the page shows)."""

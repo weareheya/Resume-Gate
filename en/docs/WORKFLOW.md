@@ -97,7 +97,7 @@ The goal: the user corrects a fact once, and every later step knows. Nothing tha
 
 **1. Is it a correction or a wording change?** A correction changes what is true or claimable: what happened, a number or what it measures, who did which part, a status, what not to say. "The $200K wasn't marketing budget, it was sponsorship I negotiated" is a correction. "Make that bullet punchier" is wording: change the resume, not the card. If you can't tell, ask one question.
 
-**2. Correct the card first**, in the same turn, and say back what changed in one line. Keep the strongest true version of the result: a correction narrows a claim, it doesn't delete the accomplishment (D-015).
+**2. Correct the card first**, in the same turn, and say back what changed in one line. Keep the strongest true version of the result: a correction narrows a claim, it doesn't delete the accomplishment (D-015). If the correction makes the source weaker ("I don't have that report any more, it's from memory"), lower the card's evidence strength or status too, not only the Source line: that's what tells every file citing it that this is a major change.
 
 **3. See what it touches**: `python3 scripts/list_claims.py --used-by C-xxx`. Tell the user which files cite the card and whether each needs a recheck. Don't edit approved or sent files on your own.
 
@@ -108,9 +108,9 @@ The goal: the user corrects a fact once, and every later step knows. Nothing tha
 | State | Means | What happens |
 |---|---|---|
 | Current | Every card it cites matches what was approved | Nothing |
-| Needs recheck | A cited card changed after approval | WARN, naming the card and the blocks that changed. At `--finalize`, a major change is an error |
+| Needs recheck | A cited card changed after approval | WARN, naming the card and the blocks that changed. At `--finalize`, a major change is an error, and so is any change when the lines citing the card were also edited after approval |
 | Sent before the change | The version was sent, then a card changed | A note only. The sent file stays as it is; the follow-up cards get the warning |
-| Not checked | No record yet (versions made before 0.7.0), or the lines were edited after the record | One summary line. At `--finalize`, an error until the user confirms and you record |
+| Not checked | No record yet (versions made before 0.7.0, or an incomplete record), or the lines were edited after the record | One summary line. At `--finalize`, an error until the user confirms and you record |
 
 A draft copied from a baseline also gets a WARN on every line copied unchanged from a baseline that was approved before its card changed: that's how an old wording slips into a new version.
 
@@ -118,7 +118,7 @@ A draft copied from a baseline also gets a WARN on every line copied unchanged f
 |---|---|
 | What happened (and the card's title), numbers and their Verified column, attribution, status / evidence / role / period, don't rephrase as, and protected / keep-for when it changes what this file's job type must keep | Approved wording, capability facets, source, any section the template doesn't have. Notes and To fill never count |
 
-Spacing, line breaks, bold, dash styles and thousands separators don't count as changes; every other character does, so `$2.1M` → `$21M` is a change and `$200,000` → `$200000` isn't.
+Spacing, a line wrapped inside a paragraph, bold, dash styles and 1,234-style thousands separators don't count as changes. A new bullet or row does, and so does `1.234`, `1 234` or a decimal comma, since those differ by region; every other character does, so `$2.1M` → `$21M` is a change and `$200,000` → `$200000` isn't.
 
 **Rechecking.** Show the user only the lines citing the changed card, next to the card's current text. If they still hold, run `--record C-xxx` for that card only; the rest of the version keeps its approval. If not, make a new version (an approved or sent file isn't edited in place).
 

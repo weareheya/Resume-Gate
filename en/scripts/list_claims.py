@@ -100,16 +100,22 @@ def cell(s):
     return s.replace("|", "/").strip()
 
 
-def assets(root, known):
+def assets(root, known, records):
     """Every resume, follow-up card and answer, with the cards it cites:
-    [(path, lifecycle, frozen, job type, {card: [lines]})]."""
+    [(path, lifecycle, frozen, job type, {card: [lines]})]. A card deleted after the file was
+    recorded still counts, so it shows up as removed instead of disappearing."""
     out = []
+    recorded = {}
+    for p, c in records:
+        recorded.setdefault(p, set()).add(c)
     for p in sorted((root / "cv" / "resumes").glob("*.md")):
         if p.name.startswith("_"):
             continue
         r = cc.scan_resume(p)
         fm = r["fm"]
-        cites = {c: cc.lines_for(r["needs"], c) for c in sorted(r["used"] & known)}
+        mine = recorded.get(deps.rel(p, root), set())
+        ids = sorted({c for _, _, xs in r["needs"] for c in xs})
+        cites = {c: cc.lines_for(r["needs"], c) for c in ids if deps.is_cited(c, known, mine)}
         frozen = cc.frozen_entry(p) is not None or fm.get("status", "").strip().lower() == "sent"
         out.append((p, fm.get("status", "") or "-", frozen, fm.get("type", ""), cites))
     for p in sorted((root / "interview").rglob("*.md")):
@@ -117,7 +123,7 @@ def assets(root, known):
             continue
         text = p.read_text(encoding="utf-8")
         fm = cc.front_matter(text)[0]
-        out.append((p, fm.get("status", "") or "-", False, fm.get("type", ""), deps.generic_citations(text, known)))
+        out.append((p, fm.get("status", "") or "-", False, fm.get("type", ""), deps.generic_citations(text, known, recorded.get(deps.rel(p, root), set()))))
     return out
 
 
@@ -126,7 +132,7 @@ def dependency_rows(root, cards, only=None):
     historical / not_checked. `only` limits it to one card."""
     records = deps.read_records(root)
     rows = []
-    for p, life, frozen, ty, cites in assets(root, set(cards)):
+    for p, life, frozen, ty, cites in assets(root, set(cards), records):
         if only is not None:
             cites = {c: v for c, v in cites.items() if c == only}
         if not cites:
@@ -144,7 +150,8 @@ def describe(states, t, names):
     parts = []
     for c, (st, d) in sorted(states.items()):
         if st == "changed":
-            parts.append(f"{c}: " + ", ".join(names.get(x, x) for x in d["blocks"]) + " · " + (t["major"] if d["major"] else t["minor"]))
+            parts.append(f"{c}: " + ", ".join(names.get(x, x) for x in d["blocks"]) + " · " + (t["major"] if d["major"] else t["minor"])
+                         + (" · " + t["edited"] if d.get("edited") else ""))
         elif st == "not_checked" and d == "edited":
             parts.append(f"{c}: {t['edited']}")
     return "; ".join(parts)

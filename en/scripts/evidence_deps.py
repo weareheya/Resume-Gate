@@ -6,9 +6,9 @@ check_claims.py and list_claims.py import it; it has no command line of its own 
 
 How it works:
   * Each Claim Card is split into blocks (what happened, numbers, attribution, status/evidence/role,
-    don't-rephrase-as, approved wording, facets, source, protection). Each block gets a short
-    fingerprint of its text after a careful clean-up: spacing, line breaks, bold/italic marks, dash
-    styles and thousands separators don't count, but every other character does, so "$2.1M" and
+    don't-rephrase-as, approved wording, facets, source, protection). Each block gets a
+    fingerprint (SHA-256) of its text after a careful clean-up: spacing, a line wrapped inside a
+    paragraph, bold/italic marks, dash styles and 1,234-style thousands separators don't count, but every other character does, so "$2.1M" and
     "$21M" differ while "$200,000" and "$200000" don't. Notes and To fill never count.
   * When the user approves a resume (or confirms a recheck), `check_claims.py <file> --record`
     writes the card fingerprints it was approved against to cv/reviewed.txt, together with a
@@ -17,7 +17,7 @@ How it works:
   * Health is worked out fresh every time and never written into the files themselves:
     current       every cited card matches its record
     changed       a cited card changed after the record (which blocks, and whether that's major)
-    not checked   no record yet, or the lines citing the card were edited after the record
+    not checked   no record yet (or an incomplete one), or the lines citing the card were edited after it
   * Major blocks: what happened, numbers (and their Verified column), attribution, status /
     evidence / role / period, don't rephrase as, and protection when it touches this file's job
     type. Minor: approved wording, facets, source, and any block the template doesn't have.
@@ -31,6 +31,7 @@ from datetime import date
 from pathlib import Path
 
 RECORD = Path("cv/reviewed.txt")
+FORMAT = "1"  # bump when normalize() or the blocks change, so old records read as "not checked", not "changed"
 
 # block name -> heading prefixes (lower case) in the English and Chinese card templates
 BLOCKS = {
@@ -51,28 +52,39 @@ ID_RE = re.compile(r"\b[A-Za-z]+-\d+\b")
 COMMENT_RE = re.compile(r"<!--.*?-->", re.S)
 
 
+NEW_LINE_RE = re.compile(r"^(?:[-*+]\s|\d+[.)]\s|\||#|>)")
+THOUSANDS_RE = re.compile(r"(?<![\d.,])\d{1,3}(?:,\d{3})+(?![\d,])")
+
+
 def normalize(text):
-    """Conservative clean-up before fingerprinting. Only changes that can't alter a fact."""
+    """Conservative clean-up before fingerprinting. Only changes that can't alter a fact.
+    Not touched on purpose: "1.234" or "1 234" style thousands, a decimal comma ("2,5"), number lists
+    ("2022,2023"), the minus sign, any letter or punctuation. Those count as changes, which is the safe side."""
     out = []
     for line in text.replace("\r\n", "\n").split("\n"):
         s = line.strip()
         if not s or set(s) <= set("|-: "):
-            continue  # blank lines and table rules
+            out.append("")  # blank lines and table rules end a paragraph
+            continue
         s = re.sub(r"^>\s?", "", s)                      # blockquote marker
         s = re.sub(r"^[*+]\s+", "- ", s)                 # bullet style
         s = re.sub(r"\*\*|__|`", "", s)                  # bold and code marks
         s = re.sub(r"(?<![\w*])\*(?=\S)(.+?)(?<=\S)\*(?![\w*])", r"\1", s)  # *italic*
         s = re.sub(r"\s*[–—―‐‑]\s*", "-", s)            # en/em dashes, with or without spaces
         s = re.sub(r"(?<=\S)\s+-\s+(?=\S)", "-", s)      # " - " used as a dash
-        s = re.sub(r"(?<=\d),(?=\d{3}(?!\d))", "", s)    # thousands separators: 200,000 = 200000
+        s = THOUSANDS_RE.sub(lambda m: m.group(0).replace(",", ""), s)  # 200,000 = 200000; 1,234,567 = 1234567
         s = re.sub(r"\s*\|\s*", "|", s)                  # table cell padding
         s = re.sub(r"\s+", " ", s)
-        out.append(s)
-    return "\n".join(out)
+        if out and out[-1] and not NEW_LINE_RE.match(line.strip()) and not out[-1].startswith(("|", "#")):
+            out[-1] += " " + s  # a wrapped line inside a paragraph or bullet: same text
+        else:
+            out.append(s)
+    return "\n".join(x for x in out if x)
 
 
 def short_hash(text):
-    return hashlib.sha256(normalize(text).encode("utf-8")).hexdigest()[:10]
+    """Full SHA-256 of the normalized text. (Nothing shows it; the record file is the only place it's kept.)"""
+    return hashlib.sha256(normalize(text).encode("utf-8")).hexdigest()
 
 
 def _front_matter(text):
@@ -164,7 +176,7 @@ def write_records(root, asset_rel, entries):
         if new:
             out.write("# Written by check_claims.py --record. Paths, card IDs and fingerprints only (D-020).\n")
         for cid in sorted(entries):
-            fields = [f"date={date.today().isoformat()}"] + [f"{k}={v}" for k, v in sorted(entries[cid].items())]
+            fields = [f"v={FORMAT}", f"date={date.today().isoformat()}"] + [f"{k}={v}" for k, v in sorted(entries[cid].items())]
             out.write("\t".join([asset_rel, cid] + fields) + "\n")
 
 
@@ -186,14 +198,19 @@ def protect_is_major(old, new, job_type):
 
 def card_state(record, blocks, lines, job_type=""):
     """State of one card for one file.
-    Returns ("not_checked", reason) | ("current", None) | ("changed", {"blocks": [...], "major": bool})."""
+    Returns ("not_checked", reason) | ("current", None) | ("changed", {"blocks": [...], "major": bool, "edited": bool}).
+    A record that is incomplete or from another format version is "not checked", never "current".
+    "edited" is reported with a change too, so a card change can't hide an unreviewed edit to the lines."""
     if record is None:
         return "not_checked", "no_record"
+    if record.get("v") != FORMAT or "lines" not in record or "meta" not in record:
+        return "not_checked", "no_record"
+    edited = lines is not None and record["lines"] != lines_hash(lines)
     if blocks is None:
         return "changed", {"blocks": ["removed"], "major": True}
     changed, major = [], False
     for name in set(record) | set(blocks):
-        if name in ("lines", "date"):
+        if name in ("lines", "date", "v"):
             continue
         old, now = record.get(name), blocks.get(name)
         if old == now:
@@ -207,8 +224,8 @@ def card_state(record, blocks, lines, job_type=""):
             major = major or name in MAJOR
         changed.append(name)
     if changed:
-        return "changed", {"blocks": sorted(changed, key=lambda n: ORDER.index(n) if n in ORDER else 99), "major": major}
-    if record.get("lines") and lines is not None and record["lines"] != lines_hash(lines):
+        return "changed", {"blocks": sorted(changed, key=lambda n: ORDER.index(n) if n in ORDER else 99), "major": major, "edited": edited}
+    if edited:
         return "not_checked", "edited"
     return "current", None
 
@@ -223,10 +240,17 @@ def asset_health(states):
     return "current"
 
 
-def generic_citations(text, known):
+def is_cited(cid, known, recorded):
+    """An ID counts as a card citation if it's a card now, or it was one when this file was recorded
+    (so a deleted card still shows up as "removed" instead of vanishing). Other IDs such as a job ID
+    or a template's C-000 don't count."""
+    return cid in known or cid in recorded
+
+
+def generic_citations(text, known, recorded=()):
     """Claim IDs a follow-up card or answer cites: {id: [lines]}. A card counts as cited by every
-    level-2 section that names it, and those whole sections are its lines. Only IDs that match a
-    real card count, so a template's C-000 is ignored."""
+    level-2 section that names it, and those whole sections are its lines. See is_cited for which
+    IDs count."""
     _, start = _front_matter(text)
     sections, cur = [], []
     for line in text.split("\n")[start:]:
@@ -239,6 +263,6 @@ def generic_citations(text, known):
     out = {}
     for sec in sections:
         for cid in sorted(set(ID_RE.findall("\n".join(sec)))):
-            if cid in known:
+            if is_cited(cid, known, recorded):
                 out.setdefault(cid, []).extend(sec)
     return out
