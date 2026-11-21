@@ -12,6 +12,7 @@ facets touch the job. Every card still goes in the evidence table (D-019); unuse
 Usage:  python3 scripts/list_claims.py [--claims evidence/claims] [--lang en|zh]
         python3 scripts/list_claims.py --used-by C-001   which resumes, follow-up cards and answers cite it, and whether each needs a recheck (D-020)
         python3 scripts/list_claims.py --health          only the files whose cited cards changed since they were checked
+        python3 scripts/list_claims.py --answers ACME-01 reviewed answers that fit this job, and which can be reused as they are
 Exit code: 0 = listed, 2 = no cards found.
 """
 import argparse
@@ -49,6 +50,14 @@ T = {
         "used_by": "{n} file(s) cite {c}:",
         "major": "major",
         "minor": "minor",
+        "ans_head": "| Answer | Question | Scope | Status | Check | Reuse? |",
+        "ans_yes": "yes",
+        "ans_recheck": "recheck first",
+        "ans_unchecked": "check against the cards first",
+        "ans_draft": "not approved yet",
+        "ans_none": "No reviewed answers fit {j}. Write new ones in interview/answers/ (copy _TEMPLATE.md).",
+        "ans_skipped": "{n} other answer(s) are for another employer or job, so they're left out.",
+        "no_job": "No job file jobs/{j}.md: employer-specific answers can't be matched, so only reusable ones are listed.",
         "many": "{n} cards. Read in full: every protected card ({k}), and every card whose summary, role or facets touch the job. Every card still goes in the evidence table; unused ones can share a line.",
     },
     "zh": {
@@ -71,6 +80,14 @@ T = {
         "used_by": "{n} 个文件引用了 {c}：",
         "major": "重大",
         "minor": "一般",
+        "ans_head": "| 答案 | 问题 | 适用范围 | 状态 | 检查 | 能复用吗 |",
+        "ans_yes": "能",
+        "ans_recheck": "先复核",
+        "ans_unchecked": "先对照卡片检查",
+        "ans_draft": "还没批准",
+        "ans_none": "没有适用于 {j} 的已审核答案。新答案写在 interview/answers/（复制 _TEMPLATE.md）。",
+        "ans_skipped": "另有 {n} 个答案是给别的公司或岗位的，没有列出。",
+        "no_job": "找不到岗位文件 jobs/{j}.md：针对某家公司的答案没法匹配，只列出通用的。",
         "many": "共 {n} 张卡。要读全文的：所有受保护的卡（{k}），以及一句话、职位或能力切面和这个岗位沾边的卡。每张卡仍要写进证据表；没用的可以合成一行。",
     },
 }
@@ -163,14 +180,69 @@ def describe(states, t, names):
     return "; ".join(parts)
 
 
+def scope_fits(scope, job_id, company):
+    """reusable | employer: <name> | job: <id>. An empty scope counts as reusable."""
+    kind, _, value = (scope or "reusable").partition(":")
+    kind, value = kind.strip().lower(), value.strip().lower()
+    if kind in ("reusable", "通用", ""):
+        return True
+    if kind in ("employer", "公司"):
+        return bool(company) and (value in company.lower() or company.lower() in value)
+    if kind in ("job", "岗位"):
+        return value == job_id.lower()
+    return False
+
+
+def answers_for(root, cards, job_id, t):
+    """Reviewed answers that fit this job, with whether each can be reused as it is (D-020)."""
+    job = root / "jobs" / f"{job_id}.md"
+    company = cc.front_matter(job.read_text(encoding="utf-8"))[0].get("company", "") if job.is_file() else ""
+    if not job.is_file():
+        print(t["no_job"].format(j=job_id))
+    rows = {me: (life, health) for me, life, health, _ in dependency_rows(root, cards)}
+    fit, skipped = [], 0
+    for p in sorted((root / "interview" / "answers").glob("*.md")):
+        if p.name.startswith("_"):
+            continue
+        fm = cc.front_matter(p.read_text(encoding="utf-8"))[0]
+        if not scope_fits(fm.get("scope", ""), job_id, company):
+            skipped += 1
+            continue
+        me = deps.rel(p, root)
+        life, health = rows.get(me, (fm.get("status", "") or "-", "current"))
+        if health in ("changed", "historical"):
+            reuse = t["ans_recheck"]
+        elif health == "not_checked":
+            reuse = t["ans_unchecked"]
+        elif life.strip().lower() != "approved":
+            reuse = t["ans_draft"]
+        else:
+            reuse = t["ans_yes"]
+        fit.append((fm.get("id") or p.stem, fm.get("question", ""), fm.get("scope", "") or "reusable", life,
+                    t["changed" if health == "historical" else health], reuse))
+    if not fit:
+        print(t["ans_none"].format(j=job_id))
+    else:
+        print(t["ans_head"])
+        print("|---|---|---|---|---|---|")
+        for row in fit:
+            print("| " + " | ".join(cell(x) for x in row) + " |")
+    if skipped:
+        print(t["ans_skipped"].format(n=skipped))
+    return 0
+
+
 def main():
     ap = argparse.ArgumentParser(description="List every Claim Card on one line each.")
     ap.add_argument("--claims", default="evidence/claims")
     ap.add_argument("--used-by", metavar="ID", help="list the resumes, follow-up cards and answers that cite this card, and whether each needs a recheck (D-020)")
     ap.add_argument("--health", action="store_true", help="only the files whose cited cards changed since they were checked (D-020)")
+    ap.add_argument("--answers", metavar="JOB", help="reviewed answers in interview/answers/ whose scope fits this job, and whether each can be reused as it is")
     ap.add_argument("--lang", choices=["en", "zh"], default=DEFAULT_LANG)
     a = ap.parse_args()
     t = T[a.lang]
+    if a.answers:
+        return answers_for(deps.kit_root(a.claims), deps.load_cards(a.claims), a.answers, t)
     if a.used_by or a.health:
         root, cards = deps.kit_root(a.claims), deps.load_cards(a.claims)
         names = cc.BLOCK_NAMES[a.lang]

@@ -1024,6 +1024,83 @@ class DependencyHealth(unittest.TestCase):
         self.assertNotEqual(n("2022,2023"), n("20222023"))       # nor a list of numbers
         self.assertEqual(len(deps.short_hash("x")), 64)
 
+    # Proposals in the Change Log's Delta table, and reviewed answers (v0.7.0 part 2)
+    def changelog(self, status, before='"Secured US$200,000 in launch-stage sponsorships."',
+                  after='"Secured US$200,000 in sponsorships I negotiated."'):
+        (self.root / "cv/changelogs").mkdir(exist_ok=True)
+        (self.root / "cv/changelogs/v2.md").write_text(
+            "---\nresume: v2\nstatus: Draft\n---\n# Log\n\n## Delta (against the baseline)\n\n"
+            "| # | Location | Change (Before → After) | Basis | Status |\n|---|---|---|---|---|\n"
+            f"| 1 | Role A | {before} → {after} | C-001 | {status} |\n", encoding="utf-8")
+
+    def check_v2(self, *args):
+        return self.check("v2", "--changelog", "cv/changelogs/v2.md", *args)
+
+    def test_rejected_proposal_still_in_resume_warns(self):
+        self.approved("base")
+        self.changelog("Rejected")
+        self.resume("v2", status="Draft", base="base", line="Secured US$200,000 in sponsorships I negotiated.")
+        code, out = self.check_v2()
+        self.assertEqual(code, 0, out)
+        self.assertIn("proposal #1 was rejected", out)
+        self.changelog("Accepted")
+        self.assertNotIn("proposal #1", self.check_v2()[1])
+
+    def test_approved_resume_with_pending_proposal_warns(self):
+        self.approved("base")
+        self.changelog("Pending")
+        self.resume("v2", status="Approved", base="base", line="Secured US$200,000 in sponsorships I negotiated.")
+        code, out = self.check_v2()
+        self.assertEqual(code, 0, out)
+        self.assertIn("proposal(s) 1 are still Pending", out)
+
+    def test_pending_proposal_goes_stale_when_its_target_text_changes(self):
+        self.approved("base")
+        self.changelog("Pending")
+        self.resume("v2", status="Draft", base="base")
+        self.assertNotIn("stale", self.check_v2()[1])
+        self.resume("base", line="Secured US$200,000 in sponsorships across the launch.")
+        code, out = self.check_v2()
+        self.assertIn("proposal #1 is stale (its Before text is no longer in base.md)", out)
+
+    def test_pending_proposal_goes_stale_when_its_card_changes(self):
+        self.approved("base")
+        self.changelog("Pending")
+        self.resume("v2", status="Draft", base="base")
+        code, out = self.sh("check_claims.py", "cv/changelogs/v2.md", "--record", "all")
+        self.assertEqual(code, 0, out)
+        self.card("C-001", wording="Secured US$200,000 in launch-stage sponsorships.")
+        self.assertNotIn("is stale", self.check_v2()[1])  # wording only: not stale
+        self.card("C-001", did="designed the packages; my manager negotiated the deals.")
+        code, out = self.check_v2()
+        self.assertIn("C-001 changed after it was proposed: attribution · major", out)
+
+    def answer(self, aid, scope, status="Approved", text="I designed the packages and negotiated each deal."):
+        (self.root / "interview/answers").mkdir(exist_ok=True)
+        (self.root / f"interview/answers/{aid}.md").write_text(
+            f"---\nid: {aid}\nquestion: Biggest win?\nscope: {scope}\nstatus: {status}\n---\n# {aid}\n\n"
+            f"## Answer (reviewed)\n\n{text} <!-- C-001 -->\n", encoding="utf-8")
+
+    def test_answers_by_scope_and_health(self):
+        (self.root / "jobs").mkdir()
+        (self.root / "jobs/JOB-1.md").write_text("---\nid: JOB-1\ncompany: Harbor Analytics\n---\n", encoding="utf-8")
+        self.answer("A-001", "reusable")
+        self.answer("A-002", "employer: Harbor Analytics")
+        self.answer("A-003", "employer: Northwind")
+        self.answer("A-004", "job: JOB-2")
+        for aid in ("A-001", "A-002"):
+            self.assertEqual(self.sh("check_claims.py", f"interview/answers/{aid}.md", "--record", "all")[0], 0)
+        code, out = self.sh("list_claims.py", "--answers", "JOB-1")
+        self.assertEqual(code, 0, out)
+        self.assertIn("| A-001 | Biggest win? | reusable | Approved | current | yes |", out)
+        self.assertIn("| A-002 |", out)
+        self.assertNotIn("A-003", out)
+        self.assertNotIn("A-004", out)
+        self.assertIn("2 other answer(s)", out)
+        self.card("C-001", did="designed the packages; my manager negotiated the deals.")
+        code, out = self.sh("list_claims.py", "--answers", "JOB-1")
+        self.assertIn("| A-001 | Biggest win? | reusable | Approved | needs recheck | recheck first |", out)
+
 
 class ReportScore(unittest.TestCase):
     """report_score.py must agree with the sample in report/template.html (38, as the page shows)."""

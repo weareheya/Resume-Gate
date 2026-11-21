@@ -29,5 +29,8 @@ __pycache__/
 !/jobs/_TEMPLATE.md
 /interview/*
 !/interview/_TEMPLATE.md
+!/interview/answers/
+/interview/answers/*
+!/interview/answers/_TEMPLATE.md
 /reports/
 # ─────────────────────────────────────────────────────────────────────────────

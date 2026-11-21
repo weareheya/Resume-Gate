@@ -12,6 +12,13 @@ What changed in each version, and whether you need to do anything. Your version 
 - Rechecking is per card: confirm the lines citing the changed card and only that card is recorded again. Sent versions are never edited; their follow-up cards get the warning instead.
 - A record is written only when the file passes the check, and it says which IDs it skipped. A deleted card still shows up where it was used: as removed if it was recorded there, as missing if it never was. A small card change can't hide an edit to the lines citing it: at `--finalize` that combination needs your OK too.
 
+**Proposals you can accept one by one.** The Change Log's Delta table now numbers each change with a Status (Pending / Accepted / Rejected). `check_claims.py` warns if rejected text is still in the resume, if an Approved resume still has Pending rows, or if a proposal went stale: its Before text is gone, or a card it relied on had a major change after it was written. Rejecting a wording is a preference, not a fact change, so the card stays as it is.
+
+**Reviewed answers.** `interview/answers/` keeps answers you've approved, each with a scope (any job, one employer, or one application). `list_claims.py --answers <job ID>` lists the ones that fit and whether each still matches its cards (D-020).
+
+- WORKFLOW S3: the employer's name, title, location and pay are never counted as gaps.
+- PROMPTS: when to use a cheaper model, and a prompt for reusing answers.
+
 **What you need to do**: nothing before your resumes keep passing. Versions made before 0.7.0 show as "not checked" in one summary line; when you reuse or send one, the AI shows you its lines and records your OK. If you keep your own `.gitignore`, add `/cv/reviewed.txt` to the personal-data block.
 
 ## 0.6.0 · 2026-11-20

@@ -107,6 +107,11 @@ T = {
         "rec_blocked": "{f} has {e} error(s), so nothing was recorded. A record means the user approved these lines; fix the errors first",
         "dep_edited_final": "{f}: {c} changed since this version was approved ({b}), and the lines citing it were edited after that. Show the user those lines next to the card; once they confirm, run --record {c}",
         "rec_done": "Recorded {f} against the current version of {cs} (cv/reviewed.txt). Record only what the user has looked at",
+        "delta_rejected": "{cl}: proposal #{k} was rejected, but its new text is in {f}:{n}. Take it out, or ask the user again",
+        "delta_pending": "{cl}: {f} is Approved but proposal(s) {ks} are still Pending. Mark each Accepted or Rejected",
+        "delta_stale": "{cl}: proposal #{k} is stale ({why}). Don't apply it as it is: propose it again against the current text and card",
+        "stale_target": "its Before text is no longer in {b}",
+        "stale_card": "{c} changed after it was proposed: {x}",
         "how_approved": "approved",
         "how_recorded": "recorded",
         "major": "major",
@@ -159,6 +164,11 @@ T = {
         "rec_blocked": "{f} 有 {e} 个错误，所以没有记录。记录的意思是本人批准了这些行；请先改掉错误",
         "dep_edited_final": "{f}：这一版批准之后 {c} 改过（{b}），而且引用它的行在那之后也改过。请把这些行和卡一起给本人看，确认后运行 --record {c}",
         "rec_done": "已记录：{f} 对照的是 {cs} 的当前版本（cv/reviewed.txt）。只记录本人看过的内容",
+        "delta_rejected": "{cl}：第 {k} 条修改提案已被拒绝，但它的新文本出现在 {f}:{n}。请删掉，或者再问一次本人",
+        "delta_pending": "{cl}：{f} 已是 Approved，但第 {ks} 条提案还是待定。请把每条标成接受或拒绝",
+        "delta_stale": "{cl}：第 {k} 条提案已过期（{why}）。不要照原样采用：请对照现在的文本和卡重新提",
+        "stale_target": "它的 Before 原文已经不在 {b} 里",
+        "stale_card": "{c} 在提案之后改过：{x}",
         "how_approved": "批准",
         "how_recorded": "记录",
         "major": "重大",
@@ -574,6 +584,47 @@ def evidence_table_ids(path):
     return ids if found else None
 
 
+DELTA_HEADINGS = ("delta",)
+PROPOSAL_STATUS = {"pending": "pending", "待定": "pending", "accepted": "accepted", "接受": "accepted", "已接受": "accepted",
+                   "rejected": "rejected", "拒绝": "rejected", "已拒绝": "rejected"}
+
+
+def quoted(cell):
+    """Text in quotes in a cell ("…", “…” or 「…」), or "" if there's none."""
+    found = [next(g for g in m.groups() if g) for m in QUOTED_LONG_RE.finditer(cell)]
+    return " ".join(found)
+
+
+QUOTED_LONG_RE = re.compile(r'"([^"\n]+)"|“([^”\n]+)”|「([^」\n]+)」')
+
+
+def delta_rows(path):
+    """Proposals in a Change Log's Delta table: [(number, before, after, ids, status)]. Only a table with a
+    Status column counts; an older Change Log without one returns []. Before/After are the quoted text on each
+    side of the arrow, so they can be looked up in a file; unquoted descriptions are left empty."""
+    lines, inside = [], False
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if line.startswith("## "):
+            inside = line[3:].strip().lower().startswith(DELTA_HEADINGS)
+        elif inside:
+            lines.append(line)
+    out = []
+    for header, rows in parse_tables(lines):
+        scol = next((i for i, c in enumerate(header) if c in ("status", "状态")), None)
+        if scol is None:
+            continue
+        ncol = next((i for i, c in enumerate(header) if c in ("#", "no.", "编号")), None)
+        ccol = next((i for i, c in enumerate(header) if "change" in c or "改动" in c), None)
+        bcol = next((i for i, c in enumerate(header) if "basis" in c or "依据" in c), None)
+        for k, cells in enumerate(rows, 1):
+            get = lambda i: cells[i].strip() if i is not None and i < len(cells) else ""
+            status = PROPOSAL_STATUS.get(get(scol).strip("* ").lower(), "")
+            change = get(ccol)
+            before, _, after = change.partition("→")
+            out.append((get(ncol) or str(k), quoted(before), quoted(after), ID_RE.findall(get(bcol) + " " + change), status))
+    return out
+
+
 def frozen_changed(resume):
     """True if cv/frozen.txt (written by scripts/freeze.py) lists this file with a different hash."""
     import hashlib
@@ -842,6 +893,34 @@ def main():
                         print("ERROR " + msg); errors += 1
                     else:
                         print("WARN  " + msg); warns += 1
+
+    # Proposals (the Change Log's Delta table, when it has a Status column): a rejected change must not be in
+    # the resume, an Approved version has no undecided proposal, and a pending one is stale once its Before text
+    # or a card it cites has changed. Stale is worked out here, never written into the Change Log.
+    if cl and cl.is_file() and not frozen:
+        rows = delta_rows(cl)
+        clme = deps.rel(cl, root)
+        resume_lines = [(n, deps.normalize(text)) for n, text, _ in needs]
+        base_text = deps.normalize(base.read_text(encoding="utf-8")) if base is not None and base.is_file() else None
+        for k, before, after, ids, st in rows:
+            if st == "rejected" and len(deps.normalize(after)) >= 10:
+                hit = next((n for n, text in resume_lines if deps.normalize(after) in text), None)
+                if hit:
+                    print("WARN  " + t["delta_rejected"].format(cl=cl.name, k=k, f=resume.name, n=hit)); warns += 1
+            if st != "pending":
+                continue
+            whys = []
+            if before and base_text is not None and deps.normalize(before) not in base_text:
+                whys.append(t["stale_target"].format(b=base.name))
+            for c in ids:
+                cst, d = deps.card_state(records.get((clme, c)), fps.get(c), None, fm.get("type", ""))
+                if cst == "changed" and d["major"]:  # a wording-only change to the card doesn't void the proposal
+                    whys.append(t["stale_card"].format(c=c, x=what(d)))
+            if whys:
+                print("WARN  " + t["delta_stale"].format(cl=cl.name, k=k, why="; ".join(whys))); warns += 1
+        pending = [k for k, _, _, _, st in rows if st == "pending"]
+        if pending and status == "approved":
+            print("WARN  " + t["delta_pending"].format(cl=cl.name, f=resume.name, ks=", ".join(pending))); warns += 1
 
     if errors:
         print(t["fail"].format(e=errors, f=resume.name))
