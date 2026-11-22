@@ -8,4 +8,4 @@
 4. **`.gitignore` 不自动替换。** 本人可能改过它，比如仓库是私有的、想让 Git 备份，所以删掉了「个人资料不进 Git」那一段。直接替换会让备份悄悄停掉。新版的 `.gitignore` 和本地不一样时，把差异给本人看，问要不要换。
 5. **永远不动本人的文件**：`docs/MY-DECISIONS.md`、`evidence/`（`_TEMPLATE.md` 除外）、`cv/`（各 `_TEMPLATE.md` 除外）、`jobs/` 和 `interview/`（各自的 `_TEMPLATE.md` 除外）、`reports/`。
 6. 如果本人改过工具文件（例如在有 MY-DECISIONS 之前往 `docs/DECISIONS.md` 里加过规则），先把这些改动挪进 `docs/MY-DECISIONS.md`，并告诉本人挪了什么。
-7. 先跑 `python3 scripts/validate_evidence.py`，再对每一份还在用的简历（`cv/CV-INDEX.md` 里每个 Approved 的版本）跑 `python3 scripts/check_claims.py`，不要只跑最新的：旧简历可能过不了新规则。用大白话告诉本人哪些通过、哪些现在要改。本人同意后再提交。
+7. 先跑 `python3 scripts/validate_evidence.py`，再对每一份还在用的简历（`cv/CV-INDEX.md` 里每个 Approved 的版本，已投出的版本也算，但只读不改：不通过的只报告）跑 `python3 scripts/check_claims.py`，不要只跑最新的：旧简历可能过不了新规则。用大白话告诉本人哪些通过、哪些现在要改。本人同意后再提交。

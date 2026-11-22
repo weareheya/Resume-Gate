@@ -33,7 +33,7 @@ Before you apply, **Finalize** (see [task modes](#task-modes)): export, check th
 
 **Picking up later.** The "Progress" section of `jobs/<job-id>.md` says which steps are done and what's waiting on the user. It's a pointer, not proof: check it against the files (the Change Log, the resume's status) before relying on it, and count something as approved only if the user's own words say so.
 
-**One master copy.** The Approved version in `cv/resumes/` is the one that counts. A copy kept in another tool (a resume builder, a job site) is the user's to keep in step; say which version it came from when you hand it over.
+**One master copy.** The Approved version in `cv/resumes/` is the one that counts. A copy kept in another tool (a resume builder, a job site) is the user's to keep in step; say which version it came from when you hand it over. The exported file still gets the layout check and must match the Approved version.
 
 ## Step 0: Cold start
 
