@@ -547,6 +547,37 @@ class ValidateEvidence(unittest.TestCase):
                 self.assertIn(snippet, out)
 
 
+class StaleVerifyNote(unittest.TestCase):
+    """A number ticked as confirmed whose note still says "to verify" gets a reminder, never an error."""
+
+    def run_v(self, root):
+        r = subprocess.run([sys.executable, "-I", str(SCRIPT.with_name("validate_evidence.py")), "--lang", "en"],
+                           cwd=root, capture_output=True, text=True)
+        return r.returncode, r.stdout
+
+    def bank(self, d, row):
+        root = Path(d)
+        (root / "evidence/claims").mkdir(parents=True)
+        (root / "evidence/claims/a.md").write_text(
+            "---\nid: C-001\nstatus: Safe to draft\nprotected: false\n---\n# Test\n## Numbers and what they mean\n"
+            "| Number | Verified | Note |\n|---|---|---|\n" + row + "\n", encoding="utf-8")
+        return root
+
+    def test_ticked_but_note_says_to_verify_warns_without_failing(self):
+        for note in ("to be verified against the public post", "To verify", "待核实"):
+            with self.subTest(note=note), tempfile.TemporaryDirectory() as d:
+                code, out = self.run_v(self.bank(d, "| 40% | ✓ | " + note + " |"))
+                self.assertEqual(code, 0, out)
+                self.assertIn("still says it is to be verified", out)
+
+    def test_a_clean_note_and_an_honest_to_verify_do_not_warn(self):
+        for row in ("| 40% | ✓ | public post, checked 2026-11-22 |", "| 40% | to verify | rough |"):
+            with self.subTest(row=row), tempfile.TemporaryDirectory() as d:
+                code, out = self.run_v(self.bank(d, row))
+                self.assertEqual(code, 0, out)
+                self.assertNotIn("still says it is to be verified", out)
+
+
 class ScoreFormula(unittest.TestCase):
     """The audit's score cases: a job-fit score can no longer reach 100 by leaving out the JD."""
 
