@@ -18,7 +18,7 @@ Number the core requirements once; the Coverage Report and the job-fit report re
 
 ## What the job is really for
 
-One or two lines: the business goal behind the role, and what an ideal hire looks like (S1). Mark what's your guess.
+Answer these before matching anything (S1), a line each: why is the company hiring, what problem does the role exist to solve? What does doing it well look like after a year? Which requirements are hard gates and which are nice to have? What would the wrong hire fail at? Mark what's your guess. These guide what to lead with; they are never facts about you and never go on the resume.
 
 ## Progress
 
