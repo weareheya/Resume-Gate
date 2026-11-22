@@ -29,6 +29,8 @@ A resume workflow for a long job search, where you tailor many versions over wee
 
 ![Resume-Gate overview: one fact, one card; every version and every interview traces back](assets/overview-en.svg)
 
+**New in 0.8.1 (2026-11-22):** fixes from real use: a number you confirm isn't asked about twice, the AI breaks a job down from first principles before matching, the final review is the full resume in the chat with changes marked, and your answers about a bullet are written back at once. See the [changelog](en/CHANGELOG.md).
+
 **New in 0.8.0 (2026-11-21):** the AI looks in your own material before it says there's no evidence. Where a requirement matters and your Claim Cards leave it open, it checks `evidence/sources/`, your reviewed answers and your profile; what it finds becomes a `Needs review` card and a question to you, never a resume line. Files you mark as skipped are never opened. `list_claims.py --sources` lists your source files with fingerprints. Nothing is required of you. [Details](en/CHANGELOG.md)
 
 **New in 0.7.0 (2026-11-21):** correct a fact once. When you fix a Claim Card, the scripts flag every resume, follow-up card and saved answer that used the old version, so a corrected error doesn't come back unnoticed. These are reminders for you to review, not a guarantee about what the AI will write; sent resumes stay unchanged. You can also accept or reject the AI's proposed changes one by one, and keep answers you've approved for reuse (`interview/answers/`). [Details](en/CHANGELOG.md)
@@ -156,6 +158,8 @@ Not sure about any of this? Ask the AI tool you picked in step 1. It can check w
 **为什么不直接让 AI 改？** 随便一个 AI 都能把简历改得更好看。它不知道的是：这个数字当时怎么算的，哪部分是你做的，哪句话一被追问就会卡壳。这些只有你知道。Resume-Gate 把它们写进证据库，只写一次，之后的一切都从同一套事实里长出来：每一版简历、每一次体检，还有每场面试前的追问卡。新开一个对话，AI 不一定可靠地记得你确认过的事；这个文件夹把它们存在文件里。
 
 ![Resume-Gate 总览：事实只写一次，简历和面试都从这里来](assets/overview-zh.svg)
+
+**0.8.1 新增（2026-11-22）：** 根据真实使用修正：你确认过的数字不再重复问，先从第一性原理拆解岗位，最后审阅把整份简历贴在聊天里、改动直接标出，你回答的问题马上写回去。详见 [更新记录](zh-CN/CHANGELOG.md)。
 
 **0.8.0 新增（2026-11-21）：** AI 在说「没有证据」之前，先翻你自己的资料。某条要求重要、而你的 Claim Card 没能覆盖时，它会查 `evidence/sources/`、你已审核的答案和档案；找到的东西变成一张 `需复核` 的卡和一个问你的问题，绝不直接变成简历里的一行。你标了跳过的文件绝不会被打开。`list_claims.py --sources` 列出你的资料文件和指纹。不需要你做任何事。[详情](zh-CN/CHANGELOG.md)
 

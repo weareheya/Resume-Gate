@@ -2,6 +2,22 @@
 
 What changed in each version, and whether you need to do anything. Your version is in `VERSION`. To update, paste prompt 5 from `docs/PROMPTS.md`.
 
+## 0.8.1 · 2026-11-22
+
+**Fixes from real use of 0.8.0.** Mostly wording the AI follows; one new reminder in the script.
+
+- A number you confirm is updated on its card, not asked about twice. If you only say where it can be looked up, the AI reads that material first, then asks one yes or no. `validate_evidence.py` now warns (never fails) when a number is ticked ✓ but its note still says "to verify".
+- Before matching a job description, the AI breaks the job down from first principles: why the company is hiring, what doing it well looks like after a year, which requirements are hard gates, what the wrong hire would fail at. Guesses are marked, and none of it becomes a fact on your resume.
+- Final review is the full resume in the chat with the changes marked in the text, asked once.
+- What you answer about a bullet is written back at once: into its card in the same turn, and into the resume only in a Draft. An Approved version gets a proposal; a Sent version stays as it was sent.
+- "3 lines per bullet" is a guideline. When layout rules clash: no orphaned heading first, then the page count, then the fill default (a warning, not a gate).
+- After you update the kit, recheck every resume still in use, sent ones read-only.
+- Interview prep starts from the saved posting and the resume already on file. Only the Approved version counts; copies in other tools are yours to keep in step.
+
+**What you need to do**: nothing.
+
+**Limits.** These are rules for the AI; whether it follows them in a real session has not been tested with a paid evaluation.
+
 ## 0.8.0 · 2026-11-21
 
 **Look before saying "no evidence".** The AI used to check only your Claim Cards, so something you had really done, sitting in your own material but without a card, could be written off as "no evidence". Now, where a requirement matters and the cards leave it open, it looks further before it says no (D-021, LESSONS L-16).
