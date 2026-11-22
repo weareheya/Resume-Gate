@@ -35,9 +35,16 @@ A resume workflow for a long job search, where you tailor many versions over wee
 
 **New in 0.7.0 (2026-11-21):** correct a fact once. When you fix a Claim Card, the scripts flag every resume, follow-up card and saved answer that used the old version, so a corrected error doesn't come back unnoticed. These are reminders for you to review, not a guarantee about what the AI will write; sent resumes stay unchanged. You can also accept or reject the AI's proposed changes one by one, and keep answers you've approved for reuse (`interview/answers/`). [Details](en/CHANGELOG.md)
 
+<details>
+<summary>Older versions (0.6.0 and earlier): details are in the changelog</summary>
+
 **New in 0.6.0 (2026-11-20):** your cards and resumes stay out of Git by default; quick edit / tailor / finalize modes, so a small fix doesn't run the whole pipeline; layout check works on Windows and Linux (you confirm the last page); a lighter evidence table that the script checks; hard requirements shown on the report. No hard rule was removed. [Details](en/CHANGELOG.md)
 
 **New in 0.5.0 (2026-11-20):** sent resumes can be frozen (`scripts/freeze.py`), and the repo has an [eval set](evals/README.md) with blind A/B/C review to check that kit changes make resumes better. 0.4.0 made the kit check what a resume leaves out, not only what it gets wrong; 0.3.0 made the evidence checks much harder to slip past. [All changes](en/CHANGELOG.md)
+
+Full history: [changelog](en/CHANGELOG.md).
+
+</details>
 
 ## What's inside
 
@@ -165,9 +172,16 @@ Not sure about any of this? Ask the AI tool you picked in step 1. It can check w
 
 **0.7.0 新增（2026-11-21）：** 事实改一次就够。你纠正一张 Claim Card 后，脚本会标出用过旧版本的每份简历、追问卡和已存回答，纠正过的错误不会悄悄回来。这是提醒你去复核，不是保证 AI 以后一定不会写错；已投递的简历保持原样。AI 提出的修改还能逐条接受或拒绝，你批准过的回答可以留着复用（`interview/answers/`）。[详情](zh-CN/CHANGELOG.md)
 
+<details>
+<summary>更早的版本（0.6.0 及之前）：详情见更新记录</summary>
+
 **0.6.0 新增（2026-11-20）：** 卡片和简历默认不进 Git；分快改 / 定制 / 定稿三种模式，小改动不再走整套流程；Windows 和 Linux 上也能做排版检查（由你确认最后一页）；证据表更轻，并由脚本把关；报告上标出硬性要求。没有删掉任何硬规则。[详情](zh-CN/CHANGELOG.md)
 
 **0.5.0 新增（2026-11-20）：** 已投递的简历可以冻结（`scripts/freeze.py`），仓库里加了[评测集](evals/README.md)和 A/B/C 盲评，用来确认工具的改动真的让简历变好。0.4.0 开始查漏写了什么，0.3.0 让证据检查更难被绕过。[全部更新记录](zh-CN/CHANGELOG.md)
+
+完整历史：[更新记录](zh-CN/CHANGELOG.md)。
+
+</details>
 
 ## 里面有什么
 
