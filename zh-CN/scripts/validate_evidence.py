@@ -27,6 +27,7 @@ spec.loader.exec_module(cc)
 
 STATUSES = {"needs review", "safe to draft", "interview only", "retired", "需复核", "仅面试", "已停用"}
 PENDING = {"to verify", "unverified", "待核实", "待补", "未核实"}
+PENDING_WORDS = ("to verify", "to be verified", "unverified", "待核实", "未核实")  # leftover wording in a note
 
 T = {
     "en": {
@@ -37,6 +38,7 @@ T = {
         "protected": "{f}: protected must be true or false, not \"{v}\"",
         "no_verified": "{f}: the Numbers table has no Verified column; its numbers count as confirmed. Add the column to mark any that aren't",
         "blank": "{f}: {k} number(s) with a blank Verified cell count as confirmed. Tick them ✓ when you next look at the card",
+        "stale": "{f}: row \"{r}\" is ticked as confirmed but its note still says it is to be verified. If the user has confirmed it, remove the leftover wording and note the date and source",
         "verified": "{f}: Verified value \"{v}\" on row \"{r}\" is neither ✓ nor \"to verify\"",
         "no_profile": "{p} is missing or lists no roles. Role headings and Education aren't checked until it's filled in",
         "ok": "OK: {n} cards checked, no errors{w}",
@@ -50,6 +52,7 @@ T = {
         "protected": "{f}：protected 只能是 true 或 false，不是「{v}」",
         "no_verified": "{f}：数字表没有「核实」一列，里面的数字都按已确认处理。需要标出未确认的，就加上这一列",
         "blank": "{f}：有 {k} 个数字的「核实」一栏是空的，按已确认处理。下次看这张卡时顺手打上 ✓",
+        "stale": "{f}：「{r}」这一行已经打了 ✓，备注里却还写着待核实。如果本人已经确认，请去掉残留的字样，并写上日期和出处",
         "verified": "{f}：「{r}」这一行的核实值「{v}」既不是 ✓ 也不是「待核实」",
         "no_profile": "{p} 不存在或没有填写任职。填好之前，职位标题和教育背景不会被检查",
         "ok": "通过：检查了 {n} 张卡，没有错误{w}",
@@ -106,10 +109,13 @@ def main():
                 if not cc.tokens(cells[0]):
                     continue  # a row with no number in it, e.g. "(none yet)"
                 v = cells[vcol].strip() if vcol < len(cells) else ""
+                confirmed = not v or v.lower() in cc.VERIFIED_OK
                 if not v:
                     blank += 1
-                elif v.lower() not in cc.VERIFIED_OK and v.lower() not in PENDING:
+                elif not confirmed and v.lower() not in PENDING:
                     err(t["verified"].format(f=f.name, v=v, r=cells[0][:40]))
+                if confirmed and any(w in c.lower() for i, c in enumerate(cells) if i != vcol for w in PENDING_WORDS):
+                    warn(t["stale"].format(f=f.name, r=cells[0][:40]))  # contradicts itself; a reminder, never an error
             if blank:
                 warn(t["blank"].format(f=f.name, k=blank))
     for cid, names in sorted(seen.items()):

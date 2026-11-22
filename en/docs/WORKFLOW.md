@@ -254,6 +254,7 @@ A file read before is still a place to look: one pass rarely takes everything ou
 | What the user said in this chat | No: their own account is confirmed (D-017) |
 | A correction from the user | No: update the card (D-020) |
 | Something the user said they're unsure of | Yes |
+| The user confirms a number the card marks `to verify` (says it's right, or says where it can be looked up) | No: update the card now. Tick Verified ✓, remove the leftover "to verify" wording, and note the date and the source in the user's words. Then carry on. Ask about a number only when the card has no source for it at all, or new material contradicts it |
 
 - **When a source disagrees with a card:**
 
