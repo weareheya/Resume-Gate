@@ -488,6 +488,96 @@ class AuditBypasses(unittest.TestCase):
         self.assertEqual(code, 0, out)
         self.assertIn('section "Experience" has 1 line(s)', out)
 
+    # a note inside `base:` is a clear error, never a silent skip of the protected-claims check
+    def test_base_with_a_note_gets_a_clear_error(self):
+        self.check("## Summary\nGrew partners from 12 to 40. <!-- C-001 -->\n", "base")
+        code, out = self.check("---\nbase: base (approved on Nov 25)\n---\n## Summary\nPartnerships lead. <!-- C-002 -->\n", "v2")
+        self.assertEqual(code, 1, out)
+        self.assertIn("`base:` must be just the version ID", out)
+        self.assertIn("base_note:", out)
+        self.assertNotIn("Baseline file not found", out)
+
+    def test_base_note_line_is_ignored_and_check_still_runs(self):
+        self.check("## Summary\nGrew partners from 12 to 40. <!-- C-001 -->\n", "base")
+        code, out = self.check("---\nbase: base\nbase_note: approved on Nov 25\n---\n## Summary\nPartnerships lead. <!-- C-002 -->\n", "v2")
+        self.assertEqual(code, 1, out)  # C-001 is protected and was dropped: still caught
+        self.assertIn("Protected claim C-001 is used in the baseline (base.md)", out)
+        self.assertNotIn("must be just the version ID", out)
+
+    # role headings: say what differs instead of one blunt error
+    def test_role_heading_changes_say_what_to_confirm(self):
+        code, out = self.check("""
+            ## Experience
+            ### Partnerships Manager · Northwind · 2022–2024
+            - Pipeline reached US$2.1M. <!-- C-007 -->
+            ### Senior Partnerships Lead · Northwind · 2022–2023
+            - Pipeline reached US$2.1M. <!-- C-007 -->
+            """)
+        self.assertEqual(code, 1, out)
+        self.assertIn("years differ", out)
+        self.assertIn("the title doesn't", out)
+        self.assertIn("yourself", out)
+
+    def test_added_seniority_word_and_false_present_only_warn(self):
+        code, out = self.check("""
+            ## Experience
+            ### Senior Partnerships Manager · Northwind · 2022–2023
+            - Pipeline reached US$2.1M. <!-- C-007 -->
+            ### Partnerships Manager · Northwind · 2022–Present
+            - Pipeline reached US$2.1M. <!-- C-007 -->
+            """)
+        self.assertEqual(code, 0, out)
+        self.assertIn('adds "senior"', out)
+        self.assertIn("separate row in profile.md with its own dates", out)
+        self.assertIn("says the role is current", out)
+
+    def test_ended_role_written_as_present_is_an_error_only_when_finalizing(self):
+        body = """
+            ## Experience
+            ### Partnerships Manager · Northwind · 2022–Present
+            - Pipeline reached US$2.1M. <!-- C-007 -->
+            """
+        code, out = self.check(body)
+        self.assertEqual(code, 0, out)
+        self.assertIn("WARN  r.md:2: this heading says the role is current", out)
+        code, out = self.check(body, "r", "--finalize")
+        self.assertEqual(code, 1, out)
+        self.assertIn("ERROR r.md:2: this heading says the role is current", out)
+
+    def test_company_named_current_or_lead_is_not_read_as_current_or_senior(self):
+        (self.root / "evidence/profile.md").write_text(PROFILE.replace("Northwind", "Current Lead Labs"), encoding="utf-8")
+        body = """
+            ## Experience
+            ### Partnerships Manager · Current Lead Labs · 2022–2023
+            - Pipeline reached US$2.1M. <!-- C-007 -->
+            """
+        code, out = self.check(body, "r", "--finalize")
+        self.assertNotIn("says the role is current", out)
+        self.assertNotIn("adds \"", out)
+        # a profile row that really is current accepts "Present"
+        (self.root / "evidence/profile.md").write_text(PROFILE.replace("2023.09", "Present"), encoding="utf-8")
+        code, out = self.check(body.replace("2022–2023", "2022–Present").replace("Current Lead Labs", "Northwind"), "r", "--finalize")
+        self.assertNotIn("says the role is current", out)
+
+    def test_unchanged_role_heading_has_no_role_warnings(self):
+        code, out = self.check("""
+            ## Experience
+            ### Partnerships Manager · Northwind · 2022–2023
+            - Pipeline reached US$2.1M. <!-- C-007 -->
+            """)
+        self.assertEqual(code, 0, out)
+        self.assertNotIn("adds \"", out)
+        self.assertNotIn("says the role is current", out)
+
+    def test_role_format_and_ampersand_changes_pass(self):
+        (self.root / "evidence/profile.md").write_text(PROFILE.replace("Partnerships Manager", "Sales and Partnerships Manager"), encoding="utf-8")
+        code, out = self.check("""
+            ## Experience
+            ### Sales & Partnerships Manager · Northwind · Mar 2022 – Sep 2023
+            - Pipeline reached US$2.1M. <!-- C-007 -->
+            """)
+        self.assertEqual(code, 0, out)
+
     def test_profile_matching_tolerates_punctuation_and_variants(self):
         (self.root / "evidence/profile.md").write_text(PROFILE.replace("| Partnerships Manager |", "| Partnerships Manager; 合作伙伴经理 |"), encoding="utf-8")
         code, out = self.check("""

@@ -33,7 +33,7 @@ One experience can prove several different skills (D-012). List the ones worth p
 | | | | |
 
 ## Approved wording
-> One or two sentences that can go straight into a resume.
+> One or two sentences, confirmed accurate. A reference, not a script: a resume line may reword it for a job as long as the facts, numbers and attribution stay the same.
 
 ## Don't rephrase as
 - Banned words: (optional; words a resume line citing this card must never use, e.g. revenue, closed)

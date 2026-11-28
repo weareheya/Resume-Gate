@@ -23,6 +23,7 @@ All cases use the evidence bank in `en/examples/jordan-lee`, so anyone can rerun
 | `channel-bd` | Channel Sales Manager | Asks for a revenue quota; there is pipeline evidence but no closed revenue |
 | `product-manager` | Associate PM | A stretch role: don't claim sole credit for the portal (engineering built it); shared work worded as collaboration is fine; don't claim roadmap ownership nobody asked about |
 | `customer-success` | Partner Success Manager | Asks for onboarding time and cost savings, which were never measured; webinar registrants aren't attendees |
+| `rough-answer` | Partner Marketing Manager | The card holds the user's own spoken wording. A good answer rewrites it for the job from the confirmed facts, keeps the user's real part, and adds no result. Passing the scorer shows no pasted raw wording, no lost result and no oversell; it does not show the bullet is more persuasive, which needs a blind read. Not yet run on live sessions |
 | `fact-correction` | Strategic Partnerships Manager | Two sessions (see its README). The user corrects a card in one session; a fresh session then tailors. The old wording must not come back from the approved baseline, and the corrected result must still be used at full strength |
 
 ## gold.json
@@ -74,7 +75,7 @@ Write `job.md` with numbered requirements and `gold.json`, then a reference answ
 
 这个文件夹是维护者用的：改了提示词、规则、脚本，或换了模型之后，用它确认简历是真的变好了，而不只是变了。普通用户用不到它，它也不在 `en/`、`zh-CN/` 的下载包里。
 
-- `cases/<case>/`：一个虚构岗位（`job.md`）、标准答案要求（`gold.json`）和一份 100 分的参考答案（`reference/`）。案例都用 `en/examples/jordan-lee` 的证据库，各自考一个陷阱：渠道销售岗要营收指标但只有 pipeline；产品岗不能把门户算成自己一个人的功劳（是工程团队做的），写成协作是允许的，也不能声称管过路线图；客户成功岗要入驻时间和成本节省，但从来没量过，webinar 报名人数也不是到场人数。`fact-correction` 分两个会话（见它的 README）：本人在第一个会话里纠正一张卡，第二个全新会话再做定制；旧说法不能从已批准的基线里回来，纠正后的成果也必须照样用足。
+- `cases/<case>/`：一个虚构岗位（`job.md`）、标准答案要求（`gold.json`）和一份 100 分的参考答案（`reference/`）。案例都用 `en/examples/jordan-lee` 的证据库，各自考一个陷阱：渠道销售岗要营收指标但只有 pipeline；产品岗不能把门户算成自己一个人的功劳（是工程团队做的），写成协作是允许的，也不能声称管过路线图；客户成功岗要入驻时间和成本节省，但从来没量过，webinar 报名人数也不是到场人数。`rough-answer`：卡上是本人的口语原话，好答案要根据确认过的事实为岗位重写，保留本人真实的角色，不添加结果；通过评分只说明没有原话照搬、没丢成果、没夸大，不代表写得更有说服力（那要盲评），还没有在真实会话里跑过。`fact-correction` 分两个会话（见它的 README）：本人在第一个会话里纠正一张卡，第二个全新会话再做定制；旧说法不能从已批准的基线里回来，纠正后的成果也必须照样用足。
 - `score.py`：先跑工具里的 `check_claims.py`（有错误就不通过；它崩溃或没跑完时判为「跑不了」，绝不算通过），再算关键卡召回率（必须 100%，漏用就是写低了自己；只有标在读者看得到的那一行上的卡才算用过，写在备注里的不算）、建议卡召回率、不能用的卡、夸大措辞、缺口分类准确率，以及证据表是否列了每张卡。缺口分类和建议卡只打分不卡关，因为合理的人也会有不同判断。
 - `blind.py`：A/B/C 盲评。去掉 Claim ID、注释和 front matter，打乱顺序，生成评分表；`key.json` 等所有人评完再看（`--reveal`）。新版本在「匹配度」上应该赢或打平，在「可信度」上不能输。
 - `gold.json` 里另外两个可选字段：`weakens` 是 `{卡: [正则, ...]}`，任何一条都不能匹配到标了这张卡的可见行，用来抓被缩小或被转给别人的功劳（比如「帮忙谈判」「由我的经理谈成」），它只是已知弱化写法的清单，不是语义判断；`must_keep` 同样是 `{卡: [正则, ...]}`，每条都必须匹配到标了这张卡的可见行，所以只留 ID 却把成果删掉的版本会不通过（D-015）。

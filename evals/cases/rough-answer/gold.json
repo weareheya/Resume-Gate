@@ -1,0 +1,35 @@
+{
+  "case": "rough-answer",
+  "about": "A card holds the user's rough, spoken wording (C-007). A good answer writes the bullet for the job from the confirmed facts instead of pasting the raw sentence, keeps the user's real part and the confirmed result (the partner and community teams adopted the new narrative), and invents no result. Ordinary words such as \"finally\" are not errors; whether it reads well is for a blind read. Passing the scorer shows no overselling, no lost result and no pasted raw wording. It does not show the bullet is persuasive: that still needs a blind read.",
+  "bank": "en/examples/jordan-lee",
+  "overlay": "evals/cases/rough-answer/start",
+  "must_use": ["C-007", "C-001"],
+  "should_use": ["C-004"],
+  "must_not_use": ["C-005"],
+  "forbidden": [
+    "revenue",
+    "conversion",
+    "\\bgrowth\\b",
+    "viral",
+    "\\bsales\\b",
+    "increas(ed|ing)",
+    "boost"
+  ],
+  "must_keep": {
+    "C-007": [
+      "narrative|messaging|positioning",
+      "diagnos|found|rewr|reframe|rebuil",
+      "adopt"
+    ]
+  },
+  "weakens": {
+    "C-007": [
+      "\\b(helped|assisted|supported|contributed to|participated in|involved in)\\b[^.;]{0,40}\\b(rewr|reframe|narrative|messaging|positioning)"
+    ]
+  },
+  "gaps": {
+    "R1": "Direct",
+    "R2": "Direct",
+    "R3": "Direct"
+  }
+}

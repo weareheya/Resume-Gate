@@ -32,6 +32,7 @@ These are defaults. A structure the user has already approved takes priority ove
 
 - [ ] Summary is short (about 3–4 lines): positioning plus the 2–4 strongest proof points. No filler like "results-oriented" or "team player"
 - [ ] Bullets start with a strong verb where that's accurate. Avoid duty-style openers like "Responsible for" or "Duties included." "Helped" and "Served as" are fine when they're the honest description: the wording must never claim more than the role was
+- [ ] Does each new or materially reworked bullet say the strongest job-relevant value the evidence supports, rather than only repeating the user's own answer or listing everything they did?
 - [ ] Each bullet tries to say what you did, how, and what came of it, with numbers where you have them
 - [ ] Check each strong bullet against STAR: the candidate's own action (A) and the result (R) are both there; the situation (S) and task (T) appear only if the bullet makes no sense without them. On paper, compress it to action + key judgment or deliverable + result, not four sentences. Save the full STAR for the interview
 - [ ] Each bullet is about 3 lines or fewer once laid out (a key experience may run longer when it earns the space; say which and why), with 2–5 bullets for each of the two most recent roles and 1–3 for earlier ones
