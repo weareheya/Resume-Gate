@@ -29,14 +29,16 @@ A resume workflow for a long job search, where you tailor many versions over wee
 
 ![Resume-Gate overview: one fact, one card; every version and every interview traces back](assets/overview-en.svg)
 
+**New in 0.8.2 (2026-11-28):** fixes from audits: a note in `base:` gets a clear message (use `base_note:`); a role heading that doesn't match your profile says whether the years or the title differ, a promotion is its own profile row, and an ended role written as "Present" is caught when you finalize; confirming a fact no longer means approving the wording, so the AI writes each bullet for the job from the confirmed facts. Nothing is required of you. [Details](en/CHANGELOG.md)
+
 **New in 0.8.1 (2026-11-22):** fixes from real use: a number you confirm isn't asked about twice, the AI breaks a job down from first principles before matching, the final review is the full resume in the chat with changes marked, and your answers about a bullet are written back at once. See the [changelog](en/CHANGELOG.md).
 
 **New in 0.8.0 (2026-11-21):** the AI looks in your own material before it says there's no evidence. Where a requirement matters and your Claim Cards leave it open, it checks `evidence/sources/`, your reviewed answers and your profile; what it finds becomes a `Needs review` card and a question to you, never a resume line. Files you mark as skipped are never opened. `list_claims.py --sources` lists your source files with fingerprints. Nothing is required of you. [Details](en/CHANGELOG.md)
 
-**New in 0.7.0 (2026-11-21):** correct a fact once. When you fix a Claim Card, the scripts flag every resume, follow-up card and saved answer that used the old version, so a corrected error doesn't come back unnoticed. These are reminders for you to review, not a guarantee about what the AI will write; sent resumes stay unchanged. You can also accept or reject the AI's proposed changes one by one, and keep answers you've approved for reuse (`interview/answers/`). [Details](en/CHANGELOG.md)
-
 <details>
-<summary>Older versions (0.6.0 and earlier): details are in the changelog</summary>
+<summary>Older versions (0.7.0 and earlier): details are in the changelog</summary>
+
+**New in 0.7.0 (2026-11-21):** correct a fact once. When you fix a Claim Card, the scripts flag every resume, follow-up card and saved answer that used the old version, so a corrected error doesn't come back unnoticed. These are reminders for you to review, not a guarantee about what the AI will write; sent resumes stay unchanged. You can also accept or reject the AI's proposed changes one by one, and keep answers you've approved for reuse (`interview/answers/`). [Details](en/CHANGELOG.md)
 
 **New in 0.6.0 (2026-11-20):** your cards and resumes stay out of Git by default; quick edit / tailor / finalize modes, so a small fix doesn't run the whole pipeline; layout check works on Windows and Linux (you confirm the last page); a lighter evidence table that the script checks; hard requirements shown on the report. No hard rule was removed. [Details](en/CHANGELOG.md)
 
@@ -166,14 +168,16 @@ Not sure about any of this? Ask the AI tool you picked in step 1. It can check w
 
 ![Resume-Gate 总览：事实只写一次，简历和面试都从这里来](assets/overview-zh.svg)
 
+**0.8.2 新增（2026-11-28）：** 根据审计意见修正：`base:` 里写了备注会给出清楚提示（备注请写在 `base_note:`）；职位标题和档案对不上时会说明是年份还是职位不同，升职单独记一行，已离职的职位写成“至今”会在定稿时被拦住；确认事实不再等于批准文案，AI 会根据确认过的事实为每个岗位重新写 bullet。不需要你做任何事。[详情](en/CHANGELOG.md)
+
 **0.8.1 新增（2026-11-22）：** 根据真实使用修正：你确认过的数字不再重复问，先从第一性原理拆解岗位，最后审阅把整份简历贴在聊天里、改动直接标出，你回答的问题马上写回去。详见 [更新记录](zh-CN/CHANGELOG.md)。
 
 **0.8.0 新增（2026-11-21）：** AI 在说「没有证据」之前，先翻你自己的资料。某条要求重要、而你的 Claim Card 没能覆盖时，它会查 `evidence/sources/`、你已审核的答案和档案；找到的东西变成一张 `需复核` 的卡和一个问你的问题，绝不直接变成简历里的一行。你标了跳过的文件绝不会被打开。`list_claims.py --sources` 列出你的资料文件和指纹。不需要你做任何事。[详情](zh-CN/CHANGELOG.md)
 
-**0.7.0 新增（2026-11-21）：** 事实改一次就够。你纠正一张 Claim Card 后，脚本会标出用过旧版本的每份简历、追问卡和已存回答，纠正过的错误不会悄悄回来。这是提醒你去复核，不是保证 AI 以后一定不会写错；已投递的简历保持原样。AI 提出的修改还能逐条接受或拒绝，你批准过的回答可以留着复用（`interview/answers/`）。[详情](zh-CN/CHANGELOG.md)
-
 <details>
-<summary>更早的版本（0.6.0 及之前）：详情见更新记录</summary>
+<summary>更早的版本（0.7.0 及之前）：详情见更新记录</summary>
+
+**0.7.0 新增（2026-11-21）：** 事实改一次就够。你纠正一张 Claim Card 后，脚本会标出用过旧版本的每份简历、追问卡和已存回答，纠正过的错误不会悄悄回来。这是提醒你去复核，不是保证 AI 以后一定不会写错；已投递的简历保持原样。AI 提出的修改还能逐条接受或拒绝，你批准过的回答可以留着复用（`interview/answers/`）。[详情](zh-CN/CHANGELOG.md)
 
 **0.6.0 新增（2026-11-20）：** 卡片和简历默认不进 Git；分快改 / 定制 / 定稿三种模式，小改动不再走整套流程；Windows 和 Linux 上也能做排版检查（由你确认最后一页）；证据表更轻，并由脚本把关；报告上标出硬性要求。没有删掉任何硬规则。[详情](zh-CN/CHANGELOG.md)
 
