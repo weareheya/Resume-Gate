@@ -2,6 +2,12 @@
 
 What changed in each version, and whether you need to do anything. Your version is in `VERSION`. To update, paste prompt 5 from `docs/PROMPTS.md`.
 
+## Unreleased
+
+- A `base:` line now holds only the version ID. A note there gets a clear message pointing to the new `base_note:` line, and the protected-claims check is never silently skipped.
+- When a role heading doesn't match your profile, the message now says whether the years or the title differ. The AI asks you, then updates your profile itself. "&" and "and" count as the same.
+- Confirming a fact no longer means approving the wording. A card's approved wording is a reference; the AI writes each line for the job from the confirmed facts, without adding facts and without limiting how many numbers a line holds.
+
 ## 0.8.1 · 2026-11-22
 
 **Fixes from real use of 0.8.0.** Mostly wording the AI follows; one new reminder in the script.

@@ -18,7 +18,7 @@
   5. 被检查的行不能出现所引用卡上「禁用词：」一行列出的词（例如 revenue、营收）。
   6. evidence/profile.md 填好之后，Experience 里的职位标题（### 职位 · 公司 · 年份）和
      Education 的每一行都要和它对得上。
-  7. 基线：如果 cv/CV-INDEX.md 里这份简历的类型已经有起点，新版本必须写 `base:`。有基线时，
+  7. 基线：`base:` 后面只能写基线的 ID（备注写在 `base_note:`，写别的算错误，不会被跳过）。如果 cv/CV-INDEX.md 里这份简历的类型已经有起点，新版本必须写 `base:`。有基线时，
      基线 Summary/Experience 里用到的 `protected: true` claim，这里也必须还在（卡上的 `keep-for` 只列了其他岗位类型时除外），而且已确认的
      数字不能少，除非本人同意（front matter 里写 `protected-ok: C-001`）。
   8. 批准后改过的卡（D-020，scripts/evidence_deps.py）：这一版引用的卡在 `--record` 之后改过，会指出
@@ -85,12 +85,15 @@ T = {
         "loose_number": "{f}: section \"{s}\", line {n} has a number no card backs: {t}",
         "waived": "{c}: dropped or shortened with the user's approval (protected-ok in the front matter). Say why in the Change Log",
         "role": "{f}:{n}: role heading doesn't match any role in {p} (title, company and years): {t}",
+        "role_dates": "{f}:{n}: same title and company as a row in {p}, but the years differ: {t}. A date change is a change of fact: ask the user to confirm it, then update that row in {p} yourself (don't ask them to edit it) and rerun",
+        "role_title": "{f}:{n}: the company matches a row in {p} but the title doesn't: {t}. If it is the same job worded differently, or a promotion, ask the user to confirm; once they do, add the new title to that row's Title cell after `;` yourself and rerun",
         "education": "{f}:{n}: Education line doesn't match {p} (degree, school and year): {t}",
         "dropped_protected": "Protected claim {c} is used in the baseline ({b}) but missing from Summary/Experience here. Restore it, or with the user's approval add `protected-ok: {c}` to the front matter and explain why in the Change Log",
         "weakened": "Protected claim {c}: the baseline ({b}) states {x} but this version no longer does. Restore it, or with the user's approval add `protected-ok: {c}` to the front matter and explain why in the Change Log",
         "dropped": "{c} is used in the baseline ({b}) but not here",
         "keep_for": "Protected claim {c} is kept for type(s) {k}; this resume is type {ty}, so leaving it out is allowed. Say why in the Change Log",
         "base_missing": "Baseline file not found: {p}. The protected-claims check can't run. Fix `base:` or pass --base",
+        "base_invalid": "{f}: `base:` must be just the version ID, got \"{v}\". Write `base: channel-v3` and put any note in a separate `base_note:` line. The protected-claims check can't run until it is fixed",
         "base_required": "{f}: no `base:`, but CV-INDEX already has a starting point for type {ty} ({s}). Set `base:` to the version this was copied from",
         "frozen": "{f} was frozen when it was sent (cv/frozen.txt) and has been edited since. Restore it, and make any change in a new version (D-010)",
         "table_gap": "{f}: the evidence table in {cl} doesn't mention {cs}. Look at them, or add them as unused with a reason; unused cards can share one line (D-019)",
@@ -148,12 +151,15 @@ T = {
         "loose_number": "{f}：栏目「{s}」第 {n} 行有没有卡片支撑的数字：{t}",
         "waived": "{c}：本人已同意删减（front matter 里的 protected-ok），请在 Change Log 里写明原因",
         "role": "{f}:{n}：职位标题和 {p} 里的任职对不上（职位、公司、年份）：{t}",
+        "role_dates": "{f}:{n}：职位和公司与 {p} 里的一行相同，但年份不同：{t}。改日期属于改事实：请先让用户确认，确认后由你自己更新 {p} 里的那一行（不要让用户去改），再重新检查",
+        "role_title": "{f}:{n}：公司与 {p} 里的一行相同，但职位不同：{t}。如果是同一份工作的不同写法，或是升职，请先让用户确认；确认后由你自己把新职位用 `;` 加进那一行的职位格里，再重新检查",
         "education": "{f}:{n}：教育这一行和 {p} 对不上（学位、学校、年份）：{t}",
         "dropped_protected": "受保护的 claim {c} 在基线（{b}）里用到了，这里的 Summary/Experience 却没有。请补回；或经本人同意后在 front matter 里加 `protected-ok: {c}`，并在 Change Log 里说明原因",
         "weakened": "受保护的 claim {c}：基线（{b}）里写了 {x}，这一版没有了。请补回；或经本人同意后在 front matter 里加 `protected-ok: {c}`，并在 Change Log 里说明原因",
         "dropped": "{c} 在基线（{b}）里用到了，这里没有",
         "keep_for": "受保护的 claim {c} 只要求在类型 {k} 里保留；这份简历是类型 {ty}，可以不放。请在 Change Log 里写明原因",
         "base_missing": "找不到基线文件：{p}，受保护 claim 检查无法进行。请修正 `base:` 或用 --base 指定",
+        "base_invalid": "{f}：`base:` 后面只能写版本 ID，现在是“{v}”。请写成 `base: channel-v3`，备注另起一行写在 `base_note:`。改好之前，受保护 claim 检查无法进行",
         "base_required": "{f}：没有写 `base:`，但 CV-INDEX 里类型 {ty} 已经有起点（{s}）。请把 `base:` 设为这份简历复制自的版本",
         "frozen": "{f} 投递时已冻结（cv/frozen.txt），之后又被改过。请恢复原样，要改就复制成一个新版本（D-010）",
         "table_gap": "{f}：{cl} 的证据表没有提到 {cs}。请看一下这些卡；用不上的写进表里并说明原因，没用的卡可以合成一行（D-019）",
@@ -430,12 +436,26 @@ def load_profile(path):
 
 def squash(text):
     """Lower case, letters and digits only: "B.A., Economics" and "BA Economics" compare equal."""
-    return re.sub(r"[\W_]+", "", text.lower())
+    return re.sub(r"[\W_]+", "", text.lower().replace("&", " and "))
 
 
 def alts(cell):
     """A profile cell may list accepted variants separated by ";" (e.g. a title in English and Chinese)."""
     return [squash(x) for x in re.split(r"[;；]", cell) if squash(x)]
+
+
+def role_problem(text, entries):
+    """Why a role heading doesn't match: "role_dates" (same title and company, other years),
+    "role_title" (company matches, title doesn't) or "role" (nothing matches)."""
+    low = squash(text)
+    nums = set(re.findall(r"\d+(?:\.\d+)?", text))
+    for a, b, n in entries:
+        if any(x in low for x in a) and any(x in low for x in b) and not nums <= n:
+            return "role_dates"
+    for a, b, n in entries:
+        if any(x in low for x in b) and not any(x in low for x in a):
+            return "role_title"
+    return "role"
 
 
 def matches_profile(text, entries):
@@ -841,7 +861,7 @@ def main():
         else:
             for n, text in r["roles"]:
                 if not matches_profile(text, profile[0]):
-                    print("ERROR " + t["role"].format(f=resume.name, n=n, p=ppath.name, t=text)); errors += 1
+                    print("ERROR " + t[role_problem(text, profile[0])].format(f=resume.name, n=n, p=ppath.name, t=text)); errors += 1
             for n, text in r["education"]:
                 if not matches_profile(text, profile[1]):
                     print("ERROR " + t["education"].format(f=resume.name, n=n, p=ppath.name, t=text)); errors += 1
@@ -849,8 +869,12 @@ def main():
     # protected claims vs the baseline
     fm = r["fm"]
     b = None
-    base = Path(a.base) if a.base else (resume.parent / (fm["base"] + ".md") if fm.get("base") else None)
-    if base is None:
+    base_id = fm.get("base", "")
+    bad_base = bool(base_id) and not a.base and not re.fullmatch(r"[\w.-]+", base_id)
+    base = Path(a.base) if a.base else (resume.parent / (base_id + ".md") if base_id and not bad_base else None)
+    if bad_base:
+        print("ERROR " + t["base_invalid"].format(f=resume.name, v=base_id)); errors += 1
+    elif base is None:
         rule = cv_index_rule(resume, fm)
         if rule:
             print("ERROR " + t["base_required"].format(f=resume.name, ty=rule[0], s=rule[1])); errors += 1

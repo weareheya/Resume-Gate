@@ -2,7 +2,8 @@
 id: general-2026-01        # 同时是文件名；要和 cv/CV-INDEX.md 里的那一行对上
 type: 03                   # CV-INDEX 里的岗位类型
 status: Draft              # Draft | Approved | Sent | Unused
-base:                      # 从哪份简历复制来的 id（第一份基线留空）
+base:                      # 只写从哪份简历复制来的 id（第一份基线留空），不要写备注
+base_note:                 # 可选：关于基线的备注写在这里
 ---
 
 <!-- 每条 bullet 末尾用 HTML 注释标上它依据的 Claim ID。渲染后看不见。
