@@ -6,6 +6,7 @@ What changed in each version, and whether you need to do anything. Your version 
 
 - A `base:` line now holds only the version ID. A note there gets a clear message pointing to the new `base_note:` line, and the protected-claims check is never silently skipped.
 - When a role heading doesn't match your profile, the message now says whether the years or the title differ, and how to record it: a promotion is a new profile row with its own dates, reworded titles go in the same row after `;`. The AI asks you (unless you already confirmed it in the chat), then updates your profile itself. "&" and "and" count as the same. A heading that adds a word like "Senior" or "Director", or says "Present" where your profile doesn't, gets a warning (not an error). Date matching is otherwise unchanged: it only compares the years.
+- Known limits of the role check: it compares years only, so a wrong month or a start date after the end date isn't caught. A heading that calls an ended role "Present" is a warning in a draft and an error under `--finalize`.
 - Confirming a fact no longer means approving the wording. A card's approved wording is a reference; the AI writes each line for the job from the confirmed facts, without adding facts and without limiting how many numbers a line holds.
 
 ## 0.8.1 · 2026-11-22

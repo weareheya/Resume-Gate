@@ -86,7 +86,7 @@ T = {
         "waived": "{c}: dropped or shortened with the user's approval (protected-ok in the front matter). Say why in the Change Log",
         "role": "{f}:{n}: role heading doesn't match any role in {p} (title, company and years): {t}",
         "role_senior": "{f}:{n}: this heading adds \"{w}\", which isn't in the matching {p} row: {t}. If it's a real promotion, ask the user, then add a separate row in {p} with its own dates (don't widen the old row). Not an error, since it may be only wording",
-        "role_present": "{f}:{n}: this heading says the role is current, but the matching {p} row has no \"Present\": {t}. If the user confirmed it is current, set the row's End to Present yourself",
+        "role_present": "{f}:{n}: this heading says the role is current, but the matching {p} row has no \"Present\": {t}. If the user confirmed it is current, set the row's End to Present yourself. A warning in a draft, an error under --finalize",
         "role_dates": "{f}:{n}: same title and company as a row in {p}, but the years differ: {t}. A date change is a change of fact: ask the user to confirm it unless they already did in this conversation, then update that row in {p} yourself (don't ask them to edit it) and rerun",
         "role_title": "{f}:{n}: the company matches a row in {p} but the title doesn't: {t}. Same job worded differently: add the new wording to that row's Title cell after `;`. A real promotion or a different job: add a separate row with its own dates, never both titles in one row. The old row was wrong: correct it. Ask the user first unless they already confirmed it in this conversation (then just update {p} yourself); rerun afterwards",
         "education": "{f}:{n}: Education line doesn't match {p} (degree, school and year): {t}",
@@ -154,7 +154,7 @@ T = {
         "waived": "{c}：本人已同意删减（front matter 里的 protected-ok），请在 Change Log 里写明原因",
         "role": "{f}:{n}：职位标题和 {p} 里的任职对不上（职位、公司、年份）：{t}",
         "role_senior": "{f}:{n}：这个标题多了“{w}”，{p} 里对应的那一行没有：{t}。如果确实是升职，请先问用户，再在 {p} 里另加一行，写上各自的起止时间（不要把旧的一行改宽）。这里只是提醒不是错误，因为也可能只是换了说法",
-        "role_present": "{f}:{n}：这个标题写的是“至今”，但 {p} 里对应的那一行没有写“Present”：{t}。如果用户确认现在还在职，请你自己把那一行的结束时间改成 Present",
+        "role_present": "{f}:{n}：这个标题写的是“至今”，但 {p} 里对应的那一行没有写“Present”：{t}。如果用户确认现在还在职，请你自己把那一行的结束时间改成 Present。草稿阶段只提醒，--finalize 时算错误",
         "role_dates": "{f}:{n}：职位和公司与 {p} 里的一行相同，但年份不同：{t}。改日期属于改事实：除非用户在这次对话里已经确认过，否则请先确认，然后由你自己更新 {p} 里的那一行（不要让用户去改），再重新检查",
         "role_title": "{f}:{n}：公司与 {p} 里的一行相同，但职位不同：{t}。同一份工作的不同写法：把新写法用 `;` 加进那一行的职位格。真的升职或换了职位：另加一行，写上各自的起止时间，不要把两个职位塞进同一行。原来那行写错了：直接改正。除非用户在这次对话里已经确认过（那就直接更新 {p}），否则先问用户；改完再重新检查",
         "education": "{f}:{n}：教育这一行和 {p} 对不上（学位、学校、年份）：{t}",
@@ -427,11 +427,12 @@ def load_profile(path):
         def col(*names):
             return next((i for i, c in enumerate(header) if any(n in c for n in names)), None)
         title, company, school, degree = col("title", "职位"), col("company", "公司"), col("school", "学校"), col("degree", "学位")
+        end = col("end", "结束")
         for cells in rows:
             get = lambda i: cells[i].strip() if i is not None and i < len(cells) else ""
             nums = set(re.findall(r"\d+(?:\.\d+)?", " ".join(cells)))
             nums |= set(re.findall(r"\d+", " ".join(cells)))
-            if re.search(PRESENT_RE, " ".join(cells).lower()):
+            if re.search(PRESENT_RE, get(end).lower()):
                 nums.add("present")
             if title is not None and company is not None and get(title) and get(company):
                 roles.append((alts(get(title)), alts(get(company)), nums))
@@ -457,20 +458,25 @@ PRESENT_RE = r"present|current|\bnow\b|至今|现在|目前"
 
 def role_flags(text, entries):
     """For a heading that matches the profile: [(key, word)] when it adds a seniority word the matching
-    row doesn't have, or says the role is current when the row has no Present. Warnings only."""
+    row's title doesn't have, or says the role is current when the row's End isn't Present. The title is the
+    first part of the heading and the end date the last, so a company called "Current Labs" is not read as
+    "current". The caller decides whether the second is a warning or, when finalizing, an error."""
     low = squash(text)
-    toks = set(re.findall(r"[a-z]+", text.lower()))
+    parts = [x.strip() for x in re.split(r"\s*[·|]\s*", text)]
+    title_part, end_part = (parts[0], parts[-1]) if len(parts) > 1 else (text, text)
+    title_low = squash(title_part)
+    toks = set(re.findall(r"[a-z]+", title_part.lower()))
     years = set(re.findall(r"\d+(?:\.\d+)?", text))
     hit = [(a, b, n) for a, b, n in entries
            if any(x in low for x in a) and any(x in low for x in b) and years <= n]
     flags = []
     if not hit:
         return flags
-    known = "".join("".join(a) + "".join(b) for a, b, n in hit)
+    known = "".join("".join(a) for a, b, n in hit)
     for w in SENIOR_WORDS:
-        if (w in toks if w.isascii() else w in low) and w not in known:
+        if (w in toks if w.isascii() else w in title_low) and w not in known:
             flags.append(("role_senior", w))
-    if re.search(PRESENT_RE, text.lower()) and not any("present" in n for a, b, n in hit):
+    if re.search(PRESENT_RE, end_part.lower()) and not any("present" in n for a, b, n in hit):
         flags.append(("role_present", ""))
     return flags
 
@@ -895,7 +901,10 @@ def main():
                     print("ERROR " + t[role_problem(text, profile[0])].format(f=resume.name, n=n, p=ppath.name, t=text)); errors += 1
                 else:
                     for key, w in role_flags(text, profile[0]):
-                        print("WARN  " + t[key].format(f=resume.name, n=n, p=ppath.name, t=text, w=w)); warns += 1
+                        if key == "role_present" and a.finalize:
+                            print("ERROR " + t[key].format(f=resume.name, n=n, p=ppath.name, t=text, w=w)); errors += 1
+                        else:
+                            print("WARN  " + t[key].format(f=resume.name, n=n, p=ppath.name, t=text, w=w)); warns += 1
             for n, text in r["education"]:
                 if not matches_profile(text, profile[1]):
                     print("ERROR " + t["education"].format(f=resume.name, n=n, p=ppath.name, t=text)); errors += 1

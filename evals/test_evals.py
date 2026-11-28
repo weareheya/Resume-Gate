@@ -135,6 +135,23 @@ class Catches(unittest.TestCase):
         r = score.score(case, text, ref(case, "changelog.md"))
         self.assertFalse(r["pass"], score.report(r))
 
+    def _rough(self, bullet):
+        case = HERE / "cases" / "rough-answer"
+        old = "Found that partners described the product as a generic tool because the story led with features; rewrote the product narrative around the problem partners solve, with input from the product lead, and the partner and community teams adopted it."
+        return score.score(case, ref(case, "resume.md").replace(old, bullet), ref(case, "changelog.md"))
+
+    def test_losing_the_confirmed_adoption_is_caught(self):
+        r = self._rough("Found that partners described the product as a generic tool and rewrote the product narrative around the problem partners solve.")
+        self.assertFalse(r["pass"], score.report(r))
+
+    def test_invented_sales_result_is_caught(self):
+        r = self._rough("Rewrote the product narrative around the problem partners solve; partner and community teams adopted it, increasing sales.")
+        self.assertFalse(r["pass"], score.report(r))
+
+    def test_ordinary_wording_is_not_an_error(self):
+        r = self._rough("Found that partners described the product as a generic tool; rewrote the narrative so the community finally understood it, and the partner and community teams adopted it.")
+        self.assertTrue(r["pass"], score.report(r))
+
     def test_legitimate_ways_to_write_the_amount_pass(self):
         for amount in ("US$200K", "US$200,000", "US$200000", "$200 K"):
             r = self._c006(f"- Designed a sponsorship package for each of six partners and negotiated all six deals, securing {amount}.")

@@ -531,6 +531,34 @@ class AuditBypasses(unittest.TestCase):
         self.assertIn("separate row in profile.md with its own dates", out)
         self.assertIn("says the role is current", out)
 
+    def test_ended_role_written_as_present_is_an_error_only_when_finalizing(self):
+        body = """
+            ## Experience
+            ### Partnerships Manager · Northwind · 2022–Present
+            - Pipeline reached US$2.1M. <!-- C-007 -->
+            """
+        code, out = self.check(body)
+        self.assertEqual(code, 0, out)
+        self.assertIn("WARN  r.md:2: this heading says the role is current", out)
+        code, out = self.check(body, "r", "--finalize")
+        self.assertEqual(code, 1, out)
+        self.assertIn("ERROR r.md:2: this heading says the role is current", out)
+
+    def test_company_named_current_or_lead_is_not_read_as_current_or_senior(self):
+        (self.root / "evidence/profile.md").write_text(PROFILE.replace("Northwind", "Current Lead Labs"), encoding="utf-8")
+        body = """
+            ## Experience
+            ### Partnerships Manager · Current Lead Labs · 2022–2023
+            - Pipeline reached US$2.1M. <!-- C-007 -->
+            """
+        code, out = self.check(body, "r", "--finalize")
+        self.assertNotIn("says the role is current", out)
+        self.assertNotIn("adds \"", out)
+        # a profile row that really is current accepts "Present"
+        (self.root / "evidence/profile.md").write_text(PROFILE.replace("2023.09", "Present"), encoding="utf-8")
+        code, out = self.check(body.replace("2022–2023", "2022–Present").replace("Current Lead Labs", "Northwind"), "r", "--finalize")
+        self.assertNotIn("says the role is current", out)
+
     def test_unchanged_role_heading_has_no_role_warnings(self):
         code, out = self.check("""
             ## Experience
