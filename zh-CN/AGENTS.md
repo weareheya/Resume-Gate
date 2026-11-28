@@ -54,7 +54,7 @@
 - 给本人看之前先按 `docs/REVIEW-CHECKLIST.md` 自审。
 - 报告按 `docs/REPORT.md` 做。不要发送或上传完整报告：里面有本人的全部信息。要分享时，用 `scripts/report_share.py` 生成分享版。
 - 给本人看简历之前，先跑 `python3 scripts/validate_evidence.py` 和 `python3 scripts/check_claims.py cv/resumes/<id>.md`，修掉所有错误，并报告结果。
-- `evidence/profile.md` 填好之后，简历上的职位、雇主、任职时间和教育背景必须和它一致。新增或修改其中一行，要先经本人确认，和卡片一样，确认后由你在同一轮里自己改，不要让本人去改档案。格式变化（“2022.03”和“Mar 2022”、“&”和“and”、该行已列出的写法）不用问；换了职位或职级、改了日期，要问。
+- `evidence/profile.md` 填好之后，简历上的职位、雇主、任职时间和教育背景必须和它一致。新增或修改其中一行，要先经本人确认，和卡片一样，确认后由你在同一轮里自己改，不要让本人去改档案。格式变化（“2022.03”和“Mar 2022”、“&”和“and”、该行已列出的写法）不用问；换了职位或职级、改了日期，要问；用户在这次对话里已经确认过的，直接更新就行。真的升职或换了职位，另加一行并写上各自的起止时间；只有同一份工作的不同写法，才用 `;` 加进该行的职位格。
 - **记下本人批准了什么。** 本人批准一个版本后，马上跑 `python3 scripts/check_claims.py cv/resumes/<id>.md --record all`；写完追问卡后，或者本人批准了 `interview/answers/` 里的一条答案后，也对那个文件跑一次 `--record all`。之后某张卡改了，检查会把引用它的每个文件标成需要复核。把引用这张卡的行给本人看，本人确认后跑 `--record C-xxx`。不要为了消除提醒去记录：一条记录表示本人看过（D-020）。
 - **人工审核关卡**：投递前，`check_claims.py cv/resumes/<id>.md --finalize` 必须通过。本人说「通过」之前，版本状态保持 `Draft`；已投递（`Sent`）的版本不再修改：本人投递时，用 `python3 scripts/freeze.py cv/resumes/<id>.md <导出的文件>` 冻结。
 

@@ -501,7 +501,8 @@ class AuditBypasses(unittest.TestCase):
         self.check("## Summary\nGrew partners from 12 to 40. <!-- C-001 -->\n", "base")
         code, out = self.check("---\nbase: base\nbase_note: approved on Nov 25\n---\n## Summary\nPartnerships lead. <!-- C-002 -->\n", "v2")
         self.assertEqual(code, 1, out)  # C-001 is protected and was dropped: still caught
-        self.assertIn("C-001", out)
+        self.assertIn("Protected claim C-001 is used in the baseline (base.md)", out)
+        self.assertNotIn("must be just the version ID", out)
 
     # role headings: say what differs instead of one blunt error
     def test_role_heading_changes_say_what_to_confirm(self):
@@ -516,6 +517,29 @@ class AuditBypasses(unittest.TestCase):
         self.assertIn("years differ", out)
         self.assertIn("the title doesn't", out)
         self.assertIn("yourself", out)
+
+    def test_added_seniority_word_and_false_present_only_warn(self):
+        code, out = self.check("""
+            ## Experience
+            ### Senior Partnerships Manager · Northwind · 2022–2023
+            - Pipeline reached US$2.1M. <!-- C-007 -->
+            ### Partnerships Manager · Northwind · 2022–Present
+            - Pipeline reached US$2.1M. <!-- C-007 -->
+            """)
+        self.assertEqual(code, 0, out)
+        self.assertIn('adds "senior"', out)
+        self.assertIn("separate row in profile.md with its own dates", out)
+        self.assertIn("says the role is current", out)
+
+    def test_unchanged_role_heading_has_no_role_warnings(self):
+        code, out = self.check("""
+            ## Experience
+            ### Partnerships Manager · Northwind · 2022–2023
+            - Pipeline reached US$2.1M. <!-- C-007 -->
+            """)
+        self.assertEqual(code, 0, out)
+        self.assertNotIn("adds \"", out)
+        self.assertNotIn("says the role is current", out)
 
     def test_role_format_and_ampersand_changes_pass(self):
         (self.root / "evidence/profile.md").write_text(PROFILE.replace("Partnerships Manager", "Sales and Partnerships Manager"), encoding="utf-8")

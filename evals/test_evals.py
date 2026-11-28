@@ -127,6 +127,14 @@ class Catches(unittest.TestCase):
         self.assertTrue(r["weakened"])
         self.assertFalse(r["pass"])
 
+    def test_pasting_the_raw_spoken_wording_is_caught(self):
+        case = HERE / "cases" / "rough-answer"
+        text = ref(case, "resume.md").replace(
+            "Found that partners described the product as a generic tool because the story led with features; rewrote the product narrative around the problem partners solve, with input from the product lead, and the partner and community teams adopted it.",
+            "We rewrote the narrative and the community finally understood what we were doing.")
+        r = score.score(case, text, ref(case, "changelog.md"))
+        self.assertFalse(r["pass"], score.report(r))
+
     def test_legitimate_ways_to_write_the_amount_pass(self):
         for amount in ("US$200K", "US$200,000", "US$200000", "$200 K"):
             r = self._c006(f"- Designed a sponsorship package for each of six partners and negotiated all six deals, securing {amount}.")
